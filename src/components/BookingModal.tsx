@@ -647,16 +647,24 @@ const BookingModal = () => {
         try {
             let paymentProofUrl = '';
             if (paymentFile) {
-                // Compress and upload to Firebase Storage
-                const { storage } = await import('../firebase');
-                const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
                 const { compressImage } = await import('../utils/compressImage');
 
                 const compressedBlob = await compressImage(paymentFile);
-                const storageRef = ref(storage, `payment-proofs/${Date.now()}_${paymentFile.name}`);
-                await uploadBytes(storageRef, compressedBlob);
-                paymentProofUrl = await getDownloadURL(storageRef);
-                console.log(`File uploaded to Firebase Storage: ${paymentProofUrl}`);
+                const uploadForm = new FormData();
+                uploadForm.append('paymentProof', compressedBlob, paymentFile.name);
+
+                const uploadResponse = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: uploadForm
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('Payment proof upload failed');
+                }
+
+                const uploadResult = await uploadResponse.json();
+                paymentProofUrl = uploadResult.path;
+                console.log(`File uploaded locally: ${paymentProofUrl}`);
             }
 
             // Sanitize all user inputs before storing
