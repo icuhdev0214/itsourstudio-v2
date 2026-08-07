@@ -1,0 +1,151 @@
+/* FeedbackManagement.css */
+
+.feedback-management .desktop-view {
+    display: block;
+}
+
+.feedback-management .mobile-view {
+    display: none;
+}
+
+/* On mobile, switch views */
+@media (max-width: 768px) {
+    .feedback-management .desktop-view {
+        display: none;
+    }
+
+    .feedback-management .mobile-view {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* Card Styling */
+.feedback-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.feedback-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.feedback-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.feedback-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+.feedback-date {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.feedback-rating {
+    color: #FFD700;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+}
+
+.feedback-message {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #475569;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.feedback-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1rem;
+}
+
+.status-toggle-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.status-toggle-btn.published {
+    background-color: #e0f2fe;
+    color: #0284c7;
+    border-color: #bae6fd;
+}
+
+.status-toggle-btn.hidden {
+    background-color: #f1f5f9;
+    color: #64748b;
+    border-color: #cbd5e1;
+}
+
+.delete-icon-btn {
+    color: #ef4444;
+    background: #fef2f2;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.delete-icon-btn:hover {
+    background: #fee2e2;
+    transform: scale(1.05);
+}
+
+/* 320px optimization */
+@media (max-width: 380px) {
+    .feedback-card {
+        padding: 1rem;
+    }
+
+    .feedback-name {
+        font-size: 0.95rem;
+    }
+
+    .feedback-message {
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    /* Ensure actions don't overflow */
+    .feedback-actions {
+        gap: 0.5rem;
+    }
+
+    .status-toggle-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}

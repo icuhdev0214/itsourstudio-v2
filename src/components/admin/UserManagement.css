@@ -1,0 +1,88 @@
+/* UserManagement.css */
+
+.user-management .desktop-view {
+    display: block;
+}
+
+.user-management .mobile-view {
+    display: none;
+}
+
+/* On mobile, switch views */
+@media (max-width: 768px) {
+    .user-management .desktop-view {
+        display: none;
+    }
+
+    .user-management .mobile-view {
+        display: grid;
+        gap: 1rem;
+    }
+}
+
+/* Card Styling */
+.user-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.user-card:active {
+    transform: scale(0.98);
+}
+
+.user-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.75rem;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.user-email {
+    font-size: 0.85rem;
+    color: #64748b;
+    word-break: break-all;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.user-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.card-label {
+    color: #64748b;
+    font-weight: 500;
+}

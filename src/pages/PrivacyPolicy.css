@@ -1,0 +1,119 @@
+.privacy-policy-page {
+    min-height: 100vh;
+    padding: 6rem 1.5rem 4rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.privacy-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.privacy-policy-page h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.privacy-policy-page .last-updated {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.privacy-policy-page section {
+    margin-bottom: 2rem;
+}
+
+.privacy-policy-page h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #c9a86c;
+    display: inline-block;
+}
+
+.privacy-policy-page p {
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.privacy-policy-page ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
+}
+
+.privacy-policy-page li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+.privacy-policy-page li::before {
+    content: "•";
+    color: #c9a86c;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.privacy-policy-page strong {
+    color: #1a1a2e;
+}
+
+.privacy-policy-page .contact-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.privacy-policy-page .contact-info p {
+    margin-bottom: 0.5rem;
+}
+
+.privacy-policy-page a {
+    color: #c9a86c;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.privacy-policy-page a:hover {
+    color: #a88a4c;
+    text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .privacy-policy-page {
+        padding: 5rem 1rem 3rem;
+    }
+
+    .privacy-container {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .privacy-policy-page h1 {
+        font-size: 1.8rem;
+    }
+
+    .privacy-policy-page h2 {
+        font-size: 1.1rem;
+    }
+}

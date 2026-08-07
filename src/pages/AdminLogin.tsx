@@ -1,0 +1,177 @@
+import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
+import { db, auth } from '../firebase';
+import './Admin.css';
+
+const AdminLogin = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+    const navigate = useNavigate();
+
+    // Auto-redirect if already logged in
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                navigate('/admin', { replace: true });
+            }
+        });
+        return () => unsubscribe();
+    }, [navigate]);
+
+    const handleLogin = async (e: FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            // Set persistence based on Remember Me
+            await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+
+            // Sign in with Firebase Auth
+            await signInWithEmailAndPassword(auth, email, password);
+
+            // Check Firestore for role and status
+            const q = query(collection(db, 'users'), where('email', '==', email));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                await auth.signOut();
+                setError('User profile not found');
+                setIsLoading(false);
+                return;
+            }
+
+            const userData = querySnapshot.docs[0].data();
+
+            if (userData.status !== 'active') {
+                await auth.signOut();
+                setError('Account is inactive');
+                setIsLoading(false);
+                return;
+            }
+
+            // Store role for UI (Auth handles actual security)
+            sessionStorage.setItem('userRole', userData.role);
+            sessionStorage.setItem('isAdmin', 'true');
+
+            navigate('/admin');
+        } catch (err: any) {
+            console.error("Login Error:", err);
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+                setError('Invalid email or password');
+            } else if (err.code === 'auth/too-many-requests') {
+                setError('Too many failed attempts. Try again later.');
+            } else {
+                setError('Login failed. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="admin-login-page">
+            <div className="admin-login-overlay"></div>
+            <div className="admin-login-container">
+                <div className="login-card-glass">
+                    <div className="login-brand">
+                        <div className="brand-logo-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                                <circle cx="12" cy="13" r="3" />
+                            </svg>
+                        </div>
+                        <h1 className="brand-title">Studio Admin</h1>
+                        <p className="brand-subtitle">Enter your credentials to access the dashboard</p>
+                    </div>
+
+                    <form onSubmit={handleLogin} className="login-form-premium">
+                        <div className="input-group-premium">
+                            <label className="input-label-premium">Email / Username</label>
+                            <div className="input-wrapper">
+                                <span className="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                </span>
+                                <input
+                                    type="text"
+                                    className="input-field-premium"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="admin@studio.com"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="input-group-premium">
+                            <label className="input-label-premium">Password</label>
+                            <div className="input-wrapper">
+                                <span className="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg>
+                                </span>
+                                <input
+                                    type="password"
+                                    className="input-field-premium"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="login-options">
+                            <label className="remember-me">
+                                <input
+                                    type="checkbox"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                />
+                                <span>Keep me logged in</span>
+                            </label>
+                        </div>
+
+                        {error && (
+                            <div className="login-error-message">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                                <span>{error}</span>
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="btn-login-premium"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <span className="loading-spinner"></span>
+                            ) : (
+                                <>
+                                    <span>Sign In</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="login-footer">
+                        <p>© 2024 Itsour Studio. Secure Admin Portal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default AdminLogin;

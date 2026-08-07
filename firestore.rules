@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =============================================
+    // It's ouR Studio - Firestore Security Rules
+    // =============================================
+    // 
+    // Those rules protect your data from unauthorized access.
+    // Deploy with: firebase deploy --only firestore:rules
+    //
+    // IMPORTANT: Admin operations should use Firebase Admin SDK
+    // on a secure backend, not client-side with these rules.
+    // =============================================
+
+    // Users collection - Users can only read/write their own data
+    // Users collection - Allow admins (auth users) to manage all users
+    match /users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Bookings - Public create, Auth for admin operations
+    match /bookings/{bookingId} {
+      allow create: if true;
+      allow read, write: if request.auth != null;
+    }
+    
+    // Public Booked Slots (No PII) - Public read/create
+    match /booked_slots/{slotId} {
+      allow read: if true;
+      allow create: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Feedback/Testimonials - Public create/read, Auth for admin
+    match /feedbacks/{feedbackId} {
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if request.auth != null;
+    }
+    
+    // Gallery - Public read, Auth for write
+    match /gallery/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Site Content - Public read, Auth for write
+    match /siteContent/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Unavailable Dates - Public read, Auth for write
+    match /unavailableDates/{dateId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Backdrops - Public read, Auth for write
+    match /backdrops/{backdropId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Bio Links - Public read, Auth for write
+    match /bioLinks/{linkId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+    }
+
+    // Reports - Public create, Auth for read/write
+    match /reports/{reportId} {
+        allow create: if true;
+        allow read, update, delete: if request.auth != null;
+    }
+
+    // Services - Public read, Auth for write
+    match /services/{serviceId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+    }
+
+    // Notifications - Public create (triggered by booking/reports), Auth for read/write
+    match /notifications/{notificationId} {
+        allow create: if true;
+        allow read, update, delete: if request.auth != null;
+    }
+    
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
