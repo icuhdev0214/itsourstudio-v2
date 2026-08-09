@@ -579,7 +579,15 @@ const BookingModal = () => {
                 showToast("Please fill in all required contact details.", 'error');
                 return;
             }
-            if (!formData.phone.startsWith('09') || formData.phone.length !== 13) {
+            if (!sanitizeName(formData.fullName, 100)) {
+                showToast("Please enter a valid full name.", 'error');
+                return;
+            }
+            if (!sanitizeEmail(formData.email)) {
+                showToast("Please enter a valid email address.", 'error');
+                return;
+            }
+            if (!sanitizePhoneNumber(formData.phone.replace(/\s/g, ''))) {
                 showToast("Please enter a valid PH phone number (starts with 09, 11 digits).", 'error');
                 return;
             }
@@ -665,8 +673,20 @@ const BookingModal = () => {
             const sanitizedPhone = sanitizePhoneNumber(formData.phone.replace(/\s/g, ''));
             const sanitizedNotes = sanitizeText(formData.notes, 500);
 
-            if (!sanitizedFullName || !sanitizedEmail || !sanitizedPhone) {
-                showToast("Invalid form data. Please check your inputs.", 'error');
+            if (!sanitizedFullName) {
+                showToast("Please enter a valid full name.", 'error');
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!sanitizedEmail) {
+                showToast("Please enter a valid email address.", 'error');
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!sanitizedPhone) {
+                showToast("Please enter a valid PH phone number (starts with 09, 11 digits).", 'error');
                 setIsSubmitting(false);
                 return;
             }
