@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot, orderBy } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
 import paymentQr from '../assets/payment_qr.png';
@@ -23,17 +24,6 @@ const EXTENSION_RATES = {
     30: 300,
     45: 450,
     60: 600
-};
-
-const MAX_PAYMENT_PROOF_DATA_URL_BYTES = 850_000;
-
-const blobToDataUrl = (blob: Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject(new Error('Failed to read payment proof image'));
-        reader.readAsDataURL(blob);
-    });
 };
 
 interface BookedSlot {
@@ -660,12 +650,13 @@ const BookingModal = () => {
             if (paymentFile) {
                 const { compressImage } = await import('../utils/compressImage');
 
-                const compressedBlob = await compressImage(paymentFile, 900, 0.65);
-                paymentProofUrl = await blobToDataUrl(compressedBlob);
-
-                if (paymentProofUrl.length > MAX_PAYMENT_PROOF_DATA_URL_BYTES) {
-                    throw new Error('Payment proof image is too large. Please upload a cropped screenshot under 1MB.');
-                }
+                const compressedBlob = await compressImage(paymentFile);
+                const sanitizedFilename = paymentFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                const storageRef = ref(storage, `payment-proofs/${Date.now()}_${sanitizedFilename}`);
+                await uploadBytes(storageRef, compressedBlob, {
+                    contentType: compressedBlob.type || paymentFile.type || 'image/jpeg'
+                });
+                paymentProofUrl = await getDownloadURL(storageRef);
             }
 
             // Sanitize all user inputs before storing
