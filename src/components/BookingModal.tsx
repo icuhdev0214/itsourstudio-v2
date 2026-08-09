@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebase';
 import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot, orderBy } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
 import paymentQr from '../assets/payment_qr.png';
@@ -654,7 +654,7 @@ const BookingModal = () => {
         }
 
         try {
-            let paymentProofUrl = '';
+            let paymentProofPath = '';
             if (paymentFile) {
                 const { compressImage } = await import('../utils/compressImage');
 
@@ -664,7 +664,7 @@ const BookingModal = () => {
                 await uploadBytes(storageRef, compressedBlob, {
                     contentType: compressedBlob.type || paymentFile.type || 'image/jpeg'
                 });
-                paymentProofUrl = await getDownloadURL(storageRef);
+                paymentProofPath = storageRef.fullPath;
             }
 
             // Sanitize all user inputs before storing
@@ -707,7 +707,7 @@ const BookingModal = () => {
                 totalPrice,
                 downpayment,
                 durationTotal,
-                paymentProofUrl,
+                paymentProofPath,
                 status: 'pending',
                 createdAt: serverTimestamp()
             });

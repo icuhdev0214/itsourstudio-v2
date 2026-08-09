@@ -31,6 +31,7 @@ interface Booking {
     status: 'pending' | 'confirmed' | 'rejected' | 'completed';
     totalPrice: number;
     paymentProofUrl?: string;
+    paymentProofPath?: string;
     createdAt?: any;
     notes?: string;
     [key: string]: any; // Allow indexing
@@ -82,6 +83,23 @@ const AdminDashboard = () => {
     }>({ show: false, date: null, type: null, dayBookings: [] });
     const [blockReason, setBlockReason] = useState('');
     const [isWalkInOpen, setIsWalkInOpen] = useState(false);
+
+    const handleViewPaymentProof = async (booking: Booking) => {
+        try {
+            if (booking.paymentProofUrl) {
+                setSelectedImage(booking.paymentProofUrl);
+                return;
+            }
+
+            if (!booking.paymentProofPath) return;
+
+            const proofUrl = await getDownloadURL(ref(storage, booking.paymentProofPath));
+            setSelectedImage(proofUrl);
+        } catch (error) {
+            console.error('Failed to load payment proof:', error);
+            showToast('error', 'Unable to Load Proof', 'Please check Storage rules or admin permissions.');
+        }
+    };
 
     // Invoice State
     const [selectedInvoiceBooking, setSelectedInvoiceBooking] = useState<Booking | null>(null);
@@ -1511,10 +1529,10 @@ const AdminDashboard = () => {
                                                 </td>
                                                 <td data-label="Total">₱{booking.totalPrice?.toLocaleString()}</td>
                                                 <td data-label="Payment">
-                                                    {booking.paymentProofUrl ? (
+                                                    {(booking.paymentProofUrl || booking.paymentProofPath) ? (
                                                         <button
                                                             className="proof-link"
-                                                            onClick={() => setSelectedImage(booking.paymentProofUrl || null)}
+                                                            onClick={() => handleViewPaymentProof(booking)}
                                                         >
                                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                                                             View Proof
