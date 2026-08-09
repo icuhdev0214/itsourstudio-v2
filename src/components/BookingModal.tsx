@@ -25,6 +25,17 @@ const EXTENSION_RATES = {
     60: 600
 };
 
+const MAX_PAYMENT_PROOF_DATA_URL_BYTES = 850_000;
+
+const blobToDataUrl = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Failed to read payment proof image'));
+        reader.readAsDataURL(blob);
+    });
+};
+
 interface BookedSlot {
     start: number;
     end: number;
@@ -649,22 +660,12 @@ const BookingModal = () => {
             if (paymentFile) {
                 const { compressImage } = await import('../utils/compressImage');
 
-                const compressedBlob = await compressImage(paymentFile);
-                const uploadForm = new FormData();
-                uploadForm.append('paymentProof', compressedBlob, paymentFile.name);
+                const compressedBlob = await compressImage(paymentFile, 900, 0.65);
+                paymentProofUrl = await blobToDataUrl(compressedBlob);
 
-                const uploadResponse = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: uploadForm
-                });
-
-                if (!uploadResponse.ok) {
-                    throw new Error('Payment proof upload failed');
+                if (paymentProofUrl.length > MAX_PAYMENT_PROOF_DATA_URL_BYTES) {
+                    throw new Error('Payment proof image is too large. Please upload a cropped screenshot under 1MB.');
                 }
-
-                const uploadResult = await uploadResponse.json();
-                paymentProofUrl = uploadResult.path;
-                console.log(`File uploaded locally: ${paymentProofUrl}`);
             }
 
             // Sanitize all user inputs before storing
@@ -767,7 +768,7 @@ const BookingModal = () => {
         } catch (error) {
             console.error("Error adding booking: ", error);
             setIsSubmitting(false);
-            showToast("Something went wrong. Please try again.", 'error');
+            showToast(error instanceof Error ? error.message : "Something went wrong. Please try again.", 'error');
         }
     };
 
