@@ -114,7 +114,7 @@ const timeToMinutes = (value?: string): number | null => {
 
 const getLedgerTotal = (booking: Booking) => (
     (Number(booking.totalPrice) || 0)
-    + (Number(booking.addOnsAmount) || 0)
+    + (booking.totalIncludesAddOns ? 0 : (Number(booking.addOnsAmount) || 0))
     - (Number(booking.discount) || 0)
 );
 
@@ -211,10 +211,10 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
     const totals = useMemo(() => {
         const countedBookings = bookings.filter((booking) => normalizeStatus(booking.status) !== 'rejected');
         return countedBookings.reduce((acc, curr) => ({
-            amount: acc.amount + (Number(curr.totalPrice) || 0),
+            amount: acc.amount + (Number(curr.serviceAmount ?? curr.totalPrice) || 0),
             addOns: acc.addOns + (Number(curr.addOnsAmount) || 0),
             discount: acc.discount + (Number(curr.discount) || 0),
-            totalParams: acc.totalParams + ((Number(curr.totalPrice) || 0) + (Number(curr.addOnsAmount) || 0) - (Number(curr.discount) || 0))
+            totalParams: acc.totalParams + getLedgerTotal(curr)
         }), { amount: 0, addOns: 0, discount: 0, totalParams: 0 });
     }, [bookings]);
 
@@ -660,7 +660,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
 
                                             <td>{booking?.package}</td>
                                             <td style={{ textAlign: 'center' }}>{renderStatusBadge(booking)}</td>
-                                            <td>{booking ? `₱${Number(booking.totalPrice).toLocaleString()}` : ''}</td>
+                                            <td>{booking ? `₱${Number(booking.serviceAmount ?? booking.totalPrice).toLocaleString()}` : ''}</td>
 
                                             <td>{renderCell(booking, 'addOns', 'text')}</td>
                                             <td>{renderCell(booking, 'addOnsAmount', 'number')}</td>
@@ -723,7 +723,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                     <td>₱{totals.addOns.toLocaleString()}</td>
                                     <td style={{ color: 'red' }}>₱{totals.discount.toLocaleString()}</td>
                                     <td style={{ fontWeight: 'bold' }}>₱{totals.totalParams.toLocaleString()}</td>
-                                    <td colSpan={7}></td>
+                                    <td colSpan={8}></td>
                                 </tr>
                             </tbody>
                         </table>

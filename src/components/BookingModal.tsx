@@ -32,6 +32,13 @@ interface BookedSlot {
     end: number;
 }
 
+interface BookingAddOn {
+    id: string;
+    name: string;
+    price: number;
+    serviceId: string;
+}
+
 const BookingModal = () => {
     const { isBookingOpen, closeBooking, selectedPackageId } = useBooking();
     const [step, setStep] = useState(1);
@@ -47,6 +54,7 @@ const BookingModal = () => {
     });
     const [paymentFile, setPaymentFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [emailDeliveryStatus, setEmailDeliveryStatus] = useState<'idle' | 'sent' | 'failed'>('idle');
     const [bookedRanges, setBookedRanges] = useState<BookedSlot[]>([]);
     const [unavailableDates, setUnavailableDates] = useState<Record<string, string>>({});
     const [seasonalPromo, setSeasonalPromo] = useState<any>(null); // State for seasonal promo data
@@ -55,6 +63,7 @@ const BookingModal = () => {
     const [timeSlotPage, setTimeSlotPage] = useState(0); // Time slot pagination
     const [packagePage, setPackagePage] = useState(0); // Package pagination
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 640); // Mobile detection
+    const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
     const SLOTS_PER_PAGE = 8;
     const PACKAGES_PER_PAGE = 4;
 
@@ -497,26 +506,51 @@ const BookingModal = () => {
             id: 'seasonal-promo',
             name: seasonalPromo.title,
             price: parseNumeric(seasonalPromo.price),
-            duration: 45 // Default duration for promo
+            duration: 45, // Default duration for promo
+            addOns: []
         }] : []),
         ...services.map(s => ({
             id: s.id,
             name: s.title,
             price: parseNumeric(s.price),
-            duration: parseNumeric(s.duration)
+            duration: parseNumeric(s.duration),
+            addOns: (s.addOns || [])
+                .filter((addOn: any) => addOn.isEnabled)
+                .map((addOn: any) => ({
+                    id: addOn.id,
+                    name: addOn.name,
+                    price: parseNumeric(addOn.price),
+                    serviceId: s.id
+                }))
         }))
     ];
 
     // Fallback to hardcoded if DB is empty to prevent crash
-    const finalPackages = allPackages.length > 0 ? allPackages : PACKAGES;
+    const finalPackages = allPackages.length > 0 ? allPackages : PACKAGES.map(pkg => ({ ...pkg, addOns: [] }));
 
     const selectedPackage = finalPackages.find(p => p.id === formData.package);
     const basePrice = selectedPackage ? selectedPackage.price : 0;
     const extensionPrice = EXTENSION_RATES[formData.extensionDuration as keyof typeof EXTENSION_RATES] || 0;
-    const totalPrice = basePrice + extensionPrice;
+    const availableAddOns: BookingAddOn[] = selectedPackage?.addOns || [];
+    const availableAddOnKey = availableAddOns.map(addOn => addOn.id).join('|');
+    const selectedAddOns = availableAddOns.filter(addOn => selectedAddOnIds.includes(addOn.id));
+    const addOnsAmount = selectedAddOns.reduce((sum, addOn) => sum + addOn.price, 0);
+    const totalPrice = basePrice + extensionPrice + addOnsAmount;
     const paymentBreakdown = calculatePaymentBreakdown(totalPrice);
     const downpayment = paymentBreakdown.requiredDownpayment;
     const durationTotal = (selectedPackage ? selectedPackage.duration : 0) + formData.extensionDuration;
+
+    useEffect(() => {
+        setSelectedAddOnIds(prev => prev.filter(id => availableAddOns.some(addOn => addOn.id === id)));
+    }, [formData.package, availableAddOnKey]);
+
+    const toggleAddOn = (addOnId: string) => {
+        setSelectedAddOnIds(prev => (
+            prev.includes(addOnId)
+                ? prev.filter(id => id !== addOnId)
+                : [...prev, addOnId]
+        ));
+    };
 
     const isSlotAvailable = (timeStr: string) => {
         // Check if past time (UTC+8)
@@ -644,6 +678,7 @@ const BookingModal = () => {
         }
 
         setIsSubmitting(true);
+        setEmailDeliveryStatus('idle');
 
         // 1. Concurrency Check (The "Double Booking" Prevention)
         const isAvailable = await checkAvailability();
@@ -706,7 +741,13 @@ const BookingModal = () => {
                 time: formData.time,
                 notes: sanitizedNotes,
                 extensionDuration: formData.extensionDuration,
+                serviceAmount: basePrice,
+                extensionAmount: extensionPrice,
+                addOns: selectedAddOns.map(addOn => `${addOn.name} (₱${addOn.price})`).join(', '),
+                selectedAddOns,
+                addOnsAmount,
                 totalPrice,
+                totalIncludesAddOns: true,
                 downpayment,
                 requiredDownpayment: paymentBreakdown.requiredDownpayment,
                 amountToPayNow: paymentBreakdown.amountToPayNow,
@@ -739,7 +780,7 @@ const BookingModal = () => {
 
             // Send Email Notification
             try {
-                await fetch('/api/send-email', {
+                const emailResponse = await fetch('/api/send-email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -751,15 +792,27 @@ const BookingModal = () => {
                             name: formData.fullName,
                             email: formData.email,
                             package: selectedPackage?.name || formData.package,
+                            selectedAddOns,
+                            addOnsAmount,
                             total_amount: totalPrice,
                             downpayment: downpayment,
+                            remainingBalance: paymentBreakdown.remainingBalance,
                             date: formData.date,
                             time_start: formData.time ? formatTime(formData.time) : ''
                         }
                     })
                 });
+
+                if (!emailResponse.ok) {
+                    const errorPayload = await emailResponse.json().catch(() => ({}));
+                    console.error("Booking email API failed", emailResponse.status, errorPayload);
+                    setEmailDeliveryStatus('failed');
+                } else {
+                    setEmailDeliveryStatus('sent');
+                }
             } catch (emailError) {
                 console.error("Failed to send email notification", emailError);
+                setEmailDeliveryStatus('failed');
             }
 
             setIsSubmitting(false);
@@ -778,6 +831,7 @@ const BookingModal = () => {
                 notes: '',
                 extensionDuration: 0
             });
+            setSelectedAddOnIds([]);
             setPaymentFile(null);
             setPreviewUrl(null);
 
@@ -844,7 +898,11 @@ const BookingModal = () => {
                         </div>
                         <h3>Booking Request Received!</h3>
                         <p>We've received your booking request and payment proof.</p>
-                        <p>A confirmation email has been sent to your inbox.</p>
+                        {emailDeliveryStatus === 'sent' ? (
+                            <p>A confirmation email has been sent to your inbox.</p>
+                        ) : (
+                            <p>Your booking was saved. If an email does not arrive, please keep your booking reference and wait for admin confirmation.</p>
+                        )}
                         <div className="modal-actions">
                             <button className="btn btn-primary" onClick={() => { setStep(1); closeBooking(); }}>Close</button>
                             <button className="btn btn-secondary" onClick={() => setStep(1)}>Book Another Session</button>
@@ -883,7 +941,10 @@ const BookingModal = () => {
                                                         <div
                                                             key={pkg.id}
                                                             className={`package-card ${formData.package === pkg.id ? 'selected' : ''}`}
-                                                            onClick={() => setFormData(prev => ({ ...prev, package: pkg.id }))}
+                                                            onClick={() => {
+                                                                setSelectedAddOnIds([]);
+                                                                setFormData(prev => ({ ...prev, package: pkg.id }));
+                                                            }}
                                                         >
                                                             <div className="package-info">
                                                                 <span className="package-name">{pkg.name}</span>
@@ -898,6 +959,28 @@ const BookingModal = () => {
                                                         </div>
                                                     ))}
                                                 </div>
+                                                {selectedPackage && availableAddOns.length > 0 && (
+                                                    <div className="add-ons-selector">
+                                                        <div className="section-label">Available Add-ons</div>
+                                                        <div className="add-ons-grid">
+                                                            {availableAddOns.map(addOn => {
+                                                                const selected = selectedAddOnIds.includes(addOn.id);
+                                                                return (
+                                                                    <button
+                                                                        type="button"
+                                                                        key={addOn.id}
+                                                                        className={`add-on-option ${selected ? 'selected' : ''}`}
+                                                                        onClick={() => toggleAddOn(addOn.id)}
+                                                                    >
+                                                                        <span className="add-on-check">{selected ? '✓' : '+'}</span>
+                                                                        <span className="add-on-name">{addOn.name}</span>
+                                                                        <strong>₱{addOn.price}</strong>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )}
                                                 {isMobile && totalPages > 1 && (
                                                     <div className="package-pagination">
                                                         <button
@@ -979,9 +1062,12 @@ const BookingModal = () => {
                                                         </div>
                                                     );
                                                 })}
-                                            </div>
-                                        </div>
-                                    </div>
+	                                                    </div>
+                                                        <p className="payment-qr-note">
+                                                            Scan the QR in GCash, then enter the exact amount shown here. Use the copy button to avoid mistakes.
+                                                        </p>
+	                                                </div>
+	                                            </div>
 
                                     <div className="form-group time-selection-container">
                                         <label>Select Time Slot</label>
@@ -1136,6 +1222,12 @@ const BookingModal = () => {
                                                 <span className="label">Total</span>
                                                 <span className="value">₱{totalPrice}</span>
                                             </div>
+                                            {selectedAddOns.length > 0 && (
+                                                <div className="mini-item">
+                                                    <span className="label">Add-ons</span>
+                                                    <span className="value">₱{addOnsAmount}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -1196,6 +1288,27 @@ const BookingModal = () => {
                                                         <span>Duration</span>
                                                         <strong>{durationTotal} mins</strong>
                                                     </div>
+                                                    <div className="summary-divider"></div>
+                                                    <div className="summary-row">
+                                                        <span>Service Price</span>
+                                                        <strong>₱{basePrice}</strong>
+                                                    </div>
+                                                    {extensionPrice > 0 && (
+                                                        <div className="summary-row">
+                                                            <span>Extra Time</span>
+                                                            <strong>₱{extensionPrice}</strong>
+                                                        </div>
+                                                    )}
+                                                    {selectedAddOns.length > 0 && (
+                                                        <>
+                                                            {selectedAddOns.map(addOn => (
+                                                                <div className="summary-row" key={addOn.id}>
+                                                                    <span>{addOn.name}</span>
+                                                                    <strong>₱{addOn.price}</strong>
+                                                                </div>
+                                                            ))}
+                                                        </>
+                                                    )}
                                                     <div className="summary-divider"></div>
                                                     <div className="summary-row total">
                                                         <span>Total Price</span>

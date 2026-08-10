@@ -669,10 +669,10 @@ const AdminDashboard = () => {
     }, [isTabFlashing]);
 
     // Send email to admin about new booking
-    const sendAdminEmailNotification = async (booking: Booking) => {
-        try {
-            await fetch('/api/send-email', {
-                method: 'POST',
+	    const sendAdminEmailNotification = async (booking: Booking) => {
+	        try {
+	            const response = await fetch('/api/send-email', {
+	                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -684,26 +684,34 @@ const AdminDashboard = () => {
                         email: booking.email,
                         phone: booking.phone,
                         package: booking.package,
+                        selectedAddOns: booking.selectedAddOns || [],
+                        addOnsAmount: booking.addOnsAmount || 0,
                         date: booking.date,
                         time_start: booking.time,
-                        totalPrice: booking.totalPrice
+                        totalPrice: booking.totalPrice,
+                        total_amount: booking.totalPrice,
+                        downpayment: booking.requiredDownpayment || booking.downpayment || booking.downpaymentAmount || 0,
+                        remainingBalance: booking.remainingBalance || 0
                     }
-                })
-            });
-            console.log('Admin email notification sent');
+	                })
+	            });
+	            if (!response.ok) {
+	                throw new Error(`Admin email API returned ${response.status}`);
+	            }
+	            console.log('Admin email notification sent');
         } catch (error) {
             console.error('Failed to send admin email notification', error);
         }
     };
 
-    const sendEmailNotification = async (booking: Booking, status: string, reason?: string) => {
+	    const sendEmailNotification = async (booking: Booking, status: string, reason?: string) => {
         const emailType = status === 'confirmed' ? 'confirmed' : status === 'rejected' ? 'rejected' : null;
 
         if (!emailType) return;
 
-        try {
-            await fetch('/api/send-email', {
-                method: 'POST',
+	        try {
+	            const response = await fetch('/api/send-email', {
+	                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -714,13 +722,21 @@ const AdminDashboard = () => {
                         name: booking.fullName,
                         email: booking.email,
                         package: booking.package,
+                        selectedAddOns: booking.selectedAddOns || [],
+                        addOnsAmount: booking.addOnsAmount || 0,
+                        total_amount: booking.totalPrice,
+                        downpayment: booking.requiredDownpayment || booking.downpayment || booking.downpaymentAmount || 0,
+                        remainingBalance: booking.remainingBalance || 0,
                         date: booking.date,
                         time_start: booking.time,
                         reason: reason || 'Scheduling conflict'
                     }
-                })
-            });
-            console.log(`Email sent for status: ${status}`);
+	                })
+	            });
+	            if (!response.ok) {
+	                throw new Error(`Status email API returned ${response.status}`);
+	            }
+	            console.log(`Email sent for status: ${status}`);
             showToast('success', 'Email Sent', `Notification sent to ${booking.email}`);
         } catch (error) {
             console.error("Failed to send email notification", error);

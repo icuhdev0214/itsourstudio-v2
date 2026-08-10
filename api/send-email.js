@@ -29,6 +29,17 @@ const renderReference = (ref) => ref ? `
     </div>
 ` : '';
 
+const renderAddOns = (addOns) => {
+    if (!Array.isArray(addOns) || addOns.length === 0) return '';
+
+    return addOns.map(addOn => `
+        <div style="${style.detailRow}">
+            <span style="${style.detailLabel}">${addOn.name}</span>
+            <span style="${style.detailValue}">₱${addOn.price}</span>
+        </div>
+    `).join('');
+};
+
 // --- Templates ---
 
 const getReceivedEmail = (booking) => `
@@ -55,8 +66,8 @@ const getReceivedEmail = (booking) => `
 
             <!-- Payment Card -->
             <div style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-radius: 16px; padding: 30px; text-align: center; color: white; margin-bottom: 30px; box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.4);">
-                <p style="margin: 0 0 5px; font-size: 13px; opacity: 0.9; text-transform: uppercase; font-weight: 600;">Total Downpayment:</p>
-                <h3 style="margin: 0 0 20px; font-size: 36px; font-weight: 800;">₱${booking.downpayment}</h3>
+	                <p style="margin: 0 0 5px; font-size: 13px; opacity: 0.9; text-transform: uppercase; font-weight: 600;">Amount to Pay Now:</p>
+	                <h3 style="margin: 0 0 20px; font-size: 36px; font-weight: 800;">₱${booking.downpayment}</h3>
                 <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; backdrop-filter: blur(5px);">
                     <p style="margin: 0; font-weight: 700; font-size: 16px;">GCash: Reggie L.</p>
                     <p style="margin: 5px 0 0; font-family: monospace; font-size: 18px;">0905 336 7103</p>
@@ -67,11 +78,14 @@ const getReceivedEmail = (booking) => `
             <!-- Details -->
             <h3 style="font-size: 14px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 15px;">Session Details</h3>
             <div style="border-top: 1px solid #f1f5f9;">
-                <div style="${style.detailRow}"><span style="${style.detailLabel}">Package:</span><span style="${style.detailValue}">${booking.package}</span></div>
-                <div style="${style.detailRow}"><span style="${style.detailLabel}">Date:</span><span style="${style.detailValue}">${booking.date}</span></div>
-                <div style="${style.detailRow}"><span style="${style.detailLabel}">Time:</span><span style="${style.detailValue}">${booking.time_start}</span></div>
-                <div style="${style.detailRow}"><span style="${style.detailLabel}">Total Price:</span><span style="${style.detailValue}">₱${booking.total_amount}</span></div>
-            </div>
+	                <div style="${style.detailRow}"><span style="${style.detailLabel}">Package:</span><span style="${style.detailValue}">${booking.package}</span></div>
+	                ${renderAddOns(booking.selectedAddOns)}
+	                <div style="${style.detailRow}"><span style="${style.detailLabel}">Date:</span><span style="${style.detailValue}">${booking.date}</span></div>
+	                <div style="${style.detailRow}"><span style="${style.detailLabel}">Time:</span><span style="${style.detailValue}">${booking.time_start}</span></div>
+	                <div style="${style.detailRow}"><span style="${style.detailLabel}">Total Price:</span><span style="${style.detailValue}">₱${booking.total_amount}</span></div>
+	                <div style="${style.detailRow}"><span style="${style.detailLabel}">Required Downpayment:</span><span style="${style.detailValue}">₱${booking.downpayment}</span></div>
+	                <div style="${style.detailRow}"><span style="${style.detailLabel}">Remaining Balance:</span><span style="${style.detailValue}">₱${booking.remainingBalance || 0}</span></div>
+	            </div>
         </div>
 
         <div style="${style.footer}">
@@ -109,13 +123,19 @@ const getConfirmedEmail = (booking) => `
                     <span style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 2px;">Session Pass</span>
                 </div>
                 <div style="padding: 25px;">
-                     <div style="text-align: center; margin-bottom: 25px;">
-                        <h3 style="margin: 0; color: #ea580c; font-size: 20px;">${booking.package}</h3>
-                        <p style="margin: 5px 0 0; color: #64748b;">${booking.date} @ ${booking.time_start}</p>
-                     </div>
-                     <div style="background-color: #fff7ed; padding: 15px; border-radius: 8px; text-align: center;">
-                        <span style="font-size: 13px; color: #c2410c;">📍 <strong>The Studio:</strong> FJ Center 15 Tongco Maysan, Valenzuela City</span>
-                     </div>
+	                     <div style="text-align: center; margin-bottom: 25px;">
+	                        <h3 style="margin: 0; color: #ea580c; font-size: 20px;">${booking.package}</h3>
+	                        <p style="margin: 5px 0 0; color: #64748b;">${booking.date} @ ${booking.time_start}</p>
+	                     </div>
+                         ${Array.isArray(booking.selectedAddOns) && booking.selectedAddOns.length > 0 ? `
+                            <div style="border-top: 1px solid #f1f5f9; padding-top: 15px; margin-bottom: 15px;">
+                                <p style="margin: 0 0 10px; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">Selected Add-ons</p>
+                                ${renderAddOns(booking.selectedAddOns)}
+                            </div>
+                         ` : ''}
+	                     <div style="background-color: #fff7ed; padding: 15px; border-radius: 8px; text-align: center;">
+	                        <span style="font-size: 13px; color: #c2410c;">📍 <strong>The Studio:</strong> FJ Center 15 Tongco Maysan, Valenzuela City</span>
+	                     </div>
                 </div>
              </div>
 
@@ -267,9 +287,10 @@ const getNewBookingAdminEmail = (booking) => `
              <!-- Booking Details -->
              <h3 style="font-size: 14px; text-transform: uppercase; color: #94a3b8; font-weight: 700; margin-bottom: 15px;">Booking Details</h3>
              <div style="border-top: 1px solid #f1f5f9;">
-                 <div style="${style.detailRow}"><span style="${style.detailLabel}">Package:</span><span style="${style.detailValue}">${booking.package}</span></div>
-                 <div style="${style.detailRow}"><span style="${style.detailLabel}">Date:</span><span style="${style.detailValue}">${booking.date}</span></div>
-                 <div style="${style.detailRow}"><span style="${style.detailLabel}">Time:</span><span style="${style.detailValue}">${booking.time_start}</span></div>
+	                 <div style="${style.detailRow}"><span style="${style.detailLabel}">Package:</span><span style="${style.detailValue}">${booking.package}</span></div>
+	                 ${renderAddOns(booking.selectedAddOns)}
+	                 <div style="${style.detailRow}"><span style="${style.detailLabel}">Date:</span><span style="${style.detailValue}">${booking.date}</span></div>
+	                 <div style="${style.detailRow}"><span style="${style.detailLabel}">Time:</span><span style="${style.detailValue}">${booking.time_start}</span></div>
                  <div style="${style.detailRow}"><span style="${style.detailLabel}">Total Price:</span><span style="${style.detailValue}">₱${booking.totalPrice}</span></div>
              </div>
 

@@ -19,6 +19,14 @@ interface Service {
     isBestSelling: boolean;
     isVisible: boolean;
     order: number;
+    addOns?: ServiceAddOn[];
+}
+
+interface ServiceAddOn {
+    id: string;
+    name: string;
+    price: string;
+    isEnabled: boolean;
 }
 
 const DEFAULT_SERVICES_SEED: Service[] = [
@@ -192,7 +200,8 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
         imageAction: '',
         isBestSelling: false,
         isVisible: true,
-        order: 0
+        order: 0,
+        addOns: []
     });
 
     // Image Upload State
@@ -254,6 +263,37 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
         }));
     };
 
+    const handleAddOnChange = (index: number, field: keyof ServiceAddOn, value: string | boolean) => {
+        setFormData(prev => ({
+            ...prev,
+            addOns: (prev.addOns || []).map((addOn, addOnIndex) => (
+                addOnIndex === index ? { ...addOn, [field]: value } : addOn
+            ))
+        }));
+    };
+
+    const handleAddAddOn = () => {
+        setFormData(prev => ({
+            ...prev,
+            addOns: [
+                ...(prev.addOns || []),
+                {
+                    id: `addon-${Date.now()}`,
+                    name: '',
+                    price: '',
+                    isEnabled: true
+                }
+            ]
+        }));
+    };
+
+    const handleRemoveAddOn = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            addOns: (prev.addOns || []).filter((_, addOnIndex) => addOnIndex !== index)
+        }));
+    };
+
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, imageField: 'imageMain' | 'imageDetail' | 'imageAction') => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -299,7 +339,8 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
             imageAction: '',
             isBestSelling: false,
             isVisible: true,
-            order: services.length
+            order: services.length,
+            addOns: []
         });
         setEditingId(null);
         setIsEditing(false);
@@ -328,7 +369,17 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
 
     const saveService = async () => {
         try {
-            const serviceData = { ...formData };
+            const serviceData = {
+                ...formData,
+                addOns: (formData.addOns || [])
+                    .map(addOn => ({
+                        ...addOn,
+                        id: addOn.id || `addon-${Date.now()}`,
+                        name: addOn.name.trim(),
+                        price: addOn.price.trim()
+                    }))
+                    .filter(addOn => addOn.name && addOn.price)
+            };
 
             // If creating new, check ID uniqueness
             if (!editingId) {
@@ -540,6 +591,60 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                             />
                         </div>
 
+                        <div className="full-width add-ons-admin-section" style={{ marginTop: '2rem' }}>
+                            <div className="add-ons-admin-header">
+                                <div>
+                                    <h5>Add-ons</h5>
+                                    <p>Optional extras customers can select for this service.</p>
+                                </div>
+                                <button type="button" className="btn btn-outline" onClick={handleAddAddOn}>
+                                    + Add Add-on
+                                </button>
+                            </div>
+
+                            {(formData.addOns || []).length === 0 ? (
+                                <p className="text-muted">No add-ons configured for this service yet.</p>
+                            ) : (
+                                <div className="add-ons-admin-list">
+                                    {(formData.addOns || []).map((addOn, index) => (
+                                        <div className="add-on-admin-row" key={addOn.id || index}>
+                                            <div>
+                                                <label className="form-label">Add-on Name</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-input"
+                                                    value={addOn.name}
+                                                    onChange={(e) => handleAddOnChange(index, 'name', e.target.value)}
+                                                    placeholder="e.g., Extra Hour"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="form-label">Price</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-input"
+                                                    value={addOn.price}
+                                                    onChange={(e) => handleAddOnChange(index, 'price', e.target.value)}
+                                                    placeholder="e.g., ₱500"
+                                                />
+                                            </div>
+                                            <label className="add-on-enabled-toggle">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={addOn.isEnabled}
+                                                    onChange={(e) => handleAddOnChange(index, 'isEnabled', e.target.checked)}
+                                                />
+                                                Enabled
+                                            </label>
+                                            <button type="button" className="btn btn-sm btn-danger" onClick={() => handleRemoveAddOn(index)}>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         {/* Images Section */}
                         <div className="full-width" style={{ marginTop: '2rem' }}>
                             <h5 style={{ marginBottom: '1rem' }}>Preview Images</h5>
@@ -622,11 +727,16 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                             {service.imageMain && <img src={service.imageMain} alt={service.title} />}
                                         </div>
                                         <div>
-                                            <h5 className="service-title">{service.title}</h5>
-                                            <div className="service-meta">
-                                                {service.price} • {service.duration}
+                                                <h5 className="service-title">{service.title}</h5>
+                                                <div className="service-meta">
+                                                    {service.price} • {service.duration}
+                                                </div>
+                                                {(service.addOns || []).length > 0 && (
+                                                    <div className="service-meta">
+                                                        {(service.addOns || []).filter(addOn => addOn.isEnabled).length} active add-on(s)
+                                                    </div>
+                                                )}
                                             </div>
-                                        </div>
                                     </div>
                                     <div className="actions">
                                         <button

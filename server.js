@@ -90,6 +90,17 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const renderEmailAddOns = (addOns) => {
+    if (!Array.isArray(addOns) || addOns.length === 0) return '';
+
+    return addOns.map(addOn => `
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+            <span style="color: #6b7280; font-size: 14px;">${addOn.name}</span>
+            <strong style="color: #1f2937; font-size: 14px;">₱${addOn.price}</strong>
+        </div>
+    `).join('');
+};
+
 // Email Templates
 const getConfirmedEmail = (booking) => `
 <!DOCTYPE html>
@@ -137,12 +148,18 @@ const getConfirmedEmail = (booking) => `
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="padding-top: 10px; border-top: 1px solid #f3f4f6;">
-                                    <p style="margin: 15px 0 5px; font-size: 12px; color: #9ca3af; text-transform: uppercase; font-weight: 600;">Package</p>
-                                    <p style="margin: 0; font-size: 16px; color: #bf6a39; font-weight: 700;">${booking.package} ✨</p>
-                                    ${booking.extensionText ? `<p style="margin: 5px 0 0; font-size: 14px; color: #4b5563;">+ ${booking.extensionText}</p>` : ''}
-                                </td>
-                            </tr>
+	                                <td colspan="2" style="padding-top: 10px; border-top: 1px solid #f3f4f6;">
+	                                    <p style="margin: 15px 0 5px; font-size: 12px; color: #9ca3af; text-transform: uppercase; font-weight: 600;">Package</p>
+	                                    <p style="margin: 0; font-size: 16px; color: #bf6a39; font-weight: 700;">${booking.package} ✨</p>
+	                                    ${booking.extensionText ? `<p style="margin: 5px 0 0; font-size: 14px; color: #4b5563;">+ ${booking.extensionText}</p>` : ''}
+                                        ${Array.isArray(booking.selectedAddOns) && booking.selectedAddOns.length > 0 ? `
+                                            <div style="margin-top: 15px;">
+                                                <p style="margin: 0 0 8px; font-size: 12px; color: #9ca3af; text-transform: uppercase; font-weight: 600;">Selected Add-ons</p>
+                                                ${renderEmailAddOns(booking.selectedAddOns)}
+                                            </div>
+                                        ` : ''}
+	                                </td>
+	                            </tr>
                         </table>
                     </div>
                 </div>
@@ -223,9 +240,26 @@ const getReceivedEmail = (booking) => `
                     <div style="background-color: #bf6a39; padding: 15px; text-align: center;">
                         <p style="margin: 0; color: #ffffff; font-size: 14px; font-weight: 500;">Please scan & reply with screenshot 📸</p>
                     </div>
-                </div>
+	                </div>
 
-                <div style="margin-top: 30px; text-align: center;">
+                    <div style="margin-top: 24px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;">
+                        <p style="margin: 0 0 12px; font-size: 12px; color: #9ca3af; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Booking Breakdown</p>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+                            <span style="color: #6b7280; font-size: 14px;">Package</span>
+                            <strong style="color: #1f2937; font-size: 14px;">${booking.package}</strong>
+                        </div>
+                        ${renderEmailAddOns(booking.selectedAddOns)}
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+                            <span style="color: #6b7280; font-size: 14px;">Total Price</span>
+                            <strong style="color: #1f2937; font-size: 14px;">₱${booking.total_amount || booking.totalPrice || 0}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                            <span style="color: #6b7280; font-size: 14px;">Remaining Balance</span>
+                            <strong style="color: #1f2937; font-size: 14px;">₱${booking.remainingBalance || 0}</strong>
+                        </div>
+                    </div>
+
+	                <div style="margin-top: 30px; text-align: center;">
                     <div style="background-color: #fef2f2; display: inline-block; padding: 10px 20px; border-radius: 8px; border: 1px solid #fee2e2;">
                         <span style="color: #ef4444; font-size: 13px; font-weight: 600;">⚠️ Deadline: 11:59 PM Tonight</span>
                     </div>

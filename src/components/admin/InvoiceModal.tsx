@@ -26,6 +26,7 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
 
     const total = Number(booking.totalPrice) || 0;
     const addOns = Number(booking.addOnsAmount) || 0;
+    const selectedAddOns = Array.isArray(booking.selectedAddOns) ? booking.selectedAddOns : [];
     const recordedDownpayment = Number(booking.downpaymentAmount) || 0;
     const paymentBreakdown = calculatePaymentBreakdown(total);
     const requiredDownpayment = Number(booking.requiredDownpayment || booking.downpayment) || paymentBreakdown.requiredDownpayment;
@@ -148,7 +149,17 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
                                                 </td>
                                                 <td className="amount">₱{(total - addOns).toLocaleString()}</td>
                                             </tr>
-                                            {addOns > 0 && (
+                                            {selectedAddOns.length > 0 ? (
+                                                selectedAddOns.map((addOn: any) => (
+                                                    <tr key={addOn.id || addOn.name}>
+                                                        <td>
+                                                            <div className="item-name">{addOn.name}</div>
+                                                            <div className="item-sub">Selected add-on</div>
+                                                        </td>
+                                                        <td className="amount">₱{Number(addOn.price || 0).toLocaleString()}</td>
+                                                    </tr>
+                                                ))
+                                            ) : addOns > 0 && (
                                                 <tr>
                                                     <td>
                                                         <div className="item-name">Add-ons / Extras</div>
