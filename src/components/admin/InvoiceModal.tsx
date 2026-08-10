@@ -3,6 +3,7 @@ import { X, CheckCircle, Banknote, Smartphone } from 'lucide-react';
 import { db } from '../../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import ConfirmPopup from '../ConfirmPopup';
+import { calculatePaymentBreakdown } from '../../utils/payment';
 import './InvoiceModal.css';
 
 interface InvoiceModalProps {
@@ -25,12 +26,16 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
 
     const total = Number(booking.totalPrice) || 0;
     const addOns = Number(booking.addOnsAmount) || 0;
-    const downpayment = Number(booking.downpaymentAmount) || 0;
+    const recordedDownpayment = Number(booking.downpaymentAmount) || 0;
+    const paymentBreakdown = calculatePaymentBreakdown(total);
+    const requiredDownpayment = Number(booking.requiredDownpayment || booking.downpayment) || paymentBreakdown.requiredDownpayment;
     const paidCash = Number(booking.fullPaymentCash) || 0;
     const paidGcash = Number(booking.fullPaymentGcash) || 0;
-    const totalPaid = downpayment + paidCash + paidGcash;
+    const totalPaid = recordedDownpayment + paidCash + paidGcash;
     const balance = total - totalPaid;
+    const balanceDue = Math.max(0, balance);
     const isPaid = balance <= 0;
+    const isDownpaymentVerified = recordedDownpayment >= requiredDownpayment;
 
     const closeConfirm = () => setConfirmPopup(prev => ({ ...prev, isOpen: false }));
 
@@ -38,16 +43,16 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
         setConfirmPopup({
             isOpen: true,
             title: 'Confirm Full Payment',
-            message: `Mark remaining balance of ₱${balance.toLocaleString()} as paid via ${method.toUpperCase()}?`,
+            message: `Mark remaining balance of ₱${balanceDue.toLocaleString()} as paid via ${method.toUpperCase()}?`,
             onConfirm: async () => {
                 closeConfirm();
                 setLoading(true);
                 try {
                     const updateData: any = {};
                     if (method === 'cash') {
-                        updateData.fullPaymentCash = paidCash + balance;
+                        updateData.fullPaymentCash = paidCash + balanceDue;
                     } else {
-                        updateData.fullPaymentGcash = paidGcash + balance;
+                        updateData.fullPaymentGcash = paidGcash + balanceDue;
                     }
                     await updateDoc(doc(db, 'bookings', booking.id), updateData);
                     onUpdate();
@@ -61,18 +66,21 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
     };
 
     const handleDownpayment = () => {
-        const defaultDown = Math.floor(total * 0.5);
+        const defaultDown = requiredDownpayment;
 
         setConfirmPopup({
             isOpen: true,
             title: 'Verify Downpayment',
-            message: `Confirm that you have verified the proof of payment for ₱${defaultDown.toLocaleString()}? This will update the ledger.`,
+            message: `Confirm that you have verified the required downpayment of ₱${defaultDown.toLocaleString()}? This will update the booking and ledger.`,
             onConfirm: async () => {
                 closeConfirm();
                 setLoading(true);
                 try {
                     await updateDoc(doc(db, 'bookings', booking.id), {
                         downpaymentAmount: defaultDown,
+                        requiredDownpayment: defaultDown,
+                        amountToPayNow: defaultDown,
+                        remainingBalance: Math.max(0, total - defaultDown),
                     });
                     onUpdate();
                 } catch (err) {
@@ -175,14 +183,24 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
                                     <span>₱{total.toLocaleString()}</span>
                                 </div>
                                 <div className="summary-row">
-                                    <span>Paid</span>
+                                    <span>Required Downpayment</span>
+                                    <span>₱{requiredDownpayment.toLocaleString()}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span>Verified Downpayment</span>
+                                    <span className={isDownpaymentVerified ? 'text-success' : 'text-danger'}>
+                                        ₱{recordedDownpayment.toLocaleString()}
+                                    </span>
+                                </div>
+                                <div className="summary-row">
+                                    <span>Total Paid</span>
                                     <span className="text-success">- ₱{totalPaid.toLocaleString()}</span>
                                 </div>
                                 <div className="divider"></div>
                                 <div className="summary-row balance-row">
                                     <span>Balance Due</span>
                                     <span className={isPaid ? 'text-success' : 'text-danger'}>
-                                        ₱{balance.toLocaleString()}
+                                        ₱{balanceDue.toLocaleString()}
                                     </span>
                                 </div>
 
@@ -198,10 +216,10 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
                             </div>
 
                             {/* Downpayment Section */}
-                            {downpayment === 0 && !isPaid && (
+                            {!isDownpaymentVerified && !isPaid && (
                                 <div className="sidebar-card actions-card">
                                     <h3>Confirm Downpayment</h3>
-                                    <p>Verify valid proof of payment, then confirm the record here.</p>
+                                    <p>Verify the proof of payment matches the required downpayment of ₱{requiredDownpayment.toLocaleString()}.</p>
                                     <div className="payment-buttons">
                                         <button className="btn-action gcash" onClick={() => handleDownpayment()} disabled={loading}>
                                             <CheckCircle size={18} /> Verify & Confirm

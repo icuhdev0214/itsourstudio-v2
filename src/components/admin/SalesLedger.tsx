@@ -3,6 +3,7 @@ import { db } from '../../firebase';
 import { collection, query, where, onSnapshot, doc, updateDoc, writeBatch, serverTimestamp, addDoc, deleteDoc } from 'firebase/firestore';
 import * as XLSX from 'xlsx';
 import { Pencil, Save, X, Trash2, PlusCircle, Monitor } from 'lucide-react';
+import { calculateRequiredDownpayment } from '../../utils/payment';
 import './SalesLedger.css';
 
 interface Booking {
@@ -22,6 +23,10 @@ interface Booking {
     addOnsAmount?: string;
     discount?: string;
     downpaymentDate?: string;
+    downpayment?: number;
+    requiredDownpayment?: number;
+    amountToPayNow?: number;
+    remainingBalance?: number;
     downpaymentAmount?: string;
     downpaymentRef?: string;
     fullPaymentGcash?: string;
@@ -105,6 +110,16 @@ const timeToMinutes = (value?: string): number | null => {
     if (period === 'am' && hours === 12) hours = 0;
 
     return hours * 60 + minutes;
+};
+
+const getLedgerTotal = (booking: Booking) => (
+    (Number(booking.totalPrice) || 0)
+    + (Number(booking.addOnsAmount) || 0)
+    - (Number(booking.discount) || 0)
+);
+
+const getRequiredDownpayment = (booking: Booking) => {
+    return Number(booking.requiredDownpayment || booking.downpayment) || calculateRequiredDownpayment(getLedgerTotal(booking));
 };
 
 const SalesLedger = ({ showToast }: SalesLedgerProps) => {
@@ -606,14 +621,15 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                     <th rowSpan={2} style={{ width: '70px', background: 'red', color: 'white' }}>DISCOUNT</th>
                                     <th rowSpan={2} style={{ width: '80px' }}>TOTAL AMOUNT</th>
 
-                                    <th colSpan={3} style={{ textAlign: 'center', background: '#fef3c7' }}>DOWNPAYMENT</th>
+                                    <th colSpan={4} style={{ textAlign: 'center', background: '#fef3c7' }}>DOWNPAYMENT</th>
                                     <th colSpan={3} style={{ textAlign: 'center', background: '#dcfce7' }}>FULL PAYMENT</th>
                                     <th rowSpan={2} style={{ width: '60px' }}>ACTION</th>
                                 </tr>
                                 <tr>
                                     {/* DP Headers */}
                                     <th style={{ background: '#fef3c7' }}>DATE</th>
-                                    <th style={{ background: '#fef3c7' }}>50% GCASH</th>
+                                    <th style={{ background: '#fef3c7' }}>REQUIRED</th>
+                                    <th style={{ background: '#fef3c7' }}>PAID</th>
                                     <th style={{ background: '#fef3c7' }}>REF. NO</th>
 
                                     {/* Full Payment Headers */}
@@ -651,11 +667,12 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                             <td style={{ color: 'red' }}>{renderCell(booking, 'discount', 'number')}</td>
 
                                             <td style={{ fontWeight: 'bold' }}>
-                                                {booking && `₱${((Number(booking.totalPrice) || 0) + (Number(booking.addOnsAmount) || 0) - (Number(booking.discount) || 0)).toLocaleString()}`}
+                                                {booking && `₱${getLedgerTotal(booking).toLocaleString()}`}
                                             </td>
 
                                             {/* Downpayment */}
                                             <td style={{ background: '#fffbeb' }}>{renderCell(booking, 'downpaymentDate', 'date')}</td>
+                                            <td style={{ background: '#fffbeb', fontWeight: 700 }}>{booking ? `₱${getRequiredDownpayment(booking).toLocaleString()}` : ''}</td>
                                             <td style={{ background: '#fffbeb' }}>{renderCell(booking, 'downpaymentAmount', 'number')}</td>
                                             <td style={{ background: '#fffbeb' }}>{renderCell(booking, 'downpaymentRef', 'text')}</td>
 

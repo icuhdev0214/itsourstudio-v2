@@ -202,7 +202,7 @@ const getReceivedEmail = (booking) => `
 
             <div style="padding: 40px 30px;">
                 <p style="color: #374151; font-size: 16px; line-height: 1.6; text-align: center; margin-bottom: 30px;">
-                    Thanks for choosing It's ouR Studio! Your slot is <strong>reserved temporarily</strong>. <br>To lock it in, please complete the 50% downpayment below.
+                    Thanks for choosing It's ouR Studio! Your slot is <strong>reserved temporarily</strong>. <br>To lock it in, please complete the required downpayment below.
                 </p>
 
                 <!-- Payment Card -->

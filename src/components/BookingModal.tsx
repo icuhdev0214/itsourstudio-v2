@@ -4,6 +4,7 @@ import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc
 import { ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
+import { calculatePaymentBreakdown } from '../utils/payment';
 import paymentQr from '../assets/payment_qr.png';
 import './ModalStyles.css';
 import { useBooking } from '../context/BookingContext';
@@ -513,7 +514,8 @@ const BookingModal = () => {
     const basePrice = selectedPackage ? selectedPackage.price : 0;
     const extensionPrice = EXTENSION_RATES[formData.extensionDuration as keyof typeof EXTENSION_RATES] || 0;
     const totalPrice = basePrice + extensionPrice;
-    const downpayment = Math.ceil(totalPrice * 0.5);
+    const paymentBreakdown = calculatePaymentBreakdown(totalPrice);
+    const downpayment = paymentBreakdown.requiredDownpayment;
     const durationTotal = (selectedPackage ? selectedPackage.duration : 0) + formData.extensionDuration;
 
     const isSlotAvailable = (timeStr: string) => {
@@ -706,6 +708,9 @@ const BookingModal = () => {
                 extensionDuration: formData.extensionDuration,
                 totalPrice,
                 downpayment,
+                requiredDownpayment: paymentBreakdown.requiredDownpayment,
+                amountToPayNow: paymentBreakdown.amountToPayNow,
+                remainingBalance: paymentBreakdown.remainingBalance,
                 durationTotal,
                 paymentProofPath,
                 status: 'pending',
@@ -1161,7 +1166,7 @@ const BookingModal = () => {
                                                             </div>
                                                         </div>
                                                         <div className="info-item">
-                                                            <span className="info-label">Amount Due</span>
+                                                            <span className="info-label">Pay now</span>
                                                             <div className="info-value-row">
                                                                 <span className="info-value highlight">₱{downpayment}</span>
                                                                 <button type="button" className="copy-btn-mini" onClick={() => copyToClipboard(downpayment.toString(), 'Amount')}>
@@ -1195,6 +1200,18 @@ const BookingModal = () => {
                                                     <div className="summary-row total">
                                                         <span>Total Price</span>
                                                         <strong>₱{totalPrice}</strong>
+                                                    </div>
+                                                    <div className="summary-row downpayment">
+                                                        <span>Required Downpayment</span>
+                                                        <strong>₱{paymentBreakdown.requiredDownpayment}</strong>
+                                                    </div>
+                                                    <div className="summary-row amount-now">
+                                                        <span>Amount to Pay Now</span>
+                                                        <strong>₱{paymentBreakdown.amountToPayNow}</strong>
+                                                    </div>
+                                                    <div className="summary-row balance">
+                                                        <span>Remaining Balance</span>
+                                                        <strong>₱{paymentBreakdown.remainingBalance}</strong>
                                                     </div>
                                                 </div>
                                             </div>

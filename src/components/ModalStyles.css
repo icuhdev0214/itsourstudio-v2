@@ -976,6 +976,32 @@ textarea::placeholder {
     margin-top: 0.5rem;
 }
 
+.summary-row.downpayment,
+.summary-row.amount-now,
+.summary-row.balance {
+    align-items: center;
+}
+
+.summary-row.downpayment strong,
+.summary-row.amount-now strong {
+    color: var(--color-terracotta);
+    font-weight: 800;
+}
+
+.summary-row.amount-now {
+    padding: 0.85rem 1rem;
+    margin: 0.25rem -1rem 0;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 12px;
+    color: #9a4f2c;
+    font-weight: 700;
+}
+
+.summary-row.balance strong {
+    color: #334155;
+}
+
 /* Upload Box */
 .upload-dropzone {
     position: relative;

@@ -46,7 +46,7 @@ const getReceivedEmail = (booking) => `
         <div style="${style.hero}">
 
             <h2 style="${style.heroTitle}">Booking Received</h2>
-            <p style="${style.heroText}">Thanks ${booking.name}! We've reserved your slot temporarily.<br>To confirm, please settle the <strong>50% downpayment</strong>.</p>
+            <p style="${style.heroText}">Thanks ${booking.name}! We've reserved your slot temporarily.<br>To confirm, please settle the <strong>required downpayment</strong>.</p>
         </div>
 
         <div style="${style.section}">
