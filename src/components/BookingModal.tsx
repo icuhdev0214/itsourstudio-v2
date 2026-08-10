@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebase';
-import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
@@ -91,12 +91,19 @@ const BookingModal = () => {
             }
         };
 
-        const servicesQuery = query(collection(db, 'services'), orderBy('order', 'asc'));
-        const unsubscribeServices = onSnapshot(servicesQuery, (snapshot) => {
-            const fetched = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+        const unsubscribeServices = onSnapshot(collection(db, 'services'), (snapshot) => {
+            const fetched = snapshot.docs
+                .map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }))
+                .sort((a: any, b: any) => {
+                    const aOrder = Number.isFinite(Number(a.order)) ? Number(a.order) : Number.MAX_SAFE_INTEGER;
+                    const bOrder = Number.isFinite(Number(b.order)) ? Number(b.order) : Number.MAX_SAFE_INTEGER;
+
+                    if (aOrder !== bOrder) return aOrder - bOrder;
+                    return String(a.title || '').localeCompare(String(b.title || ''));
+                });
             setServices(fetched);
         }, (error) => {
             console.error("Error fetching services for booking:", error);
