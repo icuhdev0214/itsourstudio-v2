@@ -72,6 +72,41 @@ const GENERATE_TIMESLOTS = () => {
 
 const TIMESLOTS = GENERATE_TIMESLOTS();
 
+interface LedgerRow {
+    key: string;
+    timeLabel: string;
+    booking: Booking | null;
+    isUnmatched?: boolean;
+}
+
+const normalizeStatus = (status?: string) => (status || 'pending').toLowerCase();
+
+const timeToMinutes = (value?: string): number | null => {
+    if (!value) return null;
+
+    const rawValue = value.trim();
+    const rangeStart = rawValue.includes('-') ? rawValue.split('-')[0].trim() : rawValue;
+    const periodFromRange = rawValue.toLowerCase().includes('pm')
+        ? 'pm'
+        : rawValue.toLowerCase().includes('am')
+            ? 'am'
+            : '';
+    const normalized = rangeStart.toLowerCase().replace(/\s+/g, '');
+    const match = normalized.match(/^(\d{1,2}):(\d{2})(am|pm)?$/);
+    if (!match) return null;
+
+    let hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    const period = match[3] || periodFromRange;
+
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+    if (period === 'pm' && hours < 12) hours += 12;
+    if (period === 'am' && hours === 12) hours = 0;
+
+    return hours * 60 + minutes;
+};
+
 const SalesLedger = ({ showToast }: SalesLedgerProps) => {
     const [bookings, setBookings] = useState<Booking[]>([]);
 
@@ -115,38 +150,52 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
         return () => unsubscribe();
     }, [selectedDate, showToast]);
 
-    // Map time slots to bookings
-    const dailyRows = useMemo(() => {
-        return TIMESLOTS.map(slot => {
-            // Logic to match booking time to slot
-            // Our slot format: "9:00 am-9:30 am"
-            // Firestore time format might be "09:00" or "9:00 AM". Need to be robust.
-
-            // Extract start time from slot for matching (e.g., "9:00 am")
-            const slotStart = slot.split('-')[0].toLowerCase().replace(/\s/g, '');
-
-            const booking = bookings.find(b => {
-                if (!b.time) return false;
-                // Normalize booking time
-                const bTime = b.time.toLowerCase().replace(/\s/g, '');
-                // Simple match: does booking time start with same chars? 
-                // e.g. b.time="09:00" vs slot="9:00". 
-                // Let's rely on exact match if possible, or partial.
-
-                // Assuming data is standard, let's try strict first, then loose
-                return bTime === slotStart || slotStart.includes(bTime) || bTime.includes(slotStart);
-            });
-
-            return {
-                timeLabel: slot,
-                booking: booking || null
-            };
+    // Map every booking into the daily time grid. Unmatched records are appended so nothing disappears.
+    const dailyRows = useMemo<LedgerRow[]>(() => {
+        const matchedBookingIds = new Set<string>();
+        const sortedBookings = [...bookings].sort((a, b) => {
+            const aMinutes = timeToMinutes(a.time) ?? Number.MAX_SAFE_INTEGER;
+            const bMinutes = timeToMinutes(b.time) ?? Number.MAX_SAFE_INTEGER;
+            return aMinutes - bMinutes;
         });
+
+        const rows: LedgerRow[] = TIMESLOTS.flatMap<LedgerRow>((slot): LedgerRow[] => {
+            const slotMinutes = timeToMinutes(slot);
+            const slotBookings = sortedBookings.filter((booking) => timeToMinutes(booking.time) === slotMinutes);
+
+            if (slotBookings.length === 0) {
+                return [{
+                    key: `empty-${slot}`,
+                    timeLabel: slot,
+                    booking: null
+                }];
+            }
+
+            slotBookings.forEach((booking) => matchedBookingIds.add(booking.id));
+
+            return slotBookings.map((booking, duplicateIndex) => ({
+                key: booking.id,
+                timeLabel: duplicateIndex === 0 ? slot : `${slot} (${duplicateIndex + 1})`,
+                booking
+            }));
+        });
+
+        const unmatchedRows: LedgerRow[] = sortedBookings
+            .filter((booking) => !matchedBookingIds.has(booking.id))
+            .map((booking) => ({
+                key: `unmatched-${booking.id}`,
+                timeLabel: booking.time || 'Unscheduled',
+                booking,
+                isUnmatched: true
+            }));
+
+        return [...rows, ...unmatchedRows];
     }, [bookings]);
 
     // Calculations for the footer (only for displayed bookings)
     const totals = useMemo(() => {
-        return bookings.reduce((acc, curr) => ({
+        const countedBookings = bookings.filter((booking) => normalizeStatus(booking.status) !== 'rejected');
+        return countedBookings.reduce((acc, curr) => ({
             amount: acc.amount + (Number(curr.totalPrice) || 0),
             addOns: acc.addOns + (Number(curr.addOnsAmount) || 0),
             discount: acc.discount + (Number(curr.discount) || 0),
@@ -252,6 +301,12 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
             );
         }
         return <div className="cell-content" title={String(value || '')}>{value || '-'}</div>;
+    };
+
+    const renderStatusBadge = (booking: Booking | null) => {
+        if (!booking) return '';
+        const status = normalizeStatus(booking.status);
+        return <span className={`ledger-status-badge status-${status}`}>{status}</span>;
     };
 
     const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -544,6 +599,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                     <th rowSpan={2} style={{ width: '90px' }}>CONTACT NO.</th>
                                     <th rowSpan={2} style={{ width: '100px' }}>TIME</th>
                                     <th rowSpan={2} style={{ width: '100px' }}>PACKAGE</th>
+                                    <th rowSpan={2} style={{ width: '90px' }}>STATUS</th>
                                     <th rowSpan={2} style={{ width: '70px' }}>AMOUNT</th>
                                     <th rowSpan={2} style={{ width: '100px' }}>ADD-ONS</th>
                                     <th rowSpan={2} style={{ width: '70px' }}>AMOUNT</th>
@@ -570,9 +626,10 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                 {dailyRows.map((row, index) => {
                                     const { booking } = row;
                                     const isEditing = booking && editingId === booking.id;
+                                    const rowStatus = booking ? normalizeStatus(booking.status) : '';
 
                                     return (
-                                        <tr key={index} className={booking ? (isEditing ? 'editing-row' : 'booked-row') : 'empty-row'}>
+                                        <tr key={row.key} className={booking ? (isEditing ? 'editing-row' : `booked-row ledger-row-${rowStatus}`) : 'empty-row'}>
                                             <td style={{ textAlign: 'center' }}>{index + 1}</td>
 
                                             {/* Date of Reservation (When they booked) */}
@@ -583,9 +640,10 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                             <td>{booking?.phone}</td>
 
                                             {/* TIME SLOT LABEL - Always matched to fixed array */}
-                                            <td style={{ fontWeight: '600', background: '#f0f9ff' }}>{row.timeLabel}</td>
+                                            <td style={{ fontWeight: '600', background: row.isUnmatched ? '#fff7ed' : '#f0f9ff' }}>{row.timeLabel}</td>
 
                                             <td>{booking?.package}</td>
+                                            <td style={{ textAlign: 'center' }}>{renderStatusBadge(booking)}</td>
                                             <td>{booking ? `₱${Number(booking.totalPrice).toLocaleString()}` : ''}</td>
 
                                             <td>{renderCell(booking, 'addOns', 'text')}</td>
@@ -642,7 +700,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
 
                                 {/* Summary Footer for the Day */}
                                 <tr className="totals-row">
-                                    <td colSpan={7} style={{ textAlign: 'right', fontWeight: 'bold' }}>DAILY TOTAL:</td>
+                                    <td colSpan={8} style={{ textAlign: 'right', fontWeight: 'bold' }}>DAILY TOTAL:</td>
                                     <td>₱{totals.amount.toLocaleString()}</td>
                                     <td></td>
                                     <td>₱{totals.addOns.toLocaleString()}</td>
