@@ -170,6 +170,9 @@
 
 .step-header {
     margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .step-title {
@@ -182,6 +185,7 @@
 .step-subtitle {
     color: #64748b;
     font-size: 1rem;
+    margin: 0;
 }
 
 /* Packages Grid */
@@ -2003,7 +2007,7 @@ padding: 1rem;
     .step-header {
         margin-bottom: 1.25rem;
         text-align: center;
-        flex-direction: row  !important;
+        align-items: center;
     }
 
     .step-title {
