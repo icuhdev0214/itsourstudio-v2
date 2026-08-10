@@ -80,22 +80,6 @@ const BookingModal = () => {
 
     // Fetch Seasonal Promo & Services Data
     useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const q = query(collection(db, 'services'), orderBy('order', 'asc'));
-                const snapshot = await getDocs(q);
-                if (!snapshot.empty) {
-                    const fetched = snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
-                    setServices(fetched);
-                }
-            } catch (err) {
-                console.error("Error fetching services for booking:", err);
-            }
-        };
-
         const fetchPromo = async () => {
             try {
                 const docSnap = await getDoc(doc(db, 'siteContent', 'seasonalPromo'));
@@ -107,8 +91,19 @@ const BookingModal = () => {
             }
         };
 
+        const servicesQuery = query(collection(db, 'services'), orderBy('order', 'asc'));
+        const unsubscribeServices = onSnapshot(servicesQuery, (snapshot) => {
+            const fetched = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setServices(fetched);
+        }, (error) => {
+            console.error("Error fetching services for booking:", error);
+        });
+
         // Fetch Administrative Blocks
-        const unsubscribe = onSnapshot(collection(db, 'unavailableDates'), (snapshot) => {
+        const unsubscribeBlocks = onSnapshot(collection(db, 'unavailableDates'), (snapshot) => {
             const blocks: Record<string, string> = {};
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
@@ -123,8 +118,10 @@ const BookingModal = () => {
         });
 
         fetchPromo();
-        fetchServices();
-        return () => unsubscribe();
+        return () => {
+            unsubscribeServices();
+            unsubscribeBlocks();
+        };
     }, []);
 
     // QOL States
@@ -509,7 +506,9 @@ const BookingModal = () => {
             duration: 45, // Default duration for promo
             addOns: []
         }] : []),
-        ...services.map(s => ({
+        ...services
+            .filter(s => s.isVisible !== false)
+            .map(s => ({
             id: s.id,
             name: s.title,
             price: parseNumeric(s.price),
@@ -951,6 +950,9 @@ const BookingModal = () => {
                                                                 <span className="package-duration">{pkg.duration} mins</span>
                                                             </div>
                                                             <div className="package-price">₱{pkg.price}</div>
+                                                            {pkg.addOns.length > 0 && (
+                                                                <div className="package-addons">{pkg.addOns.length} add-on{pkg.addOns.length > 1 ? 's' : ''} available</div>
+                                                            )}
                                                             {formData.package === pkg.id && (
                                                                 <div className="check-icon">
                                                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

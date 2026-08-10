@@ -245,6 +245,18 @@
     margin-top: auto;
 }
 
+.package-addons {
+    margin-top: 0.5rem;
+    align-self: center;
+    padding: 0.3rem 0.65rem;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 999px;
+    color: #9a4f2c;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
 .check-icon {
     position: absolute;
     top: 1rem;
@@ -2539,9 +2551,6 @@ position: sticky;
         border-radius: 14px;
     }
 
-    .step-header {
-        flex-direction: row;
-    }
 }
 
 /* ===== EXTRA SMALL SCREENS (320px - 360px) ===== */
