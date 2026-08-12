@@ -48,3 +48,9 @@ release/win-unpacked/resources/app.asar
 public/downloads/*.zip
 
 public/downloads/*.msi
+
+# Runtime uploads
+public/POP/*
+!public/POP/.gitkeep
+public/gallery-uploads/*
+!public/gallery-uploads/.gitkeep
