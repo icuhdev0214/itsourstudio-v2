@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot, orderBy } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
 import paymentQr from '../assets/payment_qr.png';
@@ -650,21 +651,12 @@ const BookingModal = () => {
                 const { compressImage } = await import('../utils/compressImage');
 
                 const compressedBlob = await compressImage(paymentFile);
-                const uploadForm = new FormData();
-                uploadForm.append('paymentProof', compressedBlob, paymentFile.name);
-
-                const uploadResponse = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: uploadForm
+                const sanitizedFilename = paymentFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                const storageRef = ref(storage, `payment-proofs/${Date.now()}_${sanitizedFilename}`);
+                await uploadBytes(storageRef, compressedBlob, {
+                    contentType: compressedBlob.type || paymentFile.type || 'image/jpeg'
                 });
-
-                if (!uploadResponse.ok) {
-                    throw new Error('Payment proof upload failed');
-                }
-
-                const uploadResult = await uploadResponse.json();
-                paymentProofUrl = uploadResult.path;
-                console.log(`File uploaded locally: ${paymentProofUrl}`);
+                paymentProofUrl = await getDownloadURL(storageRef);
             }
 
             // Sanitize all user inputs before storing
@@ -767,7 +759,7 @@ const BookingModal = () => {
         } catch (error) {
             console.error("Error adding booking: ", error);
             setIsSubmitting(false);
-            showToast("Something went wrong. Please try again.", 'error');
+            showToast(error instanceof Error ? error.message : "Something went wrong. Please try again.", 'error');
         }
     };
 
