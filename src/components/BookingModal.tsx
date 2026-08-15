@@ -1324,8 +1324,7 @@ const BookingModal = () => {
                                             </div>
                                         </div>
 
-                                        {/* Right Column: Summary & Upload */}
-                                        <div className="checkout-section summary-upload">
+                                        <div className="checkout-section booking-summary-section">
                                             <div className="booking-summary-box">
                                                 <div className="section-label">Booking Summary</div>
                                                 <div className="summary-list">
@@ -1382,36 +1381,37 @@ const BookingModal = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="upload-proof-box">
-                                                <div className="section-label">Confirm Payment</div>
+                                        </div>
 
-                                                {previewUrl ? (
-                                                    <div className="preview-container">
-                                                        <img src={previewUrl} alt="Payment Proof" className="preview-image" />
-                                                        <button type="button" className="remove-preview-btn" onClick={removeFile}>
-                                                            &times;
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <div
-                                                        className={`upload-dropzone ${isDragging ? 'drag-over' : ''}`}
-                                                        onDragOver={handleDragOver}
-                                                        onDragLeave={handleDragLeave}
-                                                        onDrop={handleDrop}
-                                                    >
-                                                        <input type="file" id="paymentProof" name="paymentProof" accept="image/*" onChange={handleFileChange} required />
-                                                        <div className="dropzone-content">
-                                                            <div className="upload-prompt">
-                                                                <div className="icon-upload">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                                                </div>
-                                                                <span>{isDragging ? 'Drop Image Here' : 'Upload Screenshot'}</span>
-                                                                <span className="drop-subtext">or drag and drop</span>
+                                        <div className="checkout-section upload-proof-box">
+                                            <div className="section-label">Confirm Payment</div>
+
+                                            {previewUrl ? (
+                                                <div className="preview-container">
+                                                    <img src={previewUrl} alt="Payment Proof" className="preview-image" />
+                                                    <button type="button" className="remove-preview-btn" onClick={removeFile}>
+                                                        &times;
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    className={`upload-dropzone ${isDragging ? 'drag-over' : ''}`}
+                                                    onDragOver={handleDragOver}
+                                                    onDragLeave={handleDragLeave}
+                                                    onDrop={handleDrop}
+                                                >
+                                                    <input type="file" id="paymentProof" name="paymentProof" accept="image/*" onChange={handleFileChange} required />
+                                                    <div className="dropzone-content">
+                                                        <div className="upload-prompt">
+                                                            <div className="icon-upload">
+                                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                                                             </div>
+                                                            <span>{isDragging ? 'Drop Image Here' : 'Upload Screenshot'}</span>
+                                                            <span className="drop-subtext">or drag and drop</span>
                                                         </div>
                                                     </div>
-                                                )}
-                                            </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
