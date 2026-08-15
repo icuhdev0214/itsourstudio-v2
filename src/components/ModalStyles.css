@@ -3114,17 +3114,16 @@ position: sticky;
 
 /* Final booking modal polish: keep footer controls and payment cards balanced. */
 .modal-content.booking-modal .wizard-actions {
-    position: sticky;
-    bottom: 0;
+    position: static;
     display: grid !important;
     grid-template-columns: minmax(140px, 1fr) minmax(150px, 180px);
     align-items: center;
     gap: 1rem;
-    padding: 1.25rem 2.5rem;
-    margin: 2rem -2.5rem -2rem;
-    background: linear-gradient(180deg, rgba(255,255,255,0.96), #ffffff);
+    padding: 1.5rem 0 0;
+    margin: 2rem 0 0;
+    background: #ffffff;
     border-top: 1px solid #f1f5f9;
-    box-shadow: 0 -12px 28px rgba(15, 23, 42, 0.04);
+    box-shadow: none;
     z-index: 30;
 }
 
@@ -3151,11 +3150,21 @@ position: sticky;
 }
 
 .payment-step .checkout-grid {
-    grid-template-columns: minmax(270px, 0.92fr) minmax(270px, 0.82fr) !important;
-    gap: 2rem;
+    grid-template-columns: minmax(260px, 0.9fr) minmax(260px, 0.82fr) !important;
+    gap: 1.75rem;
     align-items: start;
-    max-width: 850px;
+    max-width: 820px;
     margin: 0 auto;
+}
+
+.payment-step .payment-qr-card {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.payment-step .qr-card-image {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
 }
 
 .payment-step .checkout-section {
@@ -3178,7 +3187,7 @@ position: sticky;
 }
 
 .payment-step .booking-summary-box {
-    padding: 1.35rem 1.45rem;
+    padding: 1.25rem 1.35rem;
 }
 
 .payment-step .summary-list {
@@ -3203,7 +3212,7 @@ position: sticky;
 }
 
 .payment-step .upload-dropzone .dropzone-content {
-    min-height: 128px;
+    min-height: 140px;
 }
 
 @media (max-width: 820px) {
@@ -3216,8 +3225,8 @@ position: sticky;
 @media (max-width: 640px) {
     .modal-content.booking-modal .wizard-actions {
         grid-template-columns: 1fr;
-        margin-inline: -1rem;
-        margin-bottom: -1rem;
+        margin-inline: 0;
+        margin-bottom: 0;
         padding: 1rem;
     }
 
