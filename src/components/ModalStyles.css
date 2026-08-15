@@ -3169,6 +3169,16 @@ position: sticky;
     margin: 0 auto;
 }
 
+.payment-step .step-header {
+    justify-content: center;
+    text-align: center;
+}
+
+.payment-step .step-title,
+.payment-step .step-subtitle {
+    text-align: center;
+}
+
 .payment-step .payment-qr-card {
     max-width: 100%;
     margin: 0 auto;
@@ -3222,10 +3232,17 @@ position: sticky;
 
 .payment-step .upload-proof-box {
     padding-top: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .payment-step .upload-dropzone .dropzone-content {
     min-height: 140px;
+}
+
+.payment-step .upload-dropzone {
+    max-width: 100%;
 }
 
 @media (max-width: 760px) {
