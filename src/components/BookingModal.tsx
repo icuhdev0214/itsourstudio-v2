@@ -5,6 +5,7 @@ import { ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
 import { calculatePaymentBreakdown } from '../utils/payment';
+import { visibleServices } from '../utils/serviceCatalog';
 import paymentQr from '../assets/payment_qr.png';
 import './ModalStyles.css';
 import { useBooking } from '../context/BookingContext';
@@ -19,13 +20,13 @@ const PACKAGES = [
     { id: 'birthday', name: 'Birthday Package', price: 599, duration: 45 }
 ];
 
-const EXTENSION_RATES = {
-    0: 0,
-    15: 150,
-    30: 300,
-    45: 450,
-    60: 600
-};
+const DEFAULT_EXTENSION_OPTIONS: ExtensionOption[] = [
+    { id: 'none', duration: 0, price: 0, label: 'No Extension', isEnabled: true },
+    { id: 'plus-15', duration: 15, price: 150, label: '+15 mins', isEnabled: true },
+    { id: 'plus-30', duration: 30, price: 300, label: '+30 mins', isEnabled: true },
+    { id: 'plus-45', duration: 45, price: 450, label: '+45 mins', isEnabled: true },
+    { id: 'plus-60', duration: 60, price: 600, label: '+60 mins', isEnabled: true }
+];
 
 interface BookedSlot {
     start: number;
@@ -37,6 +38,14 @@ interface BookingAddOn {
     name: string;
     price: number;
     serviceId: string;
+}
+
+interface ExtensionOption {
+    id: string;
+    duration: number;
+    price: number;
+    label: string;
+    isEnabled: boolean;
 }
 
 const BookingModal = () => {
@@ -64,6 +73,7 @@ const BookingModal = () => {
     const [packagePage, setPackagePage] = useState(0); // Package pagination
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 640); // Mobile detection
     const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
+    const [extensionOptions, setExtensionOptions] = useState<ExtensionOption[]>(DEFAULT_EXTENSION_OPTIONS);
     const SLOTS_PER_PAGE = 8;
     const PACKAGES_PER_PAGE = 4;
 
@@ -78,7 +88,7 @@ const BookingModal = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Fetch Seasonal Promo & Services Data
+    // Fetch Seasonal Promo, Services, and Booking Settings Data
     useEffect(() => {
         const fetchPromo = async () => {
             try {
@@ -91,19 +101,36 @@ const BookingModal = () => {
             }
         };
 
+        const fetchExtensionOptions = async () => {
+            try {
+                const docSnap = await getDoc(doc(db, 'siteContent', 'extensionOptions'));
+                if (docSnap.exists()) {
+                    const options = docSnap.data().options;
+                    if (Array.isArray(options) && options.length > 0) {
+                        setExtensionOptions(
+                            options
+                                .map((option: any) => ({
+                                    id: String(option.id || `extension-${option.duration}`),
+                                    duration: parseNumeric(option.duration),
+                                    price: parseNumeric(option.price),
+                                    label: String(option.label || (parseNumeric(option.duration) === 0 ? 'No Extension' : `+${parseNumeric(option.duration)} mins`)),
+                                    isEnabled: option.isEnabled !== false
+                                }))
+                                .sort((a: ExtensionOption, b: ExtensionOption) => a.duration - b.duration)
+                        );
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching extension options for booking:", err);
+            }
+        };
+
         const unsubscribeServices = onSnapshot(collection(db, 'services'), (snapshot) => {
-            const fetched = snapshot.docs
+            const fetched = visibleServices(snapshot.docs
                 .map(doc => ({
                     id: doc.id,
                     ...doc.data()
-                }))
-                .sort((a: any, b: any) => {
-                    const aOrder = Number.isFinite(Number(a.order)) ? Number(a.order) : Number.MAX_SAFE_INTEGER;
-                    const bOrder = Number.isFinite(Number(b.order)) ? Number(b.order) : Number.MAX_SAFE_INTEGER;
-
-                    if (aOrder !== bOrder) return aOrder - bOrder;
-                    return String(a.title || '').localeCompare(String(b.title || ''));
-                });
+                })));
             setServices(fetched);
         }, (error) => {
             console.error("Error fetching services for booking:", error);
@@ -125,6 +152,7 @@ const BookingModal = () => {
         });
 
         fetchPromo();
+        fetchExtensionOptions();
         return () => {
             unsubscribeServices();
             unsubscribeBlocks();
@@ -536,7 +564,11 @@ const BookingModal = () => {
 
     const selectedPackage = finalPackages.find(p => p.id === formData.package);
     const basePrice = selectedPackage ? selectedPackage.price : 0;
-    const extensionPrice = EXTENSION_RATES[formData.extensionDuration as keyof typeof EXTENSION_RATES] || 0;
+    const enabledExtensionOptions = extensionOptions
+        .filter(option => option.isEnabled || option.duration === 0)
+        .sort((a, b) => a.duration - b.duration);
+    const selectedExtensionOption = enabledExtensionOptions.find(option => option.duration === formData.extensionDuration);
+    const extensionPrice = selectedExtensionOption?.price || 0;
     const availableAddOns: BookingAddOn[] = selectedPackage?.addOns || [];
     const availableAddOnKey = availableAddOns.map(addOn => addOn.id).join('|');
     const selectedAddOns = availableAddOns.filter(addOn => selectedAddOnIds.includes(addOn.id));
@@ -549,6 +581,12 @@ const BookingModal = () => {
     useEffect(() => {
         setSelectedAddOnIds(prev => prev.filter(id => availableAddOns.some(addOn => addOn.id === id)));
     }, [formData.package, availableAddOnKey]);
+
+    useEffect(() => {
+        if (!enabledExtensionOptions.some(option => option.duration === formData.extensionDuration)) {
+            setFormData(prev => ({ ...prev, extensionDuration: 0 }));
+        }
+    }, [enabledExtensionOptions, formData.extensionDuration]);
 
     const toggleAddOn = (addOnId: string) => {
         setSelectedAddOnIds(prev => (
@@ -747,6 +785,7 @@ const BookingModal = () => {
                 time: formData.time,
                 notes: sanitizedNotes,
                 extensionDuration: formData.extensionDuration,
+                extensionLabel: selectedExtensionOption?.label || (formData.extensionDuration ? `+${formData.extensionDuration} mins` : 'No Extension'),
                 serviceAmount: basePrice,
                 extensionAmount: extensionPrice,
                 addOns: selectedAddOns.map(addOn => `${addOn.name} (₱${addOn.price})`).join(', '),
@@ -803,6 +842,7 @@ const BookingModal = () => {
                             total_amount: totalPrice,
                             downpayment: downpayment,
                             remainingBalance: paymentBreakdown.remainingBalance,
+                            extensionText: extensionPrice > 0 ? `${selectedExtensionOption?.label || `+${formData.extensionDuration} mins`} (₱${extensionPrice})` : '',
                             date: formData.date,
                             time_start: formData.time ? formatTime(formData.time) : ''
                         }
@@ -1054,18 +1094,19 @@ const BookingModal = () => {
                                         <div className="form-group extension-group">
                                             <label>Add Extra Time?</label>
                                             <div className="extension-options-grid">
-                                                {Object.entries(EXTENSION_RATES).map(([duration, price]) => {
-                                                    const dur = parseInt(duration);
+                                                {enabledExtensionOptions.map((option) => {
+                                                    const dur = option.duration;
+                                                    const price = option.price;
                                                     const isSelected = formData.extensionDuration === dur;
                                                     return (
                                                         <div
-                                                            key={duration}
+                                                            key={option.id}
                                                             className={`extension-card ${isSelected ? 'selected' : ''}`}
                                                             onClick={() => setFormData(prev => ({ ...prev, extensionDuration: dur }))}
                                                         >
                                                             <div className="extension-main">
                                                                 <span className="ext-icon">{dur === 0 ? '🚫' : '⚡'}</span>
-                                                                <span className="ext-label">{dur === 0 ? 'No Extension' : `+${dur} mins`}</span>
+                                                                <span className="ext-label">{option.label}</span>
                                                             </div>
                                                             {dur > 0 && <span className="ext-price">₱{price}</span>}
                                                         </div>

@@ -801,6 +801,14 @@ input:checked+.slider:before {
     border-radius: 12px;
 }
 
+.admin-settings-panel {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
 .add-ons-admin-header {
     display: flex;
     justify-content: space-between;
@@ -827,6 +835,12 @@ input:checked+.slider:before {
     gap: 0.75rem;
 }
 
+.extension-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .add-on-admin-row {
     display: grid;
     grid-template-columns: minmax(180px, 1fr) minmax(120px, 160px) auto auto;
@@ -836,6 +850,22 @@ input:checked+.slider:before {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
+}
+
+.extension-admin-row {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(110px, 140px) minmax(110px, 140px) auto auto;
+    gap: 0.75rem;
+    align-items: end;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.compact-actions {
+    margin-top: 1rem;
+    justify-content: flex-end;
 }
 
 .add-on-enabled-toggle {
@@ -1388,6 +1418,11 @@ input:checked+.slider:before {
     }
 
     .add-on-admin-row {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .extension-admin-row {
         grid-template-columns: 1fr;
         align-items: stretch;
     }

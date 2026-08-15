@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { db, storage } from '../../firebase';
-import { collection, getDocs, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { compressImage } from '../../utils/compressImage';
+import { sortServices } from '../../utils/serviceCatalog';
 import ConfirmPopup from '../ConfirmPopup';
 import './ContentManagement.css'; // Reuse existing styles or create specific ones
 
@@ -28,6 +29,22 @@ interface ServiceAddOn {
     price: string;
     isEnabled: boolean;
 }
+
+interface ExtensionOption {
+    id: string;
+    duration: number;
+    price: string;
+    label: string;
+    isEnabled: boolean;
+}
+
+const DEFAULT_EXTENSION_OPTIONS: ExtensionOption[] = [
+    { id: 'none', duration: 0, price: '0', label: 'No Extension', isEnabled: true },
+    { id: 'plus-15', duration: 15, price: '150', label: '+15 mins', isEnabled: true },
+    { id: 'plus-30', duration: 30, price: '300', label: '+30 mins', isEnabled: true },
+    { id: 'plus-45', duration: 45, price: '450', label: '+45 mins', isEnabled: true },
+    { id: 'plus-60', duration: 60, price: '600', label: '+60 mins', isEnabled: true }
+];
 
 const DEFAULT_SERVICES_SEED: Service[] = [
     {
@@ -186,6 +203,8 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [extensionOptions, setExtensionOptions] = useState<ExtensionOption[]>(DEFAULT_EXTENSION_OPTIONS);
+    const [savingExtensionOptions, setSavingExtensionOptions] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState<Service>({
@@ -222,12 +241,89 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
 
     useEffect(() => {
         fetchServices();
+        fetchExtensionOptions();
     }, []);
+
+    const fetchExtensionOptions = async () => {
+        try {
+            const docSnap = await getDoc(doc(db, 'siteContent', 'extensionOptions'));
+            if (docSnap.exists()) {
+                const options = docSnap.data().options;
+                if (Array.isArray(options) && options.length > 0) {
+                    setExtensionOptions(options.map((option: any) => ({
+                        id: String(option.id || `extension-${option.duration}`),
+                        duration: Number(option.duration) || 0,
+                        price: String(option.price ?? '0'),
+                        label: String(option.label || (Number(option.duration) === 0 ? 'No Extension' : `+${Number(option.duration)} mins`)),
+                        isEnabled: option.isEnabled !== false
+                    })).sort((a: ExtensionOption, b: ExtensionOption) => a.duration - b.duration));
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching extension options:", error);
+            showToast('error', 'Error', 'Failed to load extra time options');
+        }
+    };
+
+    const handleExtensionOptionChange = (index: number, field: keyof ExtensionOption, value: string | number | boolean) => {
+        setExtensionOptions(prev => prev.map((option, optionIndex) => (
+            optionIndex === index ? { ...option, [field]: value } : option
+        )));
+    };
+
+    const handleAddExtensionOption = () => {
+        setExtensionOptions(prev => [
+            ...prev,
+            {
+                id: `extension-${Date.now()}`,
+                duration: 15,
+                price: '0',
+                label: '+15 mins',
+                isEnabled: true
+            }
+        ]);
+    };
+
+    const handleRemoveExtensionOption = (index: number) => {
+        setExtensionOptions(prev => prev.filter((_, optionIndex) => optionIndex !== index));
+    };
+
+    const handleSaveExtensionOptions = async () => {
+        setSavingExtensionOptions(true);
+        try {
+            const normalizedOptions = extensionOptions
+                .map(option => {
+                    const duration = Number(option.duration) || 0;
+                    return {
+                        ...option,
+                        id: option.id || `extension-${duration}`,
+                        duration,
+                        price: String(option.price || '0').trim(),
+                        label: option.label.trim() || (duration === 0 ? 'No Extension' : `+${duration} mins`)
+                    };
+                })
+                .filter(option => option.duration === 0 || Number(option.price.replace(/\D/g, '')) >= 0)
+                .sort((a, b) => a.duration - b.duration);
+
+            const hasNoExtension = normalizedOptions.some(option => option.duration === 0);
+            const options = hasNoExtension
+                ? normalizedOptions
+                : [{ id: 'none', duration: 0, price: '0', label: 'No Extension', isEnabled: true }, ...normalizedOptions];
+
+            await setDoc(doc(db, 'siteContent', 'extensionOptions'), { options });
+            setExtensionOptions(options);
+            showToast('success', 'Saved', 'Extra time options updated successfully');
+        } catch (error) {
+            console.error("Error saving extension options:", error);
+            showToast('error', 'Error', 'Failed to save extra time options');
+        } finally {
+            setSavingExtensionOptions(false);
+        }
+    };
 
     const fetchServices = async () => {
         try {
-            const q = query(collection(db, 'services'), orderBy('order', 'asc'));
-            const snapshot = await getDocs(q);
+            const snapshot = await getDocs(collection(db, 'services'));
 
             if (snapshot.empty) {
                 // Initial seed if empty? Or just leave empty.
@@ -238,7 +334,7 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                     id: doc.id,
                     ...doc.data()
                 })) as Service[];
-                setServices(fetchedServices);
+                setServices(sortServices(fetchedServices));
             }
         } catch (error) {
             console.error("Error fetching services:", error);
@@ -484,6 +580,85 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
             </div>
 
             <div className="card-body">
+                {!isEditing && (
+                    <div className="admin-settings-panel">
+                        <div className="add-ons-admin-header">
+                            <div>
+                                <h5>Extra Time Options</h5>
+                                <p>These options appear in the booking date and time step.</p>
+                            </div>
+                            <button type="button" className="btn btn-outline" onClick={handleAddExtensionOption}>
+                                + Add Option
+                            </button>
+                        </div>
+
+                        <div className="extension-admin-list">
+                            {extensionOptions.map((option, index) => (
+                                <div className="extension-admin-row" key={option.id || index}>
+                                    <div>
+                                        <label className="form-label">Label</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            value={option.label}
+                                            onChange={(e) => handleExtensionOptionChange(index, 'label', e.target.value)}
+                                            placeholder="+15 mins"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="form-label">Duration</label>
+                                        <input
+                                            type="number"
+                                            className="form-input"
+                                            value={option.duration}
+                                            min="0"
+                                            onChange={(e) => handleExtensionOptionChange(index, 'duration', Number(e.target.value))}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="form-label">Price</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            value={option.price}
+                                            onChange={(e) => handleExtensionOptionChange(index, 'price', e.target.value)}
+                                            placeholder="150"
+                                        />
+                                    </div>
+                                    <label className="add-on-enabled-toggle">
+                                        <input
+                                            type="checkbox"
+                                            checked={option.isEnabled}
+                                            disabled={option.duration === 0}
+                                            onChange={(e) => handleExtensionOptionChange(index, 'isEnabled', e.target.checked)}
+                                        />
+                                        Enabled
+                                    </label>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => handleRemoveExtensionOption(index)}
+                                        disabled={option.duration === 0}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="card-actions compact-actions">
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={handleSaveExtensionOptions}
+                                disabled={savingExtensionOptions}
+                            >
+                                {savingExtensionOptions ? 'Saving...' : 'Save Extra Time Options'}
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {isEditing ? (
                     <form onSubmit={handleSubmit} className="service-form">
                         <div className="form-grid two-col">

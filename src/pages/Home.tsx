@@ -4,6 +4,7 @@ import { useBooking } from '../context/BookingContext';
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { sanitizeName, sanitizeEmail, sanitizeText } from '../utils/sanitize';
+import { visibleServices } from '../utils/serviceCatalog';
 import FeedbackModal from '../components/FeedbackModal';
 import PromoSection from '../components/PromoSection';
 import BackdropVisualizer from '../components/BackdropVisualizer';
@@ -25,6 +26,18 @@ interface AboutContent {
     imageUrl: string;
 }
 
+interface HomeService {
+    id: string;
+    title: string;
+    price: string;
+    duration: string;
+    description: string;
+    features: string[];
+    isBestSelling?: boolean;
+    isVisible?: boolean;
+    order?: number;
+}
+
 const galleryItems = [
     { src: '/gallery/solo1.webp', category: 'Portrait', title: 'Solo Session' },
     { src: '/gallery/duo1.webp', category: 'Couple', title: 'Duo Shoot' },
@@ -38,6 +51,42 @@ const galleryItems = [
     { src: '/gallery/solo4.webp', category: 'Portrait', title: 'Self Love' },
     { src: '/gallery/duo4.webp', category: 'Couple', title: 'Besties' },
     { src: '/gallery/group4.webp', category: 'Group', title: 'Team Bonding' },
+];
+
+const FALLBACK_HOME_SERVICES: HomeService[] = [
+    {
+        id: 'solo',
+        title: 'Solo Package',
+        price: '₱299',
+        duration: '15 Minutes',
+        description: 'Perfect for a quick profile update or self-portrait session.',
+        features: ['1 Person', '10 min shoot + 5 min selection', '1 Background selection', '10 Raw soft copies', '1 4R print'],
+        isBestSelling: false,
+        isVisible: true,
+        order: 1
+    },
+    {
+        id: 'basic',
+        title: 'Basic Package',
+        price: '₱399',
+        duration: '25 Minutes',
+        description: 'Our most popular choice for couples and duos.',
+        features: ['1-2 People', '15 min shoot + 10 min selection', '1 Background selection', '15 Raw soft copies', '2 strips print', 'Free use of props & wardrobe'],
+        isBestSelling: true,
+        isVisible: true,
+        order: 2
+    },
+    {
+        id: 'barkada',
+        title: 'Barkada Package',
+        price: '₱1,949',
+        duration: '50 Minutes',
+        description: 'The ultimate group experience for friends and family.',
+        features: ['Up to 8 People', '30 min shoot + 20 min selection', '1 Background selection', 'Soft copies of all raw photos', '8 strips print', '2 A5 prints & 2 4R prints'],
+        isBestSelling: false,
+        isVisible: true,
+        order: 7
+    }
 ];
 
 const Home = () => {
@@ -73,6 +122,7 @@ const Home = () => {
     }, [location]);
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [homeServices, setHomeServices] = useState<HomeService[]>(FALLBACK_HOME_SERVICES);
     const [aboutContent, setAboutContent] = useState<AboutContent>({
         title: "About it's ouR Studio",
         description1: "Welcome to it's ouR Studio, where you're in complete control of your photography experience. Our state-of-the-art self-photography studio is designed to empower you to capture your authentic self in a comfortable, private environment.",
@@ -169,6 +219,40 @@ const Home = () => {
 
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, 'services'), (snapshot) => {
+            if (snapshot.empty) {
+                setHomeServices(FALLBACK_HOME_SERVICES);
+                return;
+            }
+
+            const services = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as HomeService[];
+
+            const previewServices = visibleServices(services).slice(0, 3);
+            setHomeServices(previewServices.length > 0 ? previewServices : FALLBACK_HOME_SERVICES);
+        }, (error) => {
+            console.error("Error fetching homepage services:", error);
+            setHomeServices(FALLBACK_HOME_SERVICES);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    const renderServiceIcon = (service: HomeService, index: number) => {
+        if (service.isBestSelling) {
+            return <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg>;
+        }
+
+        if (service.id.includes('barkada') || service.id.includes('family') || index === 2) {
+            return <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>;
+        }
+
+        return <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>;
+    };
 
     // Fetch Dynamic Gallery Items
     const [dynamicGalleryItems, setDynamicGalleryItems] = useState(galleryItems);
@@ -508,65 +592,31 @@ const Home = () => {
                     </div>
 
                     <div className="services-grid">
-                        {/* Solo Package */}
-                        <div className="service-card">
-                            <div className="service-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        {homeServices.map((service, index) => (
+                            <div key={service.id} className={`service-card ${service.isBestSelling ? 'featured' : ''}`}>
+                                {service.isBestSelling && <div className="featured-badge">Best Selling</div>}
+                                <div className="service-icon">
+                                    {renderServiceIcon(service, index)}
+                                </div>
+                                <h3 className="service-title">{service.title.replace(/ Package$/i, '')}</h3>
+                                <p className="service-duration">{service.duration}</p>
+                                {service.price && service.price !== '0' && service.price !== '₱0' && (
+                                    <div className="service-price">{service.price}</div>
+                                )}
+                                <p className="service-description">{service.description}</p>
+                                <ul className="service-features">
+                                    {(service.features || []).slice(0, 6).map((feature, featureIndex) => (
+                                        <li key={featureIndex}>{feature}</li>
+                                    ))}
+                                </ul>
+                                <button
+                                    className={`btn ${service.isBestSelling ? 'btn-secondary' : 'btn-outline'}`}
+                                    onClick={() => openBooking(service.id)}
+                                >
+                                    Book Now
+                                </button>
                             </div>
-                            <h3 className="service-title">Solo</h3>
-                            <p className="service-duration">15 Minutes</p>
-                            <div className="service-price">₱299</div>
-                            <p className="service-description">Perfect for a quick profile update or self-portrait session.</p>
-                            <ul className="service-features">
-                                <li>1 Person</li>
-                                <li>10 min shoot + 5 min selection</li>
-                                <li>1 Background selection</li>
-                                <li>10 Raw soft copies</li>
-                                <li>1 4R print</li>
-                            </ul>
-                            <button className="btn btn-outline" onClick={() => openBooking('solo')}>Book Now</button>
-                        </div>
-
-                        {/* Basic Package (Best Selling) */}
-                        <div className="service-card featured">
-                            <div className="featured-badge">Best Selling</div>
-                            <div className="service-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg>
-                            </div>
-                            <h3 className="service-title">Basic</h3>
-                            <p className="service-duration">25 Minutes</p>
-                            <div className="service-price">₱399</div>
-                            <p className="service-description">Our most popular choice for couples and duos.</p>
-                            <ul className="service-features">
-                                <li>1-2 People</li>
-                                <li>15 min shoot + 10 min selection</li>
-                                <li>1 Background selection</li>
-                                <li>15 Raw soft copies</li>
-                                <li>2 strips print</li>
-                                <li>Free use of props & wardrobe</li>
-                            </ul>
-                            <button className="btn btn-secondary" onClick={() => openBooking('basic')}>Book Now</button>
-                        </div>
-
-                        {/* Barkada Package */}
-                        <div className="service-card">
-                            <div className="service-icon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                            </div>
-                            <h3 className="service-title">Barkada</h3>
-                            <p className="service-duration">50 Minutes</p>
-                            <div className="service-price">₱1,949</div>
-                            <p className="service-description">The ultimate group experience for friends and family.</p>
-                            <ul className="service-features">
-                                <li>Up to 8 People</li>
-                                <li>30 min shoot + 20 min selection</li>
-                                <li>1 Background selection</li>
-                                <li>Soft copies of all raw photos</li>
-                                <li>8 strips print</li>
-                                <li>2 A5 prints & 2 4R prints</li>
-                            </ul>
-                            <button className="btn btn-outline" onClick={() => openBooking('barkada')}>Book Now</button>
-                        </div>
+                        ))}
                     </div>
 
                     <div style={{ textAlign: 'center', marginTop: 'var(--spacing-xl)' }}>

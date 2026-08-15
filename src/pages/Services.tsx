@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { visibleServices } from '../utils/serviceCatalog';
 
 interface Service {
     id: string;
@@ -283,19 +284,14 @@ const Services = () => {
 
     // Initial load: Fetch services from Firestore
     useEffect(() => {
-        const q = query(collection(db, 'services'), orderBy('order', 'asc'));
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const unsubscribe = onSnapshot(collection(db, 'services'), (snapshot) => {
             if (!snapshot.empty) {
                 const fetchedServices = snapshot.docs.map((doc: any) => ({
                     id: doc.id,
                     ...doc.data()
                 })) as Service[];
 
-                // Filter out hidden services
-                // If isVisible is undefined (legacy), default to true
-                const visibleServices = fetchedServices.filter(s => s.isVisible !== false);
-                setServices(visibleServices);
+                setServices(visibleServices(fetchedServices));
             } else {
                 setServices(DEFAULT_SERVICES);
             }
