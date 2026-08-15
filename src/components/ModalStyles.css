@@ -3111,3 +3111,118 @@ position: sticky;
         font-weight: 800;
     }
 }
+
+/* Final booking modal polish: keep footer controls and payment cards balanced. */
+.modal-content.booking-modal .wizard-actions {
+    position: sticky;
+    bottom: 0;
+    display: grid !important;
+    grid-template-columns: minmax(140px, 1fr) minmax(150px, 180px);
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 2.5rem;
+    margin: 2rem -2.5rem -2rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), #ffffff);
+    border-top: 1px solid #f1f5f9;
+    box-shadow: 0 -12px 28px rgba(15, 23, 42, 0.04);
+    z-index: 30;
+}
+
+.modal-content.booking-modal .wizard-actions .btn {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 12px;
+    font-weight: 700;
+    flex: initial !important;
+}
+
+.modal-content.booking-modal .wizard-actions .btn-secondary {
+    justify-self: stretch;
+    color: var(--color-terracotta);
+    background: #ffffff;
+    border: 2px solid var(--color-terracotta);
+    box-shadow: none;
+}
+
+.modal-content.booking-modal .wizard-actions .btn-primary {
+    justify-self: end;
+    background: linear-gradient(135deg, var(--color-terracotta), var(--color-brown));
+    box-shadow: 0 10px 24px rgba(191, 106, 57, 0.25);
+}
+
+.payment-step .checkout-grid {
+    grid-template-columns: minmax(270px, 0.92fr) minmax(270px, 0.82fr) !important;
+    gap: 2rem;
+    align-items: start;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.payment-step .checkout-section {
+    min-width: 0;
+}
+
+.payment-step .payment-method,
+.payment-step .summary-upload {
+    width: 100%;
+}
+
+.payment-step .section-label {
+    text-align: center;
+    color: #1f2937;
+}
+
+.payment-step .booking-summary-box,
+.payment-step .upload-proof-box {
+    border-radius: 16px;
+}
+
+.payment-step .booking-summary-box {
+    padding: 1.35rem 1.45rem;
+}
+
+.payment-step .summary-list {
+    gap: 0.85rem;
+}
+
+.payment-step .summary-row {
+    gap: 1rem;
+}
+
+.payment-step .summary-row span {
+    min-width: 0;
+}
+
+.payment-step .summary-row strong {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.payment-step .upload-proof-box {
+    padding-top: 0.25rem;
+}
+
+.payment-step .upload-dropzone .dropzone-content {
+    min-height: 128px;
+}
+
+@media (max-width: 820px) {
+    .payment-step .checkout-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 640px) {
+    .modal-content.booking-modal .wizard-actions {
+        grid-template-columns: 1fr;
+        margin-inline: -1rem;
+        margin-bottom: -1rem;
+        padding: 1rem;
+    }
+
+    .modal-content.booking-modal .wizard-actions .btn-primary,
+    .modal-content.booking-modal .wizard-actions .btn-secondary {
+        justify-self: stretch;
+    }
+}
