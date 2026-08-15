@@ -212,7 +212,7 @@ const AdminDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
-    const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
+    const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'createdAt', direction: 'desc' });
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -364,13 +364,19 @@ const AdminDashboard = () => {
 
     // Fetch Bookings Real-time
     useEffect(() => {
-        const q = query(collection(db, 'bookings'), orderBy('date', 'desc'));
+        const q = query(collection(db, 'bookings'));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const bookingsData = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             })) as Booking[];
+
+            bookingsData.sort((a, b) => {
+                const aCreated = a.createdAt?.seconds || 0;
+                const bCreated = b.createdAt?.seconds || 0;
+                return bCreated - aCreated;
+            });
 
             // Detect new booking
             if (previousBookingCount.current > 0 && bookingsData.length > previousBookingCount.current) {
@@ -1905,6 +1911,9 @@ const AdminDashboard = () => {
                     isOpen={!!selectedInvoiceBooking}
                     onClose={() => setSelectedInvoiceBooking(null)}
                     booking={selectedInvoiceBooking}
+                    onStatusEmail={async (booking, status) => {
+                        await sendEmailNotification(booking, status);
+                    }}
                     onUpdate={() => {
                         // Refresh logic if needed, but onSnapshot handles it automatically?
                         // Actually onSnapshot keeps 'bookings' fresh, but 'selectedInvoiceBooking' needs to be updated or re-fetched?

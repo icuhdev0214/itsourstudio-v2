@@ -628,7 +628,9 @@ const signInAdmin = async () => {
 };
 signInAdmin();
 
-// Schedule: Check every minute
+// Schedule: Check every minute when reminders are explicitly enabled.
+// Keep disabled by default while production reminder scheduling is postponed.
+if (process.env.ENABLE_REMINDERS === 'true') {
 cron.schedule('* * * * *', async () => {
     // 1. Calculate Target Time (Now + 30 mins) in Manila Time
     const now = new Date();
@@ -738,6 +740,9 @@ cron.schedule('* * * * *', async () => {
         console.error('Error in reminder cron:', error);
     }
 });
+} else {
+    console.log('⏸️ Reminder System: disabled. Set ENABLE_REMINDERS=true to enable local reminder checks.');
+}
 
 
 app.listen(PORT, () => {

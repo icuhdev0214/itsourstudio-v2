@@ -11,9 +11,10 @@ interface InvoiceModalProps {
     onClose: () => void;
     booking: any;
     onUpdate: () => void; // Refresh parent data
+    onStatusEmail?: (booking: any, status: 'confirmed' | 'completed') => Promise<void>;
 }
 
-const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps) => {
+const InvoiceModal = ({ isOpen, onClose, booking, onUpdate, onStatusEmail }: InvoiceModalProps) => {
     const [loading, setLoading] = useState(false);
     const [confirmPopup, setConfirmPopup] = useState({
         isOpen: false,
@@ -40,6 +41,14 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
 
     const closeConfirm = () => setConfirmPopup(prev => ({ ...prev, isOpen: false }));
 
+    const syncSlotStatus = async (status: 'confirmed' | 'completed') => {
+        try {
+            await updateDoc(doc(db, 'booked_slots', booking.id), { status });
+        } catch (err) {
+            console.log('Slot doc not found, skipping invoice status sync');
+        }
+    };
+
     const handleMarkPaid = (method: 'cash' | 'gcash') => {
         setConfirmPopup({
             isOpen: true,
@@ -49,13 +58,18 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
                 closeConfirm();
                 setLoading(true);
                 try {
-                    const updateData: any = {};
+                    const updateData: any = {
+                        status: 'completed',
+                        remainingBalance: 0
+                    };
                     if (method === 'cash') {
                         updateData.fullPaymentCash = paidCash + balanceDue;
                     } else {
                         updateData.fullPaymentGcash = paidGcash + balanceDue;
                     }
                     await updateDoc(doc(db, 'bookings', booking.id), updateData);
+                    await syncSlotStatus('completed');
+                    await onStatusEmail?.({ ...booking, ...updateData }, 'completed');
                     onUpdate();
                 } catch (err) {
                     console.error("Error updating invoice:", err);
@@ -82,7 +96,17 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate }: InvoiceModalProps)
                         requiredDownpayment: defaultDown,
                         amountToPayNow: defaultDown,
                         remainingBalance: Math.max(0, total - defaultDown),
+                        status: 'confirmed'
                     });
+                    await syncSlotStatus('confirmed');
+                    await onStatusEmail?.({
+                        ...booking,
+                        downpaymentAmount: defaultDown,
+                        requiredDownpayment: defaultDown,
+                        amountToPayNow: defaultDown,
+                        remainingBalance: Math.max(0, total - defaultDown),
+                        status: 'confirmed'
+                    }, 'confirmed');
                     onUpdate();
                 } catch (err) {
                     console.error("Error updating downpayment:", err);
