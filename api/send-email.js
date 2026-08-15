@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { applyEmailTemplate, buildTemplateEmail } from './email-template-renderer.js';
 
 // --- Shared Styles & Components ---
 const style = {
@@ -365,7 +366,7 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'Server configuration error: Missing credentials' });
     }
 
-    const { type, booking, contact, report } = req.body;
+    const { type, booking, contact, report, template } = req.body;
 
     // Transporter
     const transporter = nodemailer.createTransport({
@@ -383,16 +384,30 @@ export default async function handler(req, res) {
     try {
         switch (type) {
             case 'confirmed':
-                subject = `Booking Confirmed [${booking.referenceNumber || 'IOS'}]`;
-                html = getConfirmedEmail(booking);
+                subject = template?.subject ? applyEmailTemplate(template.subject, booking) : `Booking Confirmed [${booking.referenceNumber || 'IOS'}]`;
+                html = template?.body ? buildTemplateEmail({ template, booking, style, title: 'Booking Confirmed' }) : getConfirmedEmail(booking);
+                break;
+            case 'completed':
+                subject = template?.subject ? applyEmailTemplate(template.subject, booking) : `Session Completed [${booking.referenceNumber || 'IOS'}]`;
+                html = template?.body
+                    ? buildTemplateEmail({ template, booking, style, title: 'Booking Completed' })
+                    : buildTemplateEmail({
+                        template: {
+                            preheader: 'Thank you for visiting It\'s ouR Studio.',
+                            body: 'Hi {customerName},\n\nThank you for completing your {packageName} session with us.\n\nIf you have questions about your photos or release timeline, reply to this email and our team will help you.'
+                        },
+                        booking,
+                        style,
+                        title: 'Booking Completed'
+                    });
                 break;
             case 'received':
-                subject = `Booking Received - Action Required [${booking.referenceNumber || 'IOS'}]`;
-                html = getReceivedEmail(booking);
+                subject = template?.subject ? applyEmailTemplate(template.subject, booking) : `Booking Received - Action Required [${booking.referenceNumber || 'IOS'}]`;
+                html = template?.body ? buildTemplateEmail({ template, booking, style, title: 'Booking Received' }) : getReceivedEmail(booking);
                 break;
             case 'rejected':
-                subject = `Booking Status Update [${booking.referenceNumber || 'IOS'}]`;
-                html = getRejectedEmail(booking);
+                subject = template?.subject ? applyEmailTemplate(template.subject, booking) : `Booking Status Update [${booking.referenceNumber || 'IOS'}]`;
+                html = template?.body ? buildTemplateEmail({ template, booking, style, title: 'Booking Status Update' }) : getRejectedEmail(booking);
                 break;
             case 'contact':
                 subject = `Inquiry: ${contact.name}`;
@@ -400,12 +415,12 @@ export default async function handler(req, res) {
                 toEmail = process.env.BUSINESS_EMAIL || process.env.EMAIL_USER;
                 break;
             case 'reminder':
-                subject = `Reminder: Session in 30 Minutes [${booking.referenceNumber || 'IOS'}]`;
-                html = getReminderEmail(booking);
+                subject = template?.subject ? applyEmailTemplate(template.subject, booking) : `Reminder: Session in 30 Minutes [${booking.referenceNumber || 'IOS'}]`;
+                html = template?.body ? buildTemplateEmail({ template, booking, style, title: 'Session Reminder' }) : getReminderEmail(booking);
                 break;
             case 'new_booking_admin':
-                subject = `🔴 NEW BOOKING - ${booking.name} [${booking.referenceNumber || 'IOS'}]`;
-                html = getNewBookingAdminEmail(booking);
+                subject = template?.subject ? applyEmailTemplate(template.subject, booking) : `🔴 NEW BOOKING - ${booking.name} [${booking.referenceNumber || 'IOS'}]`;
+                html = template?.body ? buildTemplateEmail({ template, booking, style, title: 'New Booking Alert' }) : getNewBookingAdminEmail(booking);
                 toEmail = process.env.BUSINESS_EMAIL || process.env.EMAIL_USER;
                 break;
             case 'report_issue':

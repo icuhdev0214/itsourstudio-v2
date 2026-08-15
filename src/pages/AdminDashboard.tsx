@@ -16,6 +16,7 @@ import SalesLedger from '../components/admin/SalesLedger';
 import WalkInModal from '../components/admin/WalkInModal';
 import InvoiceModal from '../components/admin/InvoiceModal';
 import { UserPlus } from 'lucide-react';
+import { loadEmailTemplate } from '../utils/loadEmailTemplate';
 import '../components/admin/FloatingTimer.css';
 
 
@@ -671,6 +672,7 @@ const AdminDashboard = () => {
     // Send email to admin about new booking
 	    const sendAdminEmailNotification = async (booking: Booking) => {
 	        try {
+                const template = await loadEmailTemplate('new_booking_admin');
 	            const response = await fetch('/api/send-email', {
 	                method: 'POST',
                 headers: {
@@ -678,6 +680,7 @@ const AdminDashboard = () => {
                 },
                 body: JSON.stringify({
                     type: 'new_booking_admin',
+                    template,
                     booking: {
                         referenceNumber: booking.referenceNumber,
                         name: booking.fullName,
@@ -705,11 +708,18 @@ const AdminDashboard = () => {
     };
 
 	    const sendEmailNotification = async (booking: Booking, status: string, reason?: string) => {
-        const emailType = status === 'confirmed' ? 'confirmed' : status === 'rejected' ? 'rejected' : null;
+        const emailType = status === 'confirmed'
+            ? 'confirmed'
+            : status === 'completed'
+                ? 'completed'
+                : status === 'rejected'
+                    ? 'rejected'
+                    : null;
 
         if (!emailType) return;
 
 	        try {
+                const template = await loadEmailTemplate(emailType);
 	            const response = await fetch('/api/send-email', {
 	                method: 'POST',
                 headers: {
@@ -717,6 +727,7 @@ const AdminDashboard = () => {
                 },
                 body: JSON.stringify({
                     type: emailType,
+                    template,
                     booking: {
                         referenceNumber: booking.referenceNumber,
                         name: booking.fullName,
@@ -771,7 +782,7 @@ const AdminDashboard = () => {
 
             // Find the booking object to send email
             const booking = bookings.find(b => b.id === id);
-            if (booking && (newStatus === 'confirmed' || newStatus === 'rejected')) {
+            if (booking && (newStatus === 'confirmed' || newStatus === 'completed' || newStatus === 'rejected')) {
                 await sendEmailNotification(booking, newStatus, reason);
             }
 

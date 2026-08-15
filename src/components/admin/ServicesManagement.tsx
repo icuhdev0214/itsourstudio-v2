@@ -352,10 +352,26 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
         }));
     };
 
-    const handleFeaturesChange = (value: string) => {
+    const handleFeatureChange = (index: number, value: string) => {
         setFormData(prev => ({
             ...prev,
-            features: value.split('\n').filter(f => f.trim() !== '')
+            features: (prev.features || []).map((feature, featureIndex) => (
+                featureIndex === index ? value : feature
+            ))
+        }));
+    };
+
+    const handleAddFeature = () => {
+        setFormData(prev => ({
+            ...prev,
+            features: [...(prev.features || []), '']
+        }));
+    };
+
+    const handleRemoveFeature = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            features: (prev.features || []).filter((_, featureIndex) => featureIndex !== index)
         }));
     };
 
@@ -467,6 +483,9 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
         try {
             const serviceData = {
                 ...formData,
+                features: (formData.features || [])
+                    .map(feature => feature.trim())
+                    .filter(Boolean),
                 addOns: (formData.addOns || [])
                     .map(addOn => ({
                         ...addOn,
@@ -755,15 +774,42 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                             />
                         </div>
 
-                        <div className="full-width" style={{ marginTop: '1rem' }}>
-                            <label className="form-label">Features (One per line)</label>
-                            <textarea
-                                className="form-input"
-                                value={formData.features.join('\n')}
-                                onChange={(e) => handleFeaturesChange(e.target.value)}
-                                rows={5}
-                                placeholder="1 Person&#10;10 min shoot..."
-                            />
+                        <div className="full-width feature-admin-section" style={{ marginTop: '1rem' }}>
+                            <div className="add-ons-admin-header">
+                                <div>
+                                    <h5>Package Features</h5>
+                                    <p>These bullet points appear on the homepage and services page.</p>
+                                </div>
+                                <button type="button" className="btn btn-outline" onClick={handleAddFeature}>
+                                    + Add Feature
+                                </button>
+                            </div>
+
+                            {(formData.features || []).length === 0 ? (
+                                <p className="text-muted">No features configured yet.</p>
+                            ) : (
+                                <div className="feature-admin-list">
+                                    {(formData.features || []).map((feature, index) => (
+                                        <div className="feature-admin-row" key={index}>
+                                            <div className="feature-index">{index + 1}</div>
+                                            <input
+                                                type="text"
+                                                className="form-input"
+                                                value={feature}
+                                                onChange={(e) => handleFeatureChange(index, e.target.value)}
+                                                placeholder="e.g., 1 Background selection"
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-danger"
+                                                onClick={() => handleRemoveFeature(index)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <div className="full-width add-ons-admin-section" style={{ marginTop: '2rem' }}>

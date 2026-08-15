@@ -10,8 +10,9 @@ import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import cron from 'node-cron';
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { applyEmailTemplate, buildTemplateEmail } from './api/email-template-renderer.js';
 
 dotenv.config();
 
@@ -99,6 +100,19 @@ const renderEmailAddOns = (addOns) => {
             <strong style="color: #1f2937; font-size: 14px;">₱${addOn.price}</strong>
         </div>
     `).join('');
+};
+
+const localEmailStyle = {
+    body: 'margin: 0; padding: 0; background-color: #f8fafc; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;',
+    container: 'width: 100%; max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);',
+    hero: 'padding: 40px 30px; text-align: center;',
+    heroTitle: 'margin: 0 0 10px; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: #1e293b;',
+    section: 'padding: 0 40px 40px;',
+    detailRow: 'padding: 12px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between;',
+    detailLabel: 'font-size: 14px; color: #64748b; font-weight: 500;',
+    detailValue: 'font-size: 14px; color: #1e293b; font-weight: 600;',
+    footer: 'background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;',
+    footerText: 'margin: 0; font-size: 12px; color: #94a3b8;',
 };
 
 // Email Templates
@@ -460,7 +474,7 @@ app.post('/upload/gallery', uploadLimiter, galleryUpload.single('galleryImage'),
 
 // Email Endpoint (Rate Limited)
 app.post('/send-email', emailLimiter, async (req, res) => {
-    const { type, booking, contact, report } = req.body;
+    const { type, booking, contact, report, template } = req.body;
 
     // Allow contact type with different validation
     if (type === 'contact') {
@@ -486,12 +500,26 @@ app.post('/send-email', emailLimiter, async (req, res) => {
 
     switch (type) {
         case 'confirmed':
-            subject = "Booking Confirmed - It's ouR Studio";
-            html = getConfirmedEmail(booking);
+            subject = template?.subject ? applyEmailTemplate(template.subject, booking) : "Booking Confirmed - It's ouR Studio";
+            html = template?.body ? buildTemplateEmail({ template, booking, style: localEmailStyle, title: 'Booking Confirmed' }) : getConfirmedEmail(booking);
+            break;
+        case 'completed':
+            subject = template?.subject ? applyEmailTemplate(template.subject, booking) : "Session Completed - It's ouR Studio";
+            html = template?.body
+                ? buildTemplateEmail({ template, booking, style: localEmailStyle, title: 'Booking Completed' })
+                : buildTemplateEmail({
+                    template: {
+                        preheader: 'Thank you for visiting It\'s ouR Studio.',
+                        body: 'Hi {customerName},\n\nThank you for completing your {packageName} session with us.\n\nIf you have questions about your photos or release timeline, reply to this email and our team will help you.'
+                    },
+                    booking,
+                    style: localEmailStyle,
+                    title: 'Booking Completed'
+                });
             break;
         case 'received':
-            subject = "Booking Received - It's ouR Studio";
-            html = getReceivedEmail(booking);
+            subject = template?.subject ? applyEmailTemplate(template.subject, booking) : "Booking Received - It's ouR Studio";
+            html = template?.body ? buildTemplateEmail({ template, booking, style: localEmailStyle, title: 'Booking Received' }) : getReceivedEmail(booking);
             // Attach QR Code
             attachments.push({
                 filename: 'payment_qr.png',
@@ -500,8 +528,8 @@ app.post('/send-email', emailLimiter, async (req, res) => {
             });
             break;
         case 'rejected':
-            subject = "Booking Update - It's ouR Studio";
-            html = getRejectedEmail(booking);
+            subject = template?.subject ? applyEmailTemplate(template.subject, booking) : "Booking Update - It's ouR Studio";
+            html = template?.body ? buildTemplateEmail({ template, booking, style: localEmailStyle, title: 'Booking Status Update' }) : getRejectedEmail(booking);
             break;
         case 'contact':
             subject = `New Inquiry from ${contact.name} - It's ouR Studio`;
@@ -566,6 +594,25 @@ const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 const auth = getAuth(fbApp);
 
+const SERVER_EMAIL_TEMPLATE_FALLBACKS = {
+    reminder: {
+        subject: 'Reminder: Session in 30 Minutes [{bookingReference}]',
+        preheader: 'Your studio session is starting soon.',
+        body: 'Hi {customerName},\n\nYour {packageName} session starts soon at {bookingTime}.\n\nPlease head to the studio and arrive prepared for your shoot.'
+    }
+};
+
+const loadServerEmailTemplate = async (key) => {
+    try {
+        const templateDoc = await getDoc(doc(db, 'siteContent', 'emailTemplates'));
+        const savedTemplate = templateDoc.exists() ? templateDoc.data()?.templates?.[key] : null;
+        return savedTemplate || SERVER_EMAIL_TEMPLATE_FALLBACKS[key];
+    } catch (error) {
+        console.error(`Failed to load ${key} email template:`, error.message);
+        return SERVER_EMAIL_TEMPLATE_FALLBACKS[key];
+    }
+};
+
 // Authenticate Server for Database Access
 const signInAdmin = async () => {
     if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
@@ -618,23 +665,39 @@ cron.schedule('* * * * *', async () => {
 
         const snapshot = await getDocs(q);
 
-        snapshot.docs.forEach(async (doc) => {
-            const booking = doc.data();
+        const reminderTemplate = await loadServerEmailTemplate('reminder');
+
+        for (const docSnap of snapshot.docs) {
+            const booking = docSnap.data();
+            if (booking.reminderSentAt) {
+                continue;
+            }
+
             console.log(`🔔 Sending reminder for ${booking.fullName} (${booking.time})`);
 
-            // Email to Customer
-            const customerHtml = `
-            <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
-                <h2>⏰ Your Session in 30 Minutes!</h2>
-                <p>Hi ${booking.fullName}, just a friendly reminder that your photoshoot starts soon.</p>
-                <div style="background: #fff7ed; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <strong style="color: #c2410c;">Time: ${booking.time}</strong><br>
-                    <span>Package: ${booking.package}</span>
-                </div>
-                <p>Please arrive 10-15 minutes early!</p>
-                <p>📍 FJ Center 15 Tongco Maysan, Valenzuela City</p>
-            </div>
-            `;
+            const reminderBooking = {
+                referenceNumber: booking.referenceNumber,
+                name: booking.fullName,
+                email: booking.email,
+                package: booking.package,
+                selectedAddOns: booking.selectedAddOns || [],
+                addOnsAmount: booking.addOnsAmount || 0,
+                total_amount: booking.totalPrice,
+                downpayment: booking.requiredDownpayment || booking.downpayment || booking.downpaymentAmount || 0,
+                remainingBalance: booking.remainingBalance || 0,
+                date: booking.date,
+                time_start: booking.time
+            };
+
+            const customerSubject = reminderTemplate?.subject
+                ? applyEmailTemplate(reminderTemplate.subject, reminderBooking)
+                : `Reminder: Your Session is in 30 Minutes!`;
+            const customerHtml = buildTemplateEmail({
+                template: reminderTemplate,
+                booking: reminderBooking,
+                style: localEmailStyle,
+                title: 'Session Reminder'
+            });
 
             // Email to Admin
             const adminHtml = `
@@ -654,7 +717,7 @@ cron.schedule('* * * * *', async () => {
             await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: booking.email,
-                subject: `Reminder: Your Session is in 30 Minutes!`,
+                subject: customerSubject,
                 html: customerHtml
             });
 
@@ -665,7 +728,11 @@ cron.schedule('* * * * *', async () => {
                 subject: `🔔 30m Reminder: ${booking.fullName} @ ${booking.time}`,
                 html: adminHtml
             });
-        });
+
+            await updateDoc(doc(db, 'bookings', docSnap.id), {
+                reminderSentAt: new Date().toISOString()
+            });
+        }
 
     } catch (error) {
         console.error('Error in reminder cron:', error);

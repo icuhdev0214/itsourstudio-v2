@@ -6,6 +6,7 @@ import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '
 import { generateBookingReference } from '../utils/generateReference';
 import { calculatePaymentBreakdown } from '../utils/payment';
 import { visibleServices } from '../utils/serviceCatalog';
+import { loadEmailTemplate } from '../utils/loadEmailTemplate';
 import paymentQr from '../assets/payment_qr.png';
 import './ModalStyles.css';
 import { useBooking } from '../context/BookingContext';
@@ -825,6 +826,7 @@ const BookingModal = () => {
 
             // Send Email Notification
             try {
+                const template = await loadEmailTemplate('received');
                 const emailResponse = await fetch('/api/send-email', {
                     method: 'POST',
                     headers: {
@@ -832,6 +834,7 @@ const BookingModal = () => {
                     },
                     body: JSON.stringify({
                         type: 'received',
+                        template,
                         booking: {
                             referenceNumber: bookingReference,
                             name: formData.fullName,

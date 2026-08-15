@@ -6,6 +6,7 @@ import { compressImage } from '../../utils/compressImage';
 import { HexColorPicker } from "react-colorful";
 import ServicesManagement from './ServicesManagement';
 import GalleryManagement from './GalleryManagement';
+import EmailTemplateManagement from './EmailTemplateManagement';
 import './ContentManagement.css';
 
 interface ContentManagementProps {
@@ -115,7 +116,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
     const [editingBackdropId, setEditingBackdropId] = useState<string | null>(null);
 
     // Navigation State
-    const [activeSection, setActiveSection] = useState<'promoBanner' | 'seasonalPromo' | 'about' | 'footer' | 'backdrops' | 'faq' | 'services' | 'gallery'>('promoBanner');
+    const [activeSection, setActiveSection] = useState<'promoBanner' | 'seasonalPromo' | 'about' | 'footer' | 'backdrops' | 'faq' | 'services' | 'gallery' | 'emailTemplates'>('promoBanner');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(true); // For mobile view navigation
     const [isBackdropModalOpen, setIsBackdropModalOpen] = useState(false);
 
@@ -536,6 +537,18 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                         <div className="nav-arrow">›</div>
                     </button>
 
+                    <button
+                        className={`content-nav-btn ${activeSection === 'emailTemplates' ? 'active' : ''}`}
+                        onClick={() => navigateToSection('emailTemplates')}
+                    >
+                        <div className="nav-icon">✉️</div>
+                        <div className="nav-label">
+                            <span>Email Templates</span>
+                            <small>Booking messages</small>
+                        </div>
+                        <div className="nav-arrow">›</div>
+                    </button>
+
 
                 </div>
 
@@ -552,6 +565,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                     activeSection === 'footer' ? 'Footer Info' :
                                         activeSection === 'faq' ? 'FAQ Management' :
                                             activeSection === 'services' ? 'Services Management' :
+                                                activeSection === 'emailTemplates' ? 'Email Templates' :
                                                 activeSection === 'gallery' ? 'Gallery & Carousel' : 'Backdrops'}</h3>
                     </div>
 
@@ -1318,6 +1332,10 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
 
                     {activeSection === 'services' && (
                         <ServicesManagement showToast={showToast} />
+                    )}
+
+                    {activeSection === 'emailTemplates' && (
+                        <EmailTemplateManagement showToast={showToast} />
                     )}
 
                     {/* FAQ Modal */}
