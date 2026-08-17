@@ -3290,3 +3290,118 @@ position: sticky;
         justify-self: stretch;
     }
 }
+
+/* Theme alignment for the booking flow. This file is imported after the global CSS. */
+.modal-overlay {
+    background: rgba(8, 11, 12, 0.72);
+}
+
+.modal-content,
+.modal-content.booking-modal,
+.booking-modal-header,
+.form-step,
+.booking-summary-panel,
+.booking-form-container,
+.calendar-container,
+.time-selection-container,
+.empty-state-box,
+.payment-step .payment-qr-card,
+.payment-step .booking-summary-box,
+.payment-step .upload-proof-box,
+.upload-dropzone {
+    background: var(--surface-elevated);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.booking-modal-header {
+    border-bottom-color: var(--color-border);
+}
+
+.modal-close {
+    color: var(--color-text-light);
+}
+
+.modal-close:hover {
+    background: var(--surface-subtle);
+    color: var(--color-secondary);
+}
+
+.booking-modal .section-title,
+.modal-content .section-title,
+.payment-step .section-label,
+.booking-summary-panel h3,
+.form-step h3,
+.form-step h4 {
+    color: var(--color-text);
+}
+
+.step-item.active {
+    background: var(--surface-subtle);
+}
+
+.step-circle,
+.step-item.active .step-circle,
+.modern-select,
+.time-slot-btn,
+.form-step input,
+.form-step select,
+.form-step textarea,
+.upload-dropzone {
+    background: var(--surface-input);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+.step-label,
+.time-legend,
+.empty-state-box,
+.booking-summary-panel p,
+.summary-row span,
+.form-step p,
+.form-step small {
+    color: var(--color-text-light);
+}
+
+.step-item.active .step-circle,
+.time-slot-btn:hover:not(:disabled) {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+}
+
+.step-item.completed .step-circle,
+.time-slot-btn.selected,
+.modal-content.booking-modal .wizard-actions .btn-primary {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: var(--text-on-dark);
+}
+
+.modern-select:focus,
+.form-step input:focus,
+.form-step select:focus,
+.form-step textarea:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.time-slot-btn:hover:not(:disabled) {
+    background: var(--surface-subtle);
+}
+
+.time-slot-btn:disabled {
+    background: var(--surface-subtle);
+    color: var(--disabled-text);
+    border-color: var(--color-border);
+}
+
+.modal-content.booking-modal .wizard-actions {
+    background: var(--color-surface);
+    border-top-color: var(--color-border);
+}
+
+.modal-content.booking-modal .wizard-actions .btn-secondary {
+    background: var(--surface-subtle);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}

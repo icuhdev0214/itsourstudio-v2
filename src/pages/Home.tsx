@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Aperture, ArrowRight, CalendarCheck, Camera, ChevronDown, Clock, Images, Sparkles, X } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, doc, getDoc } from 'firebase/firestore';
@@ -89,9 +90,25 @@ const FALLBACK_HOME_SERVICES: HomeService[] = [
     }
 ];
 
+const companionSections = [
+    { id: 'home', label: 'Studio intro' },
+    { id: 'gallery', label: 'Moments' },
+    { id: 'services', label: 'Packages' },
+    { id: 'testimonials', label: 'Stories' },
+    { id: 'about', label: 'Studio' },
+    { id: 'contact', label: 'Contact' }
+];
+
 const Home = () => {
-    const { openBooking } = useBooking();
+    const { isBookingOpen, openBooking } = useBooking();
     const location = useLocation();
+    const [showCompanionIntro, setShowCompanionIntro] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return sessionStorage.getItem('studioCompanionSeen') !== 'true';
+    });
+    const [isCompanionOpen, setIsCompanionOpen] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [activeCompanionSection, setActiveCompanionSection] = useState(companionSections[0].label);
 
     useEffect(() => {
         // Scroll to top on mount if no specific scroll intent
@@ -328,6 +345,67 @@ const Home = () => {
         };
     }, []);
 
+    useEffect(() => {
+        let ticking = false;
+
+        const updateCompanion = () => {
+            const scrollableHeight = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+            const progress = Math.min(Math.max(window.scrollY / scrollableHeight, 0), 1);
+            setScrollProgress(progress);
+
+            const viewportAnchor = window.innerHeight * 0.38;
+            let currentSectionLabel = companionSections[0].label;
+            for (let index = companionSections.length - 1; index >= 0; index -= 1) {
+                const section = companionSections[index];
+                const element = document.getElementById(section.id);
+                if (element && element.getBoundingClientRect().top <= viewportAnchor) {
+                    currentSectionLabel = section.label;
+                    break;
+                }
+            }
+
+            setActiveCompanionSection(currentSectionLabel);
+            ticking = false;
+        };
+
+        const handleScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateCompanion);
+        };
+
+        updateCompanion();
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!showCompanionIntro) return;
+
+        const timer = window.setTimeout(() => {
+            setShowCompanionIntro(false);
+            sessionStorage.setItem('studioCompanionSeen', 'true');
+        }, 5200);
+
+        return () => window.clearTimeout(timer);
+    }, [showCompanionIntro]);
+
+    const dismissCompanionIntro = () => {
+        setShowCompanionIntro(false);
+        sessionStorage.setItem('studioCompanionSeen', 'true');
+    };
+
+    const scrollToNextCompanionSection = () => {
+        const currentIndex = companionSections.findIndex(section => section.label === activeCompanionSection);
+        const nextSection = companionSections[Math.min(currentIndex + 1, companionSections.length - 1)];
+        document.getElementById(nextSection.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [currentTranslate, setCurrentTranslate] = useState(0);
@@ -490,9 +568,90 @@ const Home = () => {
 
     return (
         <>
+            <aside className={`studio-companion ${showCompanionIntro ? 'intro-active' : ''} ${isCompanionOpen ? 'is-open' : ''} ${isBookingOpen ? 'is-hidden' : ''}`} aria-label="Studio page companion">
+                {showCompanionIntro && (
+                    <div className="companion-intro" role="status">
+                        <button className="companion-close" type="button" onClick={dismissCompanionIntro} aria-label="Dismiss studio intro">
+                            <X size={16} aria-hidden="true" />
+                        </button>
+                        <div className="companion-intro-camera" aria-hidden="true">
+                            <div className="companion-camera-body">
+                                <div className="companion-camera-lens"></div>
+                                <div className="companion-camera-flash"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <span className="companion-eyebrow">Self-booth mode</span>
+                            <h2>Camera is ready.</h2>
+                            <p>Scroll through the studio story, then book when your package feels right.</p>
+                        </div>
+                        <div className="companion-intro-actions">
+                            <button className="btn btn-primary" type="button" onClick={() => { dismissCompanionIntro(); openBooking(); }}>
+                                Book now
+                            </button>
+                            <button className="btn btn-secondary" type="button" onClick={dismissCompanionIntro}>
+                                Explore first
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                <button
+                    className="companion-orb"
+                    type="button"
+                    onClick={() => setIsCompanionOpen(prev => !prev)}
+                    aria-expanded={isCompanionOpen}
+                    aria-label="Toggle studio companion"
+                    style={{ '--progress': scrollProgress } as React.CSSProperties}
+                >
+                    <span className="companion-progress-ring" aria-hidden="true"></span>
+                    <span className="companion-mini-camera" aria-hidden="true">
+                        <Aperture size={24} />
+                    </span>
+                </button>
+
+                <div className="companion-panel">
+                    <span className="companion-eyebrow">Now viewing</span>
+                    <strong>{activeCompanionSection}</strong>
+                    <div className="companion-progress">
+                        <span style={{ width: `${Math.round(scrollProgress * 100)}%` }}></span>
+                    </div>
+                    <div className="companion-panel-actions">
+                        <button type="button" onClick={() => openBooking()}>
+                            <CalendarCheck size={16} aria-hidden="true" />
+                            Book
+                        </button>
+                        <button type="button" onClick={scrollToNextCompanionSection}>
+                            <ChevronDown size={16} aria-hidden="true" />
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
             {/* Hero Section */}
             <section id="home" className="hero" ref={heroRef} onMouseMove={handleHeroMouseMove}>
                 <div className="hero-background"></div>
+                <div className="hero-motion-bg" aria-hidden="true">
+                    <div className="studio-atmosphere">
+                        <div className="aperture-halo">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div className="light-leak light-leak-left"></div>
+                        <div className="light-leak light-leak-right"></div>
+                        <div className="focus-scan-line"></div>
+                    </div>
+                    <div className="film-ribbon film-ribbon-one"></div>
+                    <div className="film-ribbon film-ribbon-two"></div>
+                    <div className="studio-light-beam"></div>
+                    <div className="shutter-ring shutter-ring-one"></div>
+                    <div className="shutter-ring shutter-ring-two"></div>
+                </div>
 
                 {/* Interactive Camera Interface */}
                 <div className="camera-interface">
@@ -511,14 +670,88 @@ const Home = () => {
 
                 <div className="hero-content">
                     <div className="parallax-content">
-                        <h1 className="hero-title">
-                            <span className="hero-subtitle">Welcome to</span>
-                            it's ouR Studio
-                        </h1>
-                        <p className="hero-description">Capture your authentic self in our premium self-photography studio</p>
-                        <div className="hero-buttons">
-                            <Link to="/gallery" className="btn btn-primary btn-large">View Gallery</Link>
-                            <button className="btn btn-secondary btn-large" onClick={() => openBooking()}>Book Session</button>
+                        <div className="hero-copy">
+                            <div className="hero-kicker">
+                                <Sparkles size={18} aria-hidden="true" />
+                                Premium self-photography studio
+                            </div>
+                            <h1 className="hero-title">
+                                Book your private studio shoot in minutes.
+                            </h1>
+                            <p className="hero-description">
+                                Choose your package, reserve your slot, and step into a studio built for portraits, duos, barkadas, and content days.
+                            </p>
+                            <div className="hero-buttons">
+                                <button className="btn btn-primary btn-large hero-booking-button" onClick={() => openBooking()}>
+                                    <CalendarCheck size={20} aria-hidden="true" />
+                                    Book Session
+                                </button>
+                                <Link to="/gallery" className="btn btn-secondary btn-large">
+                                    <Images size={20} aria-hidden="true" />
+                                    View Gallery
+                                </Link>
+                            </div>
+                            <div className="hero-proof-row" aria-label="Studio booking highlights">
+                                <div>
+                                    <strong>₱299+</strong>
+                                    <span>starter sessions</span>
+                                </div>
+                                <div>
+                                    <strong>15 min+</strong>
+                                    <span>shoot options</span>
+                                </div>
+                                <div>
+                                    <strong>GCash</strong>
+                                    <span>downpayment</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="hero-booking-card" aria-label="Booking preview">
+                            <div className="booking-card-glow"></div>
+                            <div className="booking-card-header">
+                                <div className="booking-card-icon">
+                                    <Camera size={24} aria-hidden="true" />
+                                </div>
+                                <div>
+                                    <span className="booking-card-label">Next session</span>
+                                    <h2>Self-shoot booking</h2>
+                                </div>
+                            </div>
+                            <div className="booking-card-preview">
+                                <div className="self-booth-stage">
+                                    <div className="booth-camera-rig" aria-hidden="true">
+                                        <div className="camera-body">
+                                            <div className="camera-top"></div>
+                                            <div className="camera-lens">
+                                                <div className="lens-glass"></div>
+                                            </div>
+                                            <div className="camera-status-light"></div>
+                                        </div>
+                                        <div className="camera-tripod">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                    <div className="booth-alignment-line" aria-hidden="true"></div>
+                                    <div className="preview-frame preview-frame-main booth-photo-target">
+                                        <LazyImage src="/gallery/solo1.webp" alt="Solo portrait session preview" />
+                                    </div>
+                                </div>
+                                <div className="preview-stack" aria-hidden="true">
+                                    <div className="preview-frame"><LazyImage src="/gallery/duo2.webp" alt="" /></div>
+                                    <div className="preview-frame"><LazyImage src="/gallery/group1.webp" alt="" /></div>
+                                </div>
+                            </div>
+                            <div className="booking-flow">
+                                <div className="flow-step is-active"><span>1</span>Package</div>
+                                <div className="flow-step"><span>2</span>Schedule</div>
+                                <div className="flow-step"><span>3</span>Payment</div>
+                            </div>
+                            <button className="btn btn-secondary booking-card-cta" onClick={() => openBooking()}>
+                                Start booking
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -560,8 +793,20 @@ const Home = () => {
                         >
                             {/* Render items twice for infinite scroll effect */}
                             {[...dynamicGalleryItems, ...dynamicGalleryItems].map((item, index) => (
-                                <div className="gallery-card" key={index}>
+                                <div
+                                    className="gallery-card"
+                                    key={index}
+                                    style={{
+                                        '--gallery-lift': `${((index % 5) - 2) * 6}px`,
+                                        '--gallery-tilt': `${index % 2 === 0 ? -0.8 : 0.8}deg`
+                                    } as React.CSSProperties}
+                                >
                                     <div className="gallery-card-inner">
+                                        <div className="gallery-card-chrome" aria-hidden="true">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
                                         <LazyImage src={item.src} alt={item.title} wrapperClassName="gallery-card-image" />
                                         <div className="gallery-overlay">
                                             <div className="gallery-info">
@@ -593,13 +838,24 @@ const Home = () => {
 
                     <div className="services-grid">
                         {homeServices.map((service, index) => (
-                            <div key={service.id} className={`service-card ${service.isBestSelling ? 'featured' : ''}`}>
-                                {service.isBestSelling && <div className="featured-badge">Best Selling</div>}
+                            <div
+                                key={service.id}
+                                className={`service-card ${service.isBestSelling ? 'featured' : ''}`}
+                                style={{ '--package-index': index } as React.CSSProperties}
+                            >
+                                <div className="package-glow" aria-hidden="true"></div>
+                                <div className="package-card-top">
+                                    <span className="package-number">0{index + 1}</span>
+                                    {service.isBestSelling && <div className="featured-badge">Best Selling</div>}
+                                </div>
                                 <div className="service-icon">
                                     {renderServiceIcon(service, index)}
                                 </div>
                                 <h3 className="service-title">{service.title.replace(/ Package$/i, '')}</h3>
-                                <p className="service-duration">{service.duration}</p>
+                                <p className="service-duration">
+                                    <Clock size={15} aria-hidden="true" />
+                                    {service.duration}
+                                </p>
                                 {service.price && service.price !== '0' && service.price !== '₱0' && (
                                     <div className="service-price">{service.price}</div>
                                 )}
@@ -614,6 +870,7 @@ const Home = () => {
                                     onClick={() => openBooking(service.id)}
                                 >
                                     Book Now
+                                    <ArrowRight size={16} aria-hidden="true" />
                                 </button>
                             </div>
                         ))}
