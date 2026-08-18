@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { lazy, Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Aperture, ArrowRight, CalendarCheck, Camera, ChevronDown, Clock, Images, Sparkles, X } from 'lucide-react';
+import { Aperture, ArrowRight, CalendarCheck, ChevronDown, Clock, Images, Sparkles, X } from 'lucide-react';
 import { useBooking } from '../context/BookingContext';
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, doc, getDoc } from 'firebase/firestore';
@@ -10,6 +10,8 @@ import FeedbackModal from '../components/FeedbackModal';
 import PromoSection from '../components/PromoSection';
 import BackdropVisualizer from '../components/BackdropVisualizer';
 import LazyImage from '../components/LazyImage';
+
+const ScrollCameraExperience = lazy(() => import('../components/ScrollCameraExperience'));
 
 
 interface Feedback {
@@ -109,6 +111,13 @@ const Home = () => {
     const [isCompanionOpen, setIsCompanionOpen] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
     const [activeCompanionSection, setActiveCompanionSection] = useState(companionSections[0].label);
+    const isCompanionFlyingAway = scrollProgress >= 0.92;
+    const showBottomBookingReveal = isCompanionFlyingAway;
+
+    useEffect(() => {
+        document.body.classList.add('home-3d-page');
+        return () => document.body.classList.remove('home-3d-page');
+    }, []);
 
     useEffect(() => {
         // Scroll to top on mount if no specific scroll intent
@@ -567,8 +576,12 @@ const Home = () => {
     }, []);
 
     return (
-        <>
-            <aside className={`studio-companion ${showCompanionIntro ? 'intro-active' : ''} ${isCompanionOpen ? 'is-open' : ''} ${isBookingOpen ? 'is-hidden' : ''}`} aria-label="Studio page companion">
+        <div className="home-page">
+            <Suspense fallback={null}>
+                <ScrollCameraExperience scrollProgress={scrollProgress} />
+            </Suspense>
+
+            <aside className={`studio-companion ${showCompanionIntro ? 'intro-active' : ''} ${isCompanionOpen ? 'is-open' : ''} ${isCompanionFlyingAway ? 'is-flying-away' : ''} ${isBookingOpen ? 'is-hidden' : ''}`} aria-label="Studio page companion">
                 {showCompanionIntro && (
                     <div className="companion-intro" role="status">
                         <button className="companion-close" type="button" onClick={dismissCompanionIntro} aria-label="Dismiss studio intro">
@@ -707,50 +720,11 @@ const Home = () => {
                             </div>
                         </div>
 
-                        <div className="hero-booking-card" aria-label="Booking preview">
-                            <div className="booking-card-glow"></div>
-                            <div className="booking-card-header">
-                                <div className="booking-card-icon">
-                                    <Camera size={24} aria-hidden="true" />
-                                </div>
-                                <div>
-                                    <span className="booking-card-label">Next session</span>
-                                    <h2>Self-shoot booking</h2>
-                                </div>
-                            </div>
-                            <div className="booking-card-preview">
-                                <div className="self-booth-stage">
-                                    <div className="booth-camera-rig" aria-hidden="true">
-                                        <div className="camera-body">
-                                            <div className="camera-top"></div>
-                                            <div className="camera-lens">
-                                                <div className="lens-glass"></div>
-                                            </div>
-                                            <div className="camera-status-light"></div>
-                                        </div>
-                                        <div className="camera-tripod">
-                                            <span></span>
-                                            <span></span>
-                                            <span></span>
-                                        </div>
-                                    </div>
-                                    <div className="booth-alignment-line" aria-hidden="true"></div>
-                                    <div className="preview-frame preview-frame-main booth-photo-target">
-                                        <LazyImage src="/gallery/solo1.webp" alt="Solo portrait session preview" />
-                                    </div>
-                                </div>
-                                <div className="preview-stack" aria-hidden="true">
-                                    <div className="preview-frame"><LazyImage src="/gallery/duo2.webp" alt="" /></div>
-                                    <div className="preview-frame"><LazyImage src="/gallery/group1.webp" alt="" /></div>
-                                </div>
-                            </div>
-                            <div className="booking-flow">
-                                <div className="flow-step is-active"><span>1</span>Package</div>
-                                <div className="flow-step"><span>2</span>Schedule</div>
-                                <div className="flow-step"><span>3</span>Payment</div>
-                            </div>
-                            <button className="btn btn-secondary booking-card-cta" onClick={() => openBooking()}>
-                                Start booking
+                        <div className="webgl-demo-stage" aria-label="Animated camera booking preview">
+                            <button className="webgl-booking-card" type="button" onClick={() => openBooking()}>
+                                <span className="booking-card-label">Self-shoot booking</span>
+                                <strong>Book your slot, settle your downpayment, and arrive camera-ready.</strong>
+                                <span className="webgl-booking-link">Start booking</span>
                             </button>
                         </div>
                     </div>
@@ -984,6 +958,9 @@ const Home = () => {
 
             <BackdropVisualizer />
 
+            {/* Camera Vanish Flash Overlay */}
+            <div className={`camera-vanish-flash ${scrollProgress > 0.85 ? 'is-active' : ''}`} aria-hidden="true"></div>
+
             {/* Ready to Shoot CTA Section */}
             <section className="cta-section">
                 <div className="cta-background">
@@ -1008,6 +985,18 @@ const Home = () => {
                     <div className="section-header">
                         <h2 className="section-title">Get in Touch</h2>
                         <p className="section-subtitle">We'd love to hear from you</p>
+                    </div>
+
+                    <div className={`bottom-booking-reveal ${showBottomBookingReveal ? 'is-visible' : ''}`} aria-live="polite">
+                        <div className="bottom-booking-copy">
+                            <span className="companion-eyebrow">Final frame</span>
+                            <h3>Ready for your session?</h3>
+                            <p>Pick your package, reserve your time, and step into the studio when you're ready.</p>
+                        </div>
+                        <button className="btn btn-primary" type="button" onClick={() => openBooking()}>
+                            <CalendarCheck size={18} aria-hidden="true" />
+                            Book Session
+                        </button>
                     </div>
 
                     <div className="contact-container">
@@ -1115,7 +1104,7 @@ const Home = () => {
                 </div>
             </section>
 
-        </>
+        </div>
     );
 };
 
