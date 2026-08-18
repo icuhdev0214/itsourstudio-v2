@@ -6,7 +6,6 @@
   "author": "Its Our Studio",
   "homepage": "https://itsour-studio.vercel.app",
   "license": "UNLICENSED",
-  "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm:server\" \"npm:client\"",
@@ -15,19 +14,11 @@
     "server": "node server.js",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
-    "electron:build": "npm run build && electron-builder",
-    "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build",
-    "tauri": "tauri",
-    "mobile:open": "npx cap open android",
     "test": "vitest",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
-    "@capacitor/assets": "^3.0.5",
     "@playwright/test": "^1.57.0",
-    "@tauri-apps/cli": "^2.9.6",
     "@testing-library/react": "^16.3.1",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
@@ -36,10 +27,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "electron": "^39.2.6",
-    "electron-builder": "^26.0.12",
     "jsdom": "^27.3.0",
-    "png-to-ico": "^3.0.1",
     "shadcn": "^4.18.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
@@ -47,9 +35,6 @@
     "wait-on": "^9.0.3"
   },
   "dependencies": {
-    "@capacitor/android": "^8.0.0",
-    "@capacitor/cli": "^8.0.0",
-    "@capacitor/core": "^8.0.0",
     "@react-three/drei": "^10.0.0",
     "@react-three/fiber": "^9.7.0",
     "@react-three/postprocessing": "^3.0.0",
@@ -74,26 +59,5 @@
     "three": "^0.185.1",
     "use-sound": "^5.0.0",
     "xlsx": "^0.18.5"
-  },
-  "build": {
-    "appId": "com.itsourstudio.admin",
-    "productName": "Its Our Studio Admin",
-    "directories": {
-      "output": "release"
-    },
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "package.json"
-    ],
-    "win": {
-      "target": "nsis",
-      "icon": "public/logo/icon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "deleteAppDataOnUninstall": false
-    }
   }
 }

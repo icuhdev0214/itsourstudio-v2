@@ -1,9 +1,5 @@
 import { type ReactElement, useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Capacitor } from '@capacitor/core';
-
-// Check if running inside Tauri (desktop app) - build-time check or runtime fallback
-const isTauri = import.meta.env.VITE_BUILD_TARGET === 'tauri' || (typeof window !== 'undefined' && ('__TAURI__' in window || navigator.userAgent.includes('Tauri')));
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -13,7 +9,6 @@ import EmailTest from './pages/EmailTest';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
-import AdminDownload from './pages/AdminDownload';
 import CookieConsent from './components/CookieConsent';
 import FAQ from './pages/FAQ';
 import NotFound from './pages/NotFound';
@@ -72,14 +67,13 @@ const AppContent = ({ onRouteChange }: { onRouteChange: () => void }) => {
 
             {showNav && <Navbar />}
             <Routes>
-                <Route path="/" element={(Capacitor.isNativePlatform() || isTauri) ? <Navigate to="/admin" replace /> : <Home />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/email-test" element={<EmailTest />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/download" element={<AdminDownload />} />
                 <Route path="/links" element={<BioLinks />} />
 
                 {/* Redirects for hash links that might be interpreted as routes */}
