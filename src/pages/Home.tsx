@@ -12,7 +12,8 @@ import BackdropVisualizer from '../components/BackdropVisualizer';
 import LazyImage from '../components/LazyImage';
 
 const ScrollCameraExperience = lazy(() => import('../components/ScrollCameraExperience'));
-
+const preloadScrollCamera = () => import('../components/ScrollCameraExperience');
+preloadScrollCamera().catch(() => {});
 
 interface Feedback {
     id: string;
@@ -110,6 +111,7 @@ const Home = () => {
     });
     const [isCompanionOpen, setIsCompanionOpen] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [cameraProgress, setCameraProgress] = useState(0);
     const [activeCompanionSection, setActiveCompanionSection] = useState(companionSections[0].label);
     const isCompanionFlyingAway = scrollProgress >= 0.92;
     const showBottomBookingReveal = isCompanionFlyingAway;
@@ -356,11 +358,23 @@ const Home = () => {
 
     useEffect(() => {
         let ticking = false;
+        let cachedGalleryBottom = 0;
 
         const updateCompanion = () => {
             const scrollableHeight = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
             const progress = Math.min(Math.max(window.scrollY / scrollableHeight, 0), 1);
             setScrollProgress(progress);
+
+            const galleryElement = document.getElementById('gallery');
+            if (galleryElement && cachedGalleryBottom === 0) {
+                cachedGalleryBottom = galleryElement.offsetTop + galleryElement.offsetHeight;
+            }
+
+            let cameraProgress = 0;
+            if (cachedGalleryBottom > 0) {
+                cameraProgress = Math.min(Math.max(window.scrollY / (cachedGalleryBottom - window.innerHeight), 0), 1);
+            }
+            setCameraProgress(cameraProgress);
 
             const viewportAnchor = window.innerHeight * 0.38;
             let currentSectionLabel = companionSections[0].label;
@@ -383,13 +397,24 @@ const Home = () => {
             requestAnimationFrame(updateCompanion);
         };
 
+        const handleResize = () => {
+            cachedGalleryBottom = 0;
+            const galleryElement = document.getElementById('gallery');
+            if (galleryElement) {
+                cachedGalleryBottom = galleryElement.offsetTop + galleryElement.offsetHeight;
+            }
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateCompanion);
+        };
+
         updateCompanion();
         window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', handleScroll);
+        window.addEventListener('resize', handleResize);
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleScroll);
+            window.removeEventListener('resize', handleResize);
         };
     }, []);
 
@@ -578,7 +603,7 @@ const Home = () => {
     return (
         <div className="home-page">
             <Suspense fallback={null}>
-                <ScrollCameraExperience scrollProgress={scrollProgress} />
+                <ScrollCameraExperience scrollProgress={cameraProgress} />
             </Suspense>
 
             <aside className={`studio-companion ${showCompanionIntro ? 'intro-active' : ''} ${isCompanionOpen ? 'is-open' : ''} ${isCompanionFlyingAway ? 'is-flying-away' : ''} ${isBookingOpen ? 'is-hidden' : ''}`} aria-label="Studio page companion">
@@ -959,7 +984,7 @@ const Home = () => {
             <BackdropVisualizer />
 
             {/* Camera Vanish Flash Overlay */}
-            <div className={`camera-vanish-flash ${scrollProgress > 0.85 ? 'is-active' : ''}`} aria-hidden="true"></div>
+            <div className={`camera-vanish-flash ${cameraProgress > 0.85 ? 'is-active' : ''}`} aria-hidden="true"></div>
 
             {/* Ready to Shoot CTA Section */}
             <section className="cta-section">

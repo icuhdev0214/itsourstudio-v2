@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun } from 'lucide-react';
 
 import { useBooking } from '../context/BookingContext';
 import PromoBanner from './PromoBanner';
@@ -9,12 +8,6 @@ const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showBanner, setShowBanner] = useState(false);
-    const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-        if (typeof window === 'undefined') return 'light';
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    });
     const location = useLocation();
     const { openBooking } = useBooking();
 
@@ -38,9 +31,8 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        document.documentElement.dataset.theme = theme;
-        localStorage.setItem('theme', theme);
-    }, [theme]);
+        document.documentElement.dataset.theme = 'dark';
+    }, []);
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen);
@@ -166,19 +158,6 @@ const Navbar = () => {
                             Contact
                         </Link>
                     )}
-
-                    <button
-                        className="theme-toggle"
-                        type="button"
-                        onClick={() => setTheme(current => current === 'dark' ? 'light' : 'dark')}
-                        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-                    >
-                        <span className="theme-toggle-track" aria-hidden="true">
-                            <span className="theme-toggle-thumb">
-                                {theme === 'dark' ? <Moon size={15} /> : <Sun size={15} />}
-                            </span>
-                        </span>
-                    </button>
 
                     <button className="btn btn-primary" onClick={() => { openBooking(); setMobileMenuOpen(false); }}>Book Now</button>
                 </div>

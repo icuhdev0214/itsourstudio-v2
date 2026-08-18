@@ -1,67 +1,14 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useEffect, useMemo, useRef, useState, Component, Suspense } from 'react';
-import type { ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useGLTF, Environment, ContactShadows, Sparkles } from '@react-three/drei';
-
-useGLTF.preload('/models/camera.glb');
+import { Environment, ContactShadows, Sparkles } from '@react-three/drei';
 
 interface ScrollCameraExperienceProps {
     scrollProgress: number;
 }
 
-interface ModelErrorBoundaryProps {
-    children: ReactNode;
-    fallback: ReactNode;
-}
-
-interface ModelErrorBoundaryState {
-    hasError: boolean;
-}
-
-class ModelErrorBoundary extends Component<ModelErrorBoundaryProps, ModelErrorBoundaryState> {
-    constructor(props: ModelErrorBoundaryProps) {
-        super(props);
-        this.state = { hasError: false };
-    }
-
-    static getDerivedStateFromError() {
-        return { hasError: true };
-    }
-
-    componentDidCatch(error: Error) {
-        console.warn('Model loading error, falling back to procedural geometry:', error);
-    }
-
-    render() {
-        if (this.state.hasError) {
-            return this.props.fallback;
-        }
-        return this.props.children;
-    }
-}
-
 const clamp = (value: number, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 const mix = (start: number, end: number, amount: number) => start + (end - start) * amount;
-
-const Model = () => {
-    const { scene } = useGLTF('/models/camera.glb');
-
-    useMemo(() => {
-        scene.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-                const material = (child as THREE.Mesh).material as THREE.Material;
-                if (material && 'roughness' in material) {
-                    (material as THREE.MeshStandardMaterial).roughness = Math.max((material as THREE.MeshStandardMaterial).roughness, 0.4);
-                }
-            }
-        });
-    }, [scene]);
-
-    return <primitive object={scene} />;
-};
 
 const createRoundedRectShape = (width: number, height: number, radius: number) => {
     const x = -width / 2;
@@ -111,7 +58,7 @@ const useMotionSettings = () => {
 const ApertureBlades = ({ progress, isMobile }: { progress: number; isMobile: boolean }) => {
     const blades = useMemo(() => Array.from({ length: isMobile ? 6 : 8 }), [isMobile]);
     const exit = clamp((progress - 0.82) / 0.18);
-    const normalOpening = mix(0.18, 0.58, 1 - Math.abs(progress - 0.48) * 1.4);
+    const normalOpening = mix(0.56, 0.2, Math.pow(progress, 0.8));
     const opening = mix(normalOpening, 0, exit);
 
     return (
@@ -249,22 +196,21 @@ const CameraRig = ({
     }, [scrollProgress]);
 
     useFrame(({ clock }) => {
-        const p = isReducedMotion ? 0.18 : progressRef.current;
+        const p = isReducedMotion ? 0.28 : progressRef.current;
         const sectionPulse = Math.sin(clock.elapsedTime * (isMobile ? 0.55 : 0.85));
         const exit = clamp((p - 0.82) / 0.18);
-        const galleryFocus = clamp((p - 0.18) / 0.34);
-        const studioFocus = clamp((p - 0.52) / 0.34);
+        const galleryFocus = clamp(p / 0.5);
+        const smoothFocus = clamp((p - 0.2) / 0.65);
 
         if (rigRef.current) {
             const side = isMobile ? 0.46 : 1;
-            const serviceFocus = clamp((p - 0.42) / 0.28);
             rigRef.current.position.x = mix(1.92 * side, -1.12 * side, galleryFocus) + mix(0, 1.45 * side, exit);
-            rigRef.current.position.y = mix(-0.1, 0.64, studioFocus) + sectionPulse * (isMobile ? 0.025 : 0.055) + mix(0, 0.86, exit);
-            rigRef.current.position.z = mix(-1.1, -1.65, serviceFocus);
-            rigRef.current.rotation.x = mix(-0.08, 0.18, studioFocus) + sectionPulse * 0.012;
+            rigRef.current.position.y = mix(-0.1, 0.32, smoothFocus) + sectionPulse * (isMobile ? 0.025 : 0.055) + mix(0, 0.86, exit);
+            rigRef.current.position.z = mix(-1.1, -1.4, smoothFocus);
+            rigRef.current.rotation.x = mix(-0.08, 0.15, smoothFocus) + sectionPulse * 0.012;
             rigRef.current.rotation.y = mix(-0.38, 0.82, galleryFocus) + mix(0, 0.64, exit);
             rigRef.current.rotation.z = mix(0.04, -0.18, p) + mix(0, 0.38, exit);
-            const scale = isMobile ? mix(0.42, 0.7, galleryFocus) : mix(0.52, 0.84, galleryFocus);
+            const scale = isMobile ? mix(0.42, 0.72, galleryFocus) : mix(0.52, 0.88, galleryFocus);
             rigRef.current.scale.setScalar(scale * mix(1, 0.76, exit));
         }
 
@@ -281,11 +227,7 @@ const CameraRig = ({
 
     return (
         <group ref={rigRef} aria-hidden="true">
-            <Suspense fallback={<ModernCameraFallback isMobile={isMobile} />}>
-                <ModelErrorBoundary fallback={<ModernCameraFallback isMobile={isMobile} />}>
-                    <Model />
-                </ModelErrorBoundary>
-            </Suspense>
+            <ModernCameraFallback isMobile={isMobile} />
 
             <group ref={lensRef} position={[0.06, 0.06, 0.74]} rotation={[Math.PI / 2, 0, 0]}>
                 <mesh position={[0, 0.5, 0]}>
@@ -324,9 +266,51 @@ const ScrollCameraScene = ({ scrollProgress, isMobile, isReducedMotion }: Scroll
 
 const ScrollCameraExperience = ({ scrollProgress }: ScrollCameraExperienceProps) => {
     const { isMobile, isReducedMotion } = useMotionSettings();
+    const [canvasKey, setCanvasKey] = useState(0);
+    const contextLossTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const dpr: [number, number] = isMobile ? [1, 1.25] : [1, 1.65];
     const pageExitThreshold = 0.90;
     const containerOpacity = scrollProgress > pageExitThreshold ? 1 - (scrollProgress - pageExitThreshold) / 0.10 : 1;
+
+    const handleContextCreated = (state: any) => {
+        const gl = state.gl.domElement;
+
+        const handleContextLoss = (event: Event) => {
+            event.preventDefault();
+            console.warn('WebGL context lost, attempting recovery...');
+
+            if (contextLossTimeoutRef.current) clearTimeout(contextLossTimeoutRef.current);
+            contextLossTimeoutRef.current = setTimeout(() => {
+                console.warn('Context restoration timeout, forcing canvas remount');
+                setCanvasKey(k => k + 1);
+            }, 2500);
+        };
+
+        const handleContextRestored = () => {
+            if (contextLossTimeoutRef.current) clearTimeout(contextLossTimeoutRef.current);
+            console.log('WebGL context restored');
+        };
+
+        gl.addEventListener('webglcontextlost', handleContextLoss);
+        gl.addEventListener('webglcontextrestored', handleContextRestored);
+
+        return () => {
+            gl.removeEventListener('webglcontextlost', handleContextLoss);
+            gl.removeEventListener('webglcontextrestored', handleContextRestored);
+            if (contextLossTimeoutRef.current) clearTimeout(contextLossTimeoutRef.current);
+        };
+    };
+
+    useEffect(() => {
+        return () => {
+            if (contextLossTimeoutRef.current) clearTimeout(contextLossTimeoutRef.current);
+        };
+    }, []);
+
+    if (scrollProgress >= 1) {
+        return null;
+    }
 
     return (
         <div
@@ -335,10 +319,20 @@ const ScrollCameraExperience = ({ scrollProgress }: ScrollCameraExperienceProps)
             style={{ opacity: containerOpacity }}
         >
             <Canvas
+                key={canvasKey}
                 camera={{ position: [0, 0, isMobile ? 5.8 : 4.8], fov: isMobile ? 42 : 38 }}
                 dpr={dpr}
-                gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }}
+                gl={{
+                    antialias: !isMobile,
+                    alpha: true,
+                    powerPreference: 'high-performance',
+                    preserveDrawingBuffer: true,
+                    failIfMajorPerformanceCaveat: false,
+                    stencil: false,
+                    depth: true
+                }}
                 performance={{ min: 0.55 }}
+                onCreated={handleContextCreated}
             >
                 <ScrollCameraScene scrollProgress={scrollProgress} isMobile={isMobile} isReducedMotion={isReducedMotion} />
             </Canvas>

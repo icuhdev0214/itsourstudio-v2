@@ -1552,6 +1552,7 @@ const AdminDashboard = () => {
                                                     <select
                                                         value={booking.status}
                                                         onChange={(e) => handleStatusChange(booking.id, e.target.value)}
+                                                        onClick={(e) => e.stopPropagation()}
                                                         className={`status-badge status-${booking.status}`}
                                                     >
                                                         <option value="pending">Pending</option>
