@@ -46,13 +46,16 @@
   --surface-inverse: #0f1419;
   --text-on-dark: #ffffff;
   --muted-on-dark: rgba(255, 255, 255, 0.85);
-  --color-section-dark: #f8f9fa;
-  --color-section-dark-2: #f0f2f4;
+  /* Dark accent bands (CTA, film strip, footer, gallery rail).
+     These are deliberate dark sections on the light page — their text is
+     --text-on-dark, so they must stay genuinely dark or that text vanishes. */
+  --color-section-dark: #12181c;
+  --color-section-dark-2: #1d2b25;
   --color-hero-wash: rgba(45, 90, 74, 0.06);
-  --color-hero-scrim: rgba(15, 20, 25, 0.3);
-  --color-hero-scrim-strong: rgba(15, 20, 25, 0.5);
-  --color-gallery-bg: #ffffff;
-  --color-gallery-bg-2: #f8f9fa;
+  --color-hero-scrim: rgba(12, 16, 20, 0.62);
+  --color-hero-scrim-strong: rgba(12, 16, 20, 0.82);
+  --color-gallery-bg: #12181c;
+  --color-gallery-bg-2: #1d2b25;
   --page-gradient:
     radial-gradient(circle at 12% 8%, rgba(99, 117, 104, 0.18), transparent 28rem),
     radial-gradient(circle at 88% 16%, rgba(184, 111, 96, 0.12), transparent 24rem),
@@ -72,7 +75,11 @@
   --disabled-text: rgba(104, 112, 107, 0.56);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--studio-sage), var(--studio-clay));
+  /* Tonal terracotta gradient. The previous sage->clay ramp crossed from
+     green to orange and went muddy through the middle; staying inside one
+     hue family reads as a single confident brand colour and matches the
+     terracotta already used for icons, prices and links. */
+  --gradient-primary: linear-gradient(135deg, #d4644d, #ad4530);
   --gradient-overlay: linear-gradient(180deg, rgba(17, 23, 25, 0.78), rgba(99, 117, 104, 0.46));
   --gradient-glass: linear-gradient(135deg, rgba(255, 253, 248, 0.18), rgba(255, 253, 248, 0.07));
 
@@ -114,79 +121,6 @@
   --z-modal-backdrop: 1040;
   --z-modal: 1050;
   --z-tooltip: 1060;
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --studio-ink: #f5f3f0;
-  --studio-graphite: #d4d8db;
-  --studio-ivory: #0d1117;
-  --studio-porcelain: #161b22;
-  --studio-sage: #6fb896;
-  --studio-sage-soft: #1f3728;
-  --studio-clay: #f08f7e;
-  --studio-clay-soft: #3d2820;
-  --studio-champagne: #d4a882;
-  --studio-mist: #21262d;
-  --studio-muted: #8b949e;
-  --color-dark: var(--studio-ink);
-  --color-brown: var(--studio-sage);
-  --color-terracotta: var(--studio-clay);
-  --color-copper: var(--studio-sage);
-  --color-ink: #080b0c;
-  --color-gray: var(--studio-muted);
-  --color-cream: var(--studio-ivory);
-  --color-warm-white: var(--studio-porcelain);
-  --color-sage: var(--studio-sage);
-  --color-rose: var(--studio-clay);
-  --color-mist: var(--studio-mist);
-  --color-champagne: var(--studio-champagne);
-  --color-primary: var(--studio-sage);
-  --color-secondary: var(--studio-clay);
-  --color-background: #0e1214;
-  --color-surface: #171d20;
-  --color-text: #f5f0e7;
-  --color-text-light: #aeb7b1;
-  --color-border: rgba(245, 240, 231, 0.14);
-  --color-soft-panel: rgba(23, 29, 32, 0.82);
-  --surface-elevated: rgba(26, 33, 36, 0.94);
-  --surface-subtle: #20282b;
-  --surface-input: #111719;
-  --surface-inverse: #f6f3ec;
-  --text-on-dark: #fff8ed;
-  --muted-on-dark: rgba(255, 248, 237, 0.76);
-  --color-section-dark: #080b0c;
-  --color-section-dark-2: #111719;
-  --color-hero-wash: rgba(166, 183, 169, 0.18);
-  --color-hero-scrim: rgba(8, 11, 12, 0.74);
-  --color-hero-scrim-strong: rgba(8, 11, 12, 0.94);
-  --color-gallery-bg: #080b0c;
-  --color-gallery-bg-2: #111719;
-  --page-gradient:
-    radial-gradient(circle at 12% 8%, rgba(166, 183, 169, 0.12), transparent 28rem),
-    radial-gradient(circle at 88% 16%, rgba(217, 150, 137, 0.1), transparent 24rem),
-    linear-gradient(180deg, #171d20 0%, #0e1214 48%, #151b1e 100%);
-  --section-gradient:
-    radial-gradient(circle at 10% 18%, rgba(217, 150, 137, 0.12), transparent 26rem),
-    radial-gradient(circle at 86% 18%, rgba(166, 183, 169, 0.1), transparent 24rem),
-    linear-gradient(180deg, #151b1e 0%, #0e1214 100%);
-  --gallery-gradient:
-    radial-gradient(circle at 15% 8%, rgba(200, 179, 143, 0.14), transparent 24rem),
-    radial-gradient(circle at 86% 82%, rgba(217, 150, 137, 0.12), transparent 26rem),
-    linear-gradient(180deg, var(--color-gallery-bg-2) 0%, var(--color-gallery-bg) 100%);
-  --nav-bg-scrolled: rgba(17, 23, 25, 0.9);
-  --nav-text-scrolled: var(--color-text);
-  --nav-border: rgba(245, 240, 231, 0.12);
-  --focus-ring: rgba(217, 150, 137, 0.28);
-  --disabled-text: rgba(174, 183, 177, 0.52);
-  --gradient-primary: linear-gradient(135deg, var(--studio-sage), var(--studio-clay));
-  --gradient-overlay: linear-gradient(180deg, rgba(8, 11, 12, 0.84), rgba(17, 23, 25, 0.6));
-  --gradient-glass: linear-gradient(135deg, rgba(245, 240, 231, 0.12), rgba(245, 240, 231, 0.04));
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.24);
-  --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 34px rgba(0, 0, 0, 0.34);
-  --shadow-xl: 0 18px 54px rgba(0, 0, 0, 0.44);
-  --shadow-studio: 0 26px 70px rgba(0, 0, 0, 0.42);
 }
 
 /* ===================================
@@ -4380,7 +4314,9 @@ p {
 .home-page .hero-content {
   width: min(1180px, calc(100% - 2rem));
   max-width: 1180px;
-  padding: var(--spacing-xl) 0;
+  /* Extra top padding clears the fixed navbar — without it the kicker badge
+     rides up underneath the logo. */
+  padding: calc(var(--spacing-xl) + 5rem) 0 var(--spacing-xl);
 }
 
 .home-page .parallax-content {
@@ -5501,10 +5437,6 @@ section {
   transition: background 0.3s ease;
 }
 
-:root[data-theme='dark'] .service-fullscreen.alt-bg {
-  background: linear-gradient(180deg, #0f1517 0%, #0a0e10 100%);
-}
-
 .service-split {
   display: flex;
   width: 100%;
@@ -6464,13 +6396,6 @@ section {
   transition: background 0.3s ease;
 }
 
-:root[data-theme='dark'] .gallery-page {
-  background:
-    radial-gradient(circle at 14% 12%, rgba(217, 150, 137, 0.2), transparent 28rem),
-    radial-gradient(circle at 88% 70%, rgba(131, 162, 146, 0.22), transparent 30rem),
-    linear-gradient(180deg, #0a0e10 0%, #0f1517 48%, #080b0d 100%);
-}
-
 .page-header {
   padding: 160px 0 var(--spacing-3xl);
   text-align: center;
@@ -6488,10 +6413,6 @@ section {
   z-index: 0;
   backdrop-filter: blur(2px);
   transition: background 0.3s ease;
-}
-
-:root[data-theme='dark'] .page-header::before {
-  background: linear-gradient(135deg, rgba(80, 50, 40, 0.95), rgba(20, 15, 12, 0.98));
 }
 
 .page-header .container {
@@ -6553,12 +6474,6 @@ section {
   transition: all var(--transition-base);
 }
 
-:root[data-theme='dark'] .filter-btn {
-  background: rgba(255, 253, 248, 0.08);
-  border: 2px solid rgba(255, 248, 237, 0.2);
-  color: var(--text-on-dark);
-}
-
 .filter-btn::before {
   content: '';
   position: absolute;
@@ -6594,25 +6509,6 @@ section {
 .filter-btn.active:hover {
   background: var(--color-brown);
   box-shadow: 0 6px 20px rgba(191, 106, 57, 0.6);
-}
-
-:root[data-theme='dark'] .filter-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(212, 191, 161, 0.2);
-  border-color: rgba(255, 248, 237, 0.4);
-  background: rgba(255, 253, 248, 0.14);
-}
-
-:root[data-theme='dark'] .filter-btn.active {
-  background: linear-gradient(135deg, rgba(212, 191, 161, 0.25), rgba(255, 171, 117, 0.15));
-  color: var(--text-on-dark);
-  border-color: rgba(212, 191, 161, 0.5);
-  box-shadow: 0 4px 14px rgba(212, 191, 161, 0.2);
-}
-
-:root[data-theme='dark'] .filter-btn.active:hover {
-  background: linear-gradient(135deg, rgba(212, 191, 161, 0.3), rgba(255, 171, 117, 0.2));
-  box-shadow: 0 6px 20px rgba(212, 191, 161, 0.3);
 }
 
 /* Gallery Grid Layout */
@@ -7483,6 +7379,16 @@ section {
   transform: translateY(-1px);
 }
 
+/* Submit button: give it breathing room from the textarea and a
+   comfortable, balanced hit area rather than the cramped default. */
+.contact-form button[type='submit'] {
+  margin-top: 0.5rem;
+  padding: 1rem 2.5rem;
+  min-height: 52px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
 /* Contact Info */
 .contact-info-wrapper {
   display: flex;
@@ -7554,21 +7460,33 @@ section {
 .social-links {
   display: flex;
   gap: var(--spacing-sm);
+  align-items: center;
 }
 
+/* Circular icon buttons — uniform size keeps them aligned regardless of
+   platform name length, and matches the icon language used above. */
 .social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   color: var(--color-terracotta);
   text-decoration: none;
-  font-size: 0.9rem;
   border: 1px solid var(--color-terracotta);
-  padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: 50%;
   transition: all 0.3s ease;
+}
+
+.social-link svg {
+  display: block;
 }
 
 .social-link:hover {
   background: var(--color-terracotta);
   color: white;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
@@ -8301,10 +8219,6 @@ section {
   filter: none;
 }
 
-:root[data-theme='dark'] .navbar.scrolled .logo-image {
-  filter: brightness(0) invert(1);
-}
-
 .theme-toggle {
   width: 48px;
   min-width: 48px;
@@ -8342,11 +8256,6 @@ section {
   transition: transform 0.25s cubic-bezier(0.2, 1, 0.2, 1), color 0.25s ease, background 0.25s ease;
 }
 
-:root[data-theme='dark'] .theme-toggle-thumb {
-  color: var(--studio-champagne);
-  transform: translateX(20px);
-}
-
 .navbar.scrolled .theme-toggle-track,
 .navbar.menu-open .theme-toggle-track {
   background: var(--surface-subtle);
@@ -8370,10 +8279,6 @@ section {
 
 .navbar.menu-open .logo-image {
   filter: none;
-}
-
-:root[data-theme='dark'] .navbar.menu-open .logo-image {
-  filter: brightness(0) invert(1);
 }
 
 .btn-primary,
@@ -8483,12 +8388,6 @@ section {
     radial-gradient(circle at 85% 18%, rgba(255, 248, 237, 0.24), transparent 12rem),
     linear-gradient(145deg, #758675, #8f655a 78%);
   color: var(--text-on-dark);
-}
-
-:root[data-theme='dark'] .service-card.featured {
-  background:
-    radial-gradient(circle at 85% 18%, rgba(255, 248, 237, 0.16), transparent 12rem),
-    linear-gradient(145deg, #56685c, #8f655a 82%);
 }
 
 .service-card.featured h3,
@@ -8698,4 +8597,21 @@ h6 {
   [class*="animate"] {
     animation: none !important;
   }
+}
+
+/* ===================================
+   HERO TEXT SITS ON A DARK PHOTO
+   ===================================
+   The hero always renders over a darkened studio image, so its copy must
+   stay light in BOTH themes. Without this the cream token inverts to near
+   black in dark mode and the subtitle disappears into the photo. */
+
+.home-page .hero-description,
+.home-page .hero-kicker {
+  color: rgba(255, 248, 240, 0.92);
+}
+
+.home-page .hero-eyebrow,
+.home-page .hero-note-label {
+  color: rgba(255, 248, 240, 0.72);
 }

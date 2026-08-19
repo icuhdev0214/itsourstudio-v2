@@ -49,3 +49,5 @@ public/gallery-uploads/*
 # Claude Code local files
 .claude/
 .mcp.json
+.agents/
+skills-lock.json

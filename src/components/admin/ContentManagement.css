@@ -280,6 +280,15 @@ input:checked+.slider:before {
     border-top: 1px solid #f1f5f9;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Keep action labels on one line so paired buttons stay the same height
+   and read as an aligned row. */
+.card-actions .btn {
+    white-space: nowrap;
 }
 
 /* Backdrops Specifics */
