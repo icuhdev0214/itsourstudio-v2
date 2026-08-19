@@ -31,7 +31,7 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.dataset.theme = 'light';
     }, []);
 
     const toggleMobileMenu = () => {
