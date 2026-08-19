@@ -565,6 +565,134 @@ app.post('/send-email', emailLimiter, async (req, res) => {
 
 // --- Reminder System (Cron Job) ---
 
+// Vercel Cron Endpoint
+app.get('/api/cron/reminders', async (req, res) => {
+    // Simple auth check - Vercel crons don't have auth headers by default
+    // For production, you might want to add a secret header verification
+    console.log('🔔 Cron reminder check triggered');
+
+    try {
+        // 1. Calculate Target Time (Now + 30 mins) in Manila Time
+        const now = new Date();
+        const targetTime = new Date(now.getTime() + 30 * 60000); // + 30 minutes
+
+        const formatterDate = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        const formatterTime = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Manila',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        const targetDateStr = formatterDate.format(targetTime); // YYYY-MM-DD
+        const targetTimeStr = formatterTime.format(targetTime); // HH:mm
+
+        const q = query(
+            collection(db, 'bookings'),
+            where('date', '==', targetDateStr),
+            where('time', '==', targetTimeStr),
+            where('status', '==', 'confirmed')
+        );
+
+        const snapshot = await getDocs(q);
+
+        const reminderTemplate = await loadServerEmailTemplate('reminder');
+        let sentCount = 0;
+
+        for (const docSnap of snapshot.docs) {
+            const booking = docSnap.data();
+            if (booking.reminderSentAt) {
+                console.log(`⏭️ Reminder already sent for ${booking.fullName}`);
+                continue;
+            }
+
+            console.log(`📧 Sending reminder for ${booking.fullName} (${booking.time})`);
+
+            const reminderBooking = {
+                referenceNumber: booking.referenceNumber,
+                name: booking.fullName,
+                email: booking.email,
+                package: booking.package,
+                selectedAddOns: booking.selectedAddOns || [],
+                addOnsAmount: booking.addOnsAmount || 0,
+                total_amount: booking.totalPrice,
+                downpayment: booking.requiredDownpayment || booking.downpayment || booking.downpaymentAmount || 0,
+                remainingBalance: booking.remainingBalance || 0,
+                date: booking.date,
+                time_start: booking.time
+            };
+
+            const customerSubject = reminderTemplate?.subject
+                ? applyEmailTemplate(reminderTemplate.subject, reminderBooking)
+                : `Reminder: Your Session is in 30 Minutes!`;
+            const customerHtml = buildTemplateEmail({
+                template: reminderTemplate,
+                booking: reminderBooking,
+                style: localEmailStyle,
+                title: 'Session Reminder'
+            });
+
+            // Email to Admin
+            const adminHtml = `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                <h2 style="color: #c2410c;">🔔 Upcoming Session Alert</h2>
+                <p><strong>30 Minutes to go!</strong></p>
+                <ul>
+                    <li><strong>Client:</strong> ${booking.fullName}</li>
+                    <li><strong>Time:</strong> ${booking.time}</li>
+                    <li><strong>Package:</strong> ${booking.package}</li>
+                    <li><strong>Ref:</strong> ${booking.referenceNumber}</li>
+                </ul>
+            </div>
+            `;
+
+            try {
+                // Send Customer Email
+                await transporter.sendMail({
+                    from: process.env.EMAIL_USER,
+                    to: booking.email,
+                    subject: customerSubject,
+                    html: customerHtml
+                });
+
+                // Send Admin Email
+                await transporter.sendMail({
+                    from: process.env.EMAIL_USER,
+                    to: process.env.BUSINESS_EMAIL || process.env.EMAIL_USER,
+                    subject: `🔔 30m Reminder: ${booking.fullName} @ ${booking.time}`,
+                    html: adminHtml
+                });
+
+                await updateDoc(doc(db, 'bookings', docSnap.id), {
+                    reminderSentAt: new Date().toISOString()
+                });
+
+                sentCount++;
+            } catch (emailError) {
+                console.error(`❌ Failed to send reminder for ${booking.fullName}:`, emailError.message);
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Reminder check completed. Sent ${sentCount} reminder(s).`,
+            targetDate: targetDateStr,
+            targetTime: targetTimeStr
+        });
+    } catch (error) {
+        console.error('❌ Error in reminder cron endpoint:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 // Firebase Config (Matches client config for simplicity in this hybrid setup)
 const requiredFirebaseEnv = [
     'VITE_FIREBASE_API_KEY',

@@ -45,3 +45,7 @@ public/POP/*
 !public/POP/.gitkeep
 public/gallery-uploads/*
 !public/gallery-uploads/.gitkeep
+
+# Claude Code local files
+.claude/
+.mcp.json

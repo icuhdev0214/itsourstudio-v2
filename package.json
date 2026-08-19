@@ -45,7 +45,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
     "firebase": "^12.6.0",
-    "firebase-admin": "^13.6.0",
+    "firebase-admin": "^13.10.0",
     "lucide-react": "^0.562.0",
     "multer": "^2.0.2",
     "node-cron": "^4.2.1",
