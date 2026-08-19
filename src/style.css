@@ -3,19 +3,19 @@
    =================================== */
 
 :root {
-  /* Clean Light Mode Palette */
+  /* Premium Light Mode Palette */
   color-scheme: light;
-  --studio-ink: #0f1419;
+  --studio-ink: #0a0e12;
   --studio-graphite: #2f3638;
   --studio-ivory: #ffffff;
-  --studio-porcelain: #fafbfc;
-  --studio-sage: #2d5a4a;
-  --studio-sage-soft: #f0f5f3;
-  --studio-clay: #c85a45;
-  --studio-clay-soft: #fef3f0;
-  --studio-champagne: #d4bfa1;
-  --studio-mist: #f3f5f4;
-  --studio-muted: #6b7578;
+  --studio-porcelain: #f9fafb;
+  --studio-sage: #1e4d3e;
+  --studio-sage-soft: #ecf3f0;
+  --studio-clay: #d4644d;
+  --studio-clay-soft: #fdf1ed;
+  --studio-champagne: #c8a882;
+  --studio-mist: #f0f3f5;
+  --studio-muted: #718086;
 
   /* Compatibility tokens */
   --color-dark: var(--studio-ink);
@@ -118,17 +118,17 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --studio-ink: #f5f0e7;
-  --studio-graphite: #d8ded8;
-  --studio-ivory: #0e1214;
-  --studio-porcelain: #171d20;
-  --studio-sage: #a6b7a9;
-  --studio-sage-soft: #27342d;
-  --studio-clay: #d99689;
-  --studio-clay-soft: #392923;
-  --studio-champagne: #c8b38f;
-  --studio-mist: #242d2f;
-  --studio-muted: #aeb7b1;
+  --studio-ink: #f5f3f0;
+  --studio-graphite: #d4d8db;
+  --studio-ivory: #0d1117;
+  --studio-porcelain: #161b22;
+  --studio-sage: #6fb896;
+  --studio-sage-soft: #1f3728;
+  --studio-clay: #f08f7e;
+  --studio-clay-soft: #3d2820;
+  --studio-champagne: #d4a882;
+  --studio-mist: #21262d;
+  --studio-muted: #8b949e;
   --color-dark: var(--studio-ink);
   --color-brown: var(--studio-sage);
   --color-terracotta: var(--studio-clay);

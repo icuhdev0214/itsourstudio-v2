@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Moon, Sun } from 'lucide-react';
 
 import { useBooking } from '../context/BookingContext';
 import PromoBanner from './PromoBanner';
@@ -30,9 +31,21 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
     useEffect(() => {
-        document.documentElement.dataset.theme = 'light';
+        const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+        const initialTheme = savedTheme || 'light';
+        setTheme(initialTheme);
+        document.documentElement.dataset.theme = initialTheme;
     }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        document.documentElement.dataset.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+    };
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen);
@@ -159,6 +172,21 @@ const Navbar = () => {
                         </Link>
                     )}
 
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: 'var(--color-text)'
+                        }}
+                        title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                    >
+                        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                    </button>
                     <button className="btn btn-primary" onClick={() => { openBooking(); setMobileMenuOpen(false); }}>Book Now</button>
                 </div>
                 <button className={`mobile-menu-btn ${mobileMenuOpen ? 'active' : ''}`} id="mobileMenuBtn" onClick={toggleMobileMenu}>
