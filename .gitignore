@@ -51,3 +51,6 @@ public/gallery-uploads/*
 .mcp.json
 .agents/
 skills-lock.json
+
+# Claude Design handoff bundles (source lives in the design project)
+*-handoff.zip
