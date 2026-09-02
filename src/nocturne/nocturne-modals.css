@@ -2,10 +2,10 @@
  * Nocturne skin for the shared modals — booking, report, feedback.
  *
  * Those modals are styled by src/components/ModalStyles.css, which hardcodes a
- * light palette (white cards, slate borders, slate text) rather than reading
- * tokens. The admin dashboard shares several of those class names, so this is
- * an override layer scoped to `.nocturne-root` instead of an edit to the
- * source file — the admin keeps its light modals until it is themed too.
+ * cool slate-and-white palette rather than reading tokens. The admin dashboard
+ * shares several of those class names, so this is an override layer scoped to
+ * `.nocturne-root` instead of an edit to the source file — the admin keeps its
+ * own styling until it is themed too.
  *
  * Structure only where necessary: this restates colour, not layout.
  */
@@ -75,7 +75,7 @@
 }
 
 .nocturne-root .modal-overlay {
-    background: color-mix(in srgb, #0b0c14 74%, transparent);
+    background: color-mix(in srgb, #2e1c14 74%, transparent);
 }
 
 /* ── selected / hover states ────────────────────────────────────────────── */
@@ -99,7 +99,7 @@
 .nocturne-root .add-on-option.selected,
 .nocturne-root .time-slot-btn.selected,
 .nocturne-root .time-slot-btn.active {
-    background: var(--color-accent-900);
+    background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
     border-color: var(--color-accent);
     box-shadow: none;
 }
@@ -115,8 +115,8 @@
 }
 
 .nocturne-root .step-circle {
-    border-color: var(--color-neutral-700);
-    color: var(--color-neutral-400);
+    border-color: var(--role-quiet-border);
+    color: var(--role-faint);
 }
 
 /* ── type ───────────────────────────────────────────────────────────────── */
@@ -165,18 +165,18 @@
 .nocturne-root .popup-close-btn,
 .nocturne-root .calendar-header button,
 .nocturne-root .date-input-trigger .chevron-icon {
-    color: var(--color-neutral-400);
+    color: var(--role-faint);
 }
 
 .nocturne-root .modal-content input::placeholder,
 .nocturne-root .modal-content textarea::placeholder,
 .nocturne-root .date-input-trigger .date-text:empty::before {
-    color: var(--color-neutral-600);
+    color: var(--color-neutral-500);
 }
 
 .nocturne-root .package-price,
 .nocturne-root .summary-row.amount-now strong {
-    color: var(--color-accent-300);
+    color: var(--role-accent-text);
 }
 
 /* ── calendar ───────────────────────────────────────────────────────────── */
@@ -192,7 +192,7 @@
 .nocturne-root .calendar-day.disabled,
 .nocturne-root .calendar-day.disabled:hover {
     background: transparent;
-    color: var(--color-neutral-700);
+    color: var(--role-faint);
 }
 
 .nocturne-root .calendar-day.selected {
@@ -213,7 +213,7 @@
 .nocturne-root .time-slot-btn:disabled,
 .nocturne-root .pagination-btn:disabled {
     background: transparent;
-    color: var(--color-neutral-700);
+    color: var(--color-neutral-400);
     border-color: var(--color-divider);
 }
 

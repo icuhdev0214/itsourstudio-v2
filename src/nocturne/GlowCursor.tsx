@@ -12,6 +12,11 @@ import { Renderer, Program, Mesh, Triangle } from 'ogl';
  * This hides nothing and captures no pointer events — it is a `pointer-events:
  * none` overlay that draws *alongside* the native cursor. Render it only
  * behind a capability gate; see useEffectsEnabled.
+ *
+ * Blends `normal`, not `screen`: screen keeps the lighter of the two layers,
+ * which is a no-op against a near-white ground. Intensity and opacity are
+ * pulled back to suit — on cream the trail wants to read as a soft warm
+ * smudge, where on the old dark ground it could carry a bright glow.
  */
 
 const MAX_POINTS = 64;
@@ -160,23 +165,23 @@ export interface GlowCursorProps {
 
 /** Defaults are the values the Nocturne design passes. */
 const GlowCursor = ({
-    color = '#67E8F9',
-    secondaryColor = '#A78BFA',
+    color = '#c49a6c',
+    secondaryColor = '#8b5e3c',
     trailLength = 40,
     trailWidth = 8,
     trailTaper = 0.8,
     followSpeed = 0.16,
-    glowIntensity = 1.9,
+    glowIntensity = 1.2,
     glowSpread = 1.2,
     hotspot = 0.65,
     brightness = 1.25,
-    opacity = 1,
+    opacity = 0.55,
     pulseSpeed = 1.1,
     noiseStrength = 0.035,
     idleFade = true,
     idleTimeout = 700,
     fadeDuration = 900,
-    blendMode = 'screen',
+    blendMode = 'normal',
     maxDevicePixelRatio = 1.5,
 }: GlowCursorProps) => {
     const containerRef = useRef<HTMLDivElement>(null);

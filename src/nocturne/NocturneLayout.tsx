@@ -46,7 +46,7 @@ const NocturneNav = () => {
                 onClick={() => go('/')}
                 aria-label="it's ouR Studio — home"
             >
-                <img src="/logo/LOGO_var2.png" alt="it's ouR Studio" />
+                <img src="/logo/LOGO_var1.png" alt="it's ouR Studio" />
             </button>
 
             {NAV_LINKS.map((link) => (

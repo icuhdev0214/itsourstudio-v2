@@ -5,8 +5,9 @@ import { Renderer, Program, Mesh, Triangle } from 'ogl';
  * GradientWaves — React Bits raymarched wave field.
  *
  * Ported from the Claude Design handoff (`GradientWaves.jsx`). The shaders are
- * verbatim; the loader changed from an esm.sh side-load to a real `ogl` import,
- * and prop defaults are the values the Nocturne design passes.
+ * verbatim; the loader changed from an esm.sh side-load to a real `ogl` import.
+ * The colour defaults are the warm palette's — cream horizon, beige wave,
+ * caramel crest — so the field reads as a soft wash behind the hero copy.
  *
  * Render this only behind a capability gate — see useEffectsEnabled.
  */
@@ -164,9 +165,9 @@ export interface GradientWavesProps {
 
 /** Defaults are the values the Nocturne hero passes in the design source. */
 const GradientWaves = ({
-    horizonColor = '#161826',
-    waveColor = '#5d5294',
-    crestColor = '#9184d9',
+    horizonColor = '#f8f3ed',
+    waveColor = '#e8d8c8',
+    crestColor = '#c49a6c',
     speed = 0.4,
     amplitude = 2.5,
     waveScale = 0.6,

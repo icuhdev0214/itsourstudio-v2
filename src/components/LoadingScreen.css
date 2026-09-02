@@ -7,18 +7,18 @@
  * to this element, so nothing leaks into the light-mode admin, and matching
  * src/nocturne/tokens.css value for value.
  *
- * The ground is the hero's own base, lit by two soft accent blooms, so the
- * loader dissolves into the hero behind it rather than cutting to it.
+ * The ground is the hero's own cream base, lit by two soft beige blooms, so
+ * the loader dissolves into the hero behind it rather than cutting to it.
  */
 
 .loading-screen {
-    --ls-bg: #161826;
-    --ls-text: #e9e9ed;
-    --ls-accent: #9184d9;
-    --ls-accent-300: #d2cefd;
-    --ls-accent-700: #5d5294;
-    --ls-accent-800: #423a6a;
-    --ls-neutral-400: #b2b6ca;
+    --ls-bg: #f8f3ed;          /* Cream */
+    --ls-text: #3b2a24;        /* Dark Brown */
+    --ls-accent: #8b5e3c;      /* Medium Brown */
+    --ls-accent-300: #c49a6c;  /* Caramel */
+    --ls-accent-700: #e8d8c8;  /* Light Beige — the blooms, on a light ground */
+    --ls-accent-800: #f2e3d0;
+    --ls-neutral-400: #6a5238;
     --ls-font: 'Inter', system-ui, sans-serif;
 
     position: fixed;
@@ -29,7 +29,7 @@
     /* The glow comes from the two orbs below; this stays the flat hero ground,
        or the pair compounds into a ground far brighter than the hero the
        loader fades into. */
-    background: linear-gradient(var(--ls-bg), #1c1e30);
+    background: linear-gradient(var(--ls-bg), #fffdf9);
     color: var(--ls-text);
     display: flex;
     align-items: center;
@@ -137,13 +137,18 @@
     }
 }
 
+/* The wordmark asset is warm-white on transparent, so on a cream ground it
+   needs a ground of its own — the same brown the nav pill gives it. */
 .logo-container {
     width: 196px;
+    padding: 22px 26px;
+    border-radius: 14px;
+    background: var(--ls-accent);
     display: flex;
     align-items: center;
     justify-content: center;
     animation: logoFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 8px 26px rgba(145, 132, 217, 0.4));
+    filter: drop-shadow(0 10px 28px rgba(74, 44, 32, 0.22));
 }
 
 .loading-logo-image {
@@ -169,7 +174,7 @@
 .loading-bar-container {
     width: 200px;
     height: 3px;
-    background: color-mix(in srgb, var(--ls-text) 14%, transparent);
+    background: color-mix(in srgb, var(--ls-text) 12%, transparent);
     border-radius: 2px;
     margin: 0 auto 1.5rem;
     overflow: hidden;
@@ -181,8 +186,8 @@
     width: 55%;
     background: linear-gradient(90deg,
             transparent,
-            var(--ls-accent-300) 35%,
-            var(--ls-accent-300) 65%,
+            var(--ls-accent) 35%,
+            var(--ls-accent) 65%,
             transparent);
     border-radius: 2px;
     animation: loadingProgress 1.4s ease-in-out infinite;
@@ -230,7 +235,7 @@
     position: absolute;
     border-radius: 50%;
     filter: blur(90px);
-    opacity: 0.32;
+    opacity: 0.75;
     animation: orbFloat 8s ease-in-out infinite;
 }
 

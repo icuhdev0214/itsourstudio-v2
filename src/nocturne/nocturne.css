@@ -26,8 +26,8 @@
    not cover. Literal rather than tokenised: the tokens live inside
    `.nocturne-root`, and <body> is outside it. */
 body.nocturne-body {
-    background: #161826;
-    color-scheme: dark;
+    background: #f8f3ed;
+    color-scheme: light;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -138,7 +138,7 @@ body.nocturne-body {
 .nocturne-root .faq-icon,
 .nocturne-root .privacy-policy-page a,
 .nocturne-root .privacy-policy-page li::before {
-    color: var(--color-accent-300);
+    color: var(--role-accent-text);
 }
 
 .nocturne-root .faq-item:hover {
@@ -171,8 +171,8 @@ body.nocturne-body {
 .nocturne-root h6 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
 
 .nocturne-root p { margin: 0 0 var(--space-3); }
-.nocturne-root a { color: var(--color-accent-300); text-decoration: none; text-underline-offset: 3px; }
-.nocturne-root a:hover { color: var(--color-accent-600); }
+.nocturne-root a { color: var(--role-accent-text); text-decoration: none; text-underline-offset: 3px; }
+.nocturne-root a:hover { color: var(--role-accent-text-hover); }
 .nocturne-root img { display: block; max-width: 100%; }
 .nocturne-root figure { margin: 0; }
 
@@ -181,7 +181,11 @@ body.nocturne-body {
 .nocturne-root ::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
 
 .nocturne-root .text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
-.nocturne-root .lighten { mix-blend-mode: lighten; background-color: transparent; }
+/* A no-op on this palette. `lighten` keeps the lighter of the two layers,
+   which lifted photographs off the old dark ground but erases them against
+   cream, so images composite normally and the class is kept only so the
+   markup does not have to change. */
+.nocturne-root .lighten { mix-blend-mode: normal; background-color: transparent; }
 
 /* Rules fade to transparent at both ends instead of stopping cleanly — a
    Nocturne signature. The ramp is 48px an end (one deck baseline unit). */
@@ -237,7 +241,7 @@ body.nocturne-body {
     font-weight: var(--font-heading-weight);
     font-size: 14.5px;
     line-height: 1.2;
-    color: var(--color-accent-300);
+    color: var(--role-accent-text);
     background: transparent;
     border: 1px solid var(--color-accent);
     padding: 14px 28px;
@@ -250,11 +254,11 @@ body.nocturne-body {
 
 /* Quiet twin of .nx-pill.
 
-   The handoff hovered this to --color-accent-100 (#f5f4ff) while leaving the
-   label at --color-text (#e9e9ed) — near-white on near-white, so the label
-   disappeared on hover. Deliberate deviation: the hover is a text-tinted wash
-   with an accent edge, which keeps the label legible and still reads as the
-   quiet option next to .nx-pill. */
+   The handoff hovered this to the lightest accent step while leaving the label
+   at --color-text, which on its dark ground put near-white on near-white and
+   lost the label. Deliberate deviation, and one that still holds on this
+   palette: the hover is a text-tinted wash with an accent edge, legible on
+   either ground and still the quiet option next to .nx-pill. */
 .nocturne-root .nx-pill-quiet {
     color: var(--color-text);
     border: 1.5px solid var(--color-neutral-700);
@@ -262,7 +266,7 @@ body.nocturne-body {
 
 .nocturne-root .nx-pill-quiet:hover {
     background: color-mix(in srgb, var(--color-text) 8%, transparent);
-    border-color: var(--color-accent-300);
+    border-color: var(--color-accent);
 }
 
 .nocturne-root .nx-pill-lg { font-size: 15px; padding: 15px 30px; }
@@ -344,7 +348,7 @@ body.nocturne-body {
     padding: 6px 13px;
     border-radius: 999px;
     background: color-mix(in srgb, var(--color-accent) 14%, transparent);
-    color: var(--color-accent-200);
+    color: var(--color-accent-900);
 }
 
 .nocturne-root .nx-badge {
@@ -353,8 +357,8 @@ body.nocturne-body {
     font-size: 11.5px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
-    color: var(--color-accent-200);
+    background: var(--role-accent-band);
+    color: var(--role-on-accent-band);
     padding: 6px 12px;
     border-radius: 999px;
 }
@@ -463,7 +467,7 @@ body.nocturne-body {
     gap: 22px;
     padding: 9px 10px 9px 18px;
     border-radius: 999px;
-    background: color-mix(in srgb, #232532 88%, transparent);
+    background: color-mix(in srgb, #fffdf9 88%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: var(--shadow-md);
@@ -486,15 +490,15 @@ body.nocturne-body {
     cursor: pointer;
     font-size: 13.5px;
     padding: 6px 4px;
-    color: var(--color-neutral-300);
+    color: var(--role-muted);
     background: none;
     border: 0;
     font-family: inherit;
     transition: color 0.2s ease;
 }
 
-.nx-nav-link:hover { color: var(--color-accent-300); }
-.nx-nav-link.is-active { color: var(--color-accent-300); }
+.nx-nav-link:hover { color: var(--role-accent-text); }
+.nx-nav-link.is-active { color: var(--role-accent-text); }
 
 .nx-nav-toggle {
     display: none;
@@ -548,8 +552,8 @@ body.nocturne-body {
     gap: 8px;
     padding: 6px 14px;
     border-radius: 999px;
-    background: var(--color-accent-900);
-    color: var(--color-accent-300);
+    background: var(--role-accent-band);
+    color: var(--role-on-accent-band);
     font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -566,7 +570,7 @@ body.nocturne-body {
 .nx-hero-lede {
     font-size: 17px;
     line-height: 1.6;
-    color: var(--color-neutral-300);
+    color: var(--role-muted);
     max-width: 46ch;
     margin: 20px 0 0;
 }
@@ -575,7 +579,7 @@ body.nocturne-body {
 
 .nx-hero-stats { display: flex; flex-wrap: wrap; gap: 36px; margin-top: 42px; }
 .nx-hero-stat-value { font-family: var(--font-heading); font-size: 28px; }
-.nx-hero-stat-label { font-size: 12.5px; color: var(--color-neutral-400); }
+.nx-hero-stat-label { font-size: 12.5px; color: var(--role-faint); }
 
 /* — hero card stack — */
 .nx-stack {
@@ -593,7 +597,7 @@ body.nocturne-body {
     border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    border: 1px solid color-mix(in srgb, #e9e9ed 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
     background-size: cover;
     background-position: center 28%;
     transition: transform 0.7s cubic-bezier(0.16, 1.6, 0.3, 1);
@@ -603,7 +607,7 @@ body.nocturne-body {
     position: absolute;
     bottom: 4px;
     font-size: 12px;
-    color: var(--color-neutral-400);
+    color: var(--role-faint);
 }
 
 /* — about — */
@@ -638,7 +642,7 @@ body.nocturne-body {
     width: 126px;
     height: 126px;
     border-radius: 999px;
-    background: var(--color-accent-900);
+    background: var(--role-accent-band);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -646,7 +650,7 @@ body.nocturne-body {
     font-family: var(--font-heading);
     font-size: 14px;
     line-height: 1.2;
-    color: var(--color-accent-300);
+    color: var(--role-on-accent-band);
     animation: nx-floaty 6s ease-in-out infinite;
 }
 
@@ -655,7 +659,7 @@ body.nocturne-body {
 .nx-about-lede {
     font-size: 16.5px;
     line-height: 1.65;
-    color: var(--color-neutral-300);
+    color: var(--role-muted);
     margin: 18px 0 0;
     max-width: 52ch;
 }
@@ -676,7 +680,7 @@ body.nocturne-body {
 }
 
 .nx-about-card-title { font-family: var(--font-heading); font-size: 15px; }
-.nx-about-card-body { font-size: 13px; color: var(--color-neutral-400); margin-top: 5px; }
+.nx-about-card-body { font-size: 13px; color: var(--role-faint); margin-top: 5px; }
 
 /* — packages — */
 .nx-packages { padding: 100px 40px; }
@@ -694,7 +698,7 @@ body.nocturne-body {
 .nx-section-link {
     cursor: pointer;
     font-size: 14px;
-    color: var(--color-accent-300);
+    color: var(--role-accent-text);
     padding-bottom: 8px;
     background: none;
     border: 0;
@@ -727,19 +731,19 @@ body.nocturne-body {
 .nx-package-media .nx-badge { position: absolute; left: 14px; top: 14px; }
 .nx-package-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
 .nx-package-title { font-family: var(--font-heading); font-size: 20px; }
-.nx-package-duration { font-size: 13px; color: var(--color-neutral-400); margin-top: 4px; }
+.nx-package-duration { font-size: 13px; color: var(--role-faint); margin-top: 4px; }
 
 .nx-package-price {
     font-family: var(--font-heading);
     font-size: 30px;
-    color: var(--color-accent-300);
+    color: var(--role-accent-text);
     margin-top: 12px;
 }
 
 .nx-package-desc {
     font-size: 14px;
     line-height: 1.55;
-    color: var(--color-neutral-300);
+    color: var(--role-muted);
     margin-top: 8px;
 }
 
@@ -749,7 +753,7 @@ body.nocturne-body {
     padding: 18px 0 0;
     font-family: var(--font-heading);
     font-size: 14px;
-    color: var(--color-accent-300);
+    color: var(--role-accent-text);
     background: none;
     border: 0;
     text-align: left;
@@ -758,8 +762,8 @@ body.nocturne-body {
 /* — visit — */
 .nx-visit {
     padding: 90px 40px 100px;
-    background: var(--color-accent-900);
-    color: var(--color-accent-200);
+    background: var(--role-accent-band);
+    color: var(--role-on-accent-band);
 }
 
 .nx-visit-inner {
@@ -771,8 +775,8 @@ body.nocturne-body {
     align-items: center;
 }
 
-.nx-visit .nx-eyebrow { color: var(--color-accent-300); }
-.nx-visit h2 { font-size: 40px; line-height: 1.1; margin: 14px 0 0; color: var(--color-neutral-100); }
+.nx-visit .nx-eyebrow { color: var(--role-on-accent-band); }
+.nx-visit h2 { font-size: 40px; line-height: 1.1; margin: 14px 0 0; color: var(--role-on-accent-band); }
 
 .nx-visit-details {
     display: flex;
@@ -794,9 +798,24 @@ body.nocturne-body {
 
 .nx-visit-media img { width: 100%; height: 100%; object-fit: cover; }
 
+/* Everything inside the band sits on the accent, so the page-ground accent
+   colours — links, the pill's label and border — would be brown on brown. */
+.nx-visit a { color: var(--role-on-accent-band); text-decoration: underline; }
+.nx-visit a:hover { color: var(--color-accent-200); }
+
+.nx-visit .nx-pill {
+    color: var(--role-on-accent-band);
+    border-color: color-mix(in srgb, var(--role-on-accent-band) 55%, transparent);
+}
+
+.nx-visit .nx-pill:hover {
+    background: color-mix(in srgb, var(--role-on-accent-band) 16%, transparent);
+    border-color: var(--role-on-accent-band);
+}
+
 /* — footer — */
 .nx-footer {
-    background: var(--color-neutral-900);
+    background: var(--role-band);
     padding: 44px 40px;
     display: flex;
     justify-content: space-between;
@@ -804,11 +823,11 @@ body.nocturne-body {
     gap: 24px;
     flex-wrap: wrap;
     font-size: 13px;
-    color: var(--color-neutral-400);
+    color: var(--role-on-band);
 }
 
-.nx-footer a { color: var(--color-neutral-400); }
-.nx-footer a:hover { color: var(--color-accent-300); }
+.nx-footer a { color: var(--role-accent-text); }
+.nx-footer a:hover { color: var(--role-accent-text-hover); }
 
 .nx-footer-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 
@@ -817,12 +836,12 @@ body.nocturne-body {
     border: 0;
     padding: 0;
     font: inherit;
-    color: var(--color-neutral-400);
+    color: var(--role-faint);
     cursor: pointer;
     text-decoration: underline;
 }
 
-.nx-footer-btn:hover { color: var(--color-accent-300); }
+.nx-footer-btn:hover { color: var(--role-accent-text-hover); }
 
 /* ══════════════════════════════════════════════════════════════════════════
    4. Gallery — filters, 3D drift wall, lightbox
@@ -839,17 +858,17 @@ body.nocturne-body {
     padding: 10px 22px;
     border-radius: 999px;
     background: transparent;
-    color: var(--color-neutral-300);
-    border: 1.5px solid var(--color-neutral-700);
+    color: var(--role-muted);
+    border: 1.5px solid var(--role-quiet-border);
     font-family: inherit;
     transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
-.nx-filter:hover { border-color: var(--color-accent-300); color: var(--color-accent-300); }
+.nx-filter:hover { border-color: var(--color-accent); color: var(--role-accent-text); }
 
 .nx-filter.is-active {
-    background: var(--color-accent-800);
-    color: #fff;
+    background: var(--role-selected);
+    color: var(--role-on-selected);
     border-color: var(--color-accent);
 }
 
@@ -907,10 +926,10 @@ body.nocturne-body {
     inset: 9px;
     border-radius: 14px;
     overflow: hidden;
-    background-color: #0b0b12;
+    background-color: var(--color-neutral-300);
     background-size: cover;
     background-position: center;
-    opacity: 0.55;
+    opacity: 0.85;
     cursor: pointer;
     border: 0;
     padding: 0;
@@ -942,7 +961,7 @@ body.nocturne-body {
     aspect-ratio: 3 / 4;
     border-radius: 14px;
     overflow: hidden;
-    background-color: #0b0b12;
+    background-color: var(--color-neutral-300);
     background-size: cover;
     background-position: center;
     cursor: pointer;
@@ -962,7 +981,7 @@ body.nocturne-body {
     margin: 0 auto;
     padding: 80px 20px;
     text-align: center;
-    color: var(--color-neutral-400);
+    color: var(--role-faint);
 }
 
 /* — lightbox — */
@@ -970,7 +989,7 @@ body.nocturne-body {
     position: fixed;
     inset: 0;
     z-index: 95;
-    background: color-mix(in srgb, #0b0c14 93%, transparent);
+    background: var(--role-scrim);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -984,7 +1003,7 @@ body.nocturne-body {
     width: 52px;
     height: 52px;
     border-radius: 999px;
-    background: color-mix(in srgb, #e9e9ed 12%, transparent);
+    background: color-mix(in srgb, #fffdf9 14%, transparent);
     color: var(--color-neutral-100);
     display: flex;
     align-items: center;
@@ -994,7 +1013,7 @@ body.nocturne-body {
     border: 0;
 }
 
-.nx-lightbox-nav:hover { background: color-mix(in srgb, #e9e9ed 20%, transparent); }
+.nx-lightbox-nav:hover { background: color-mix(in srgb, #fffdf9 24%, transparent); }
 .nx-lightbox-prev { left: 34px; }
 .nx-lightbox-next { right: 34px; }
 
@@ -1005,7 +1024,7 @@ body.nocturne-body {
     width: 44px;
     height: 44px;
     border-radius: 999px;
-    background: color-mix(in srgb, #e9e9ed 12%, transparent);
+    background: color-mix(in srgb, #fffdf9 14%, transparent);
     color: var(--color-neutral-100);
     display: flex;
     align-items: center;
@@ -1015,7 +1034,7 @@ body.nocturne-body {
     border: 0;
 }
 
-.nx-lightbox-close:hover { background: color-mix(in srgb, #e9e9ed 20%, transparent); }
+.nx-lightbox-close:hover { background: color-mix(in srgb, #fffdf9 24%, transparent); }
 
 .nx-lightbox-figure {
     display: flex;
@@ -1060,7 +1079,7 @@ body.nocturne-body {
     background: transparent;
 }
 
-.nx-service-row.is-shaded { background: var(--color-neutral-900); }
+.nx-service-row.is-shaded { background: var(--role-band); }
 .nx-service-row.is-flipped .nx-service-info { order: 2; }
 .nx-service-row.is-flipped .nx-service-media { order: 1; }
 
@@ -1074,13 +1093,13 @@ body.nocturne-body {
     flex-wrap: wrap;
 }
 
-.nx-service-price { font-family: var(--font-heading); font-size: 34px; color: var(--color-accent-300); }
-.nx-service-duration { font-size: 14px; color: var(--color-neutral-400); }
+.nx-service-price { font-family: var(--font-heading); font-size: 34px; color: var(--role-accent-text); }
+.nx-service-duration { font-size: 14px; color: var(--role-faint); }
 
 .nx-service-desc {
     font-size: 15.5px;
     line-height: 1.6;
-    color: var(--color-neutral-300);
+    color: var(--role-muted);
     margin-top: 10px;
     max-width: 46ch;
 }
