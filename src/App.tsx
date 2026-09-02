@@ -1,10 +1,9 @@
 import { type ReactElement, useState, useEffect, useCallback, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import Gallery from './pages/Gallery';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import NocturneLayout from './nocturne/NocturneLayout';
+import NocturneHome from './pages/NocturneHome';
+import NocturneServices from './pages/NocturneServices';
+import NocturneGallery from './pages/NocturneGallery';
 import EmailTest from './pages/EmailTest';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import AdminDashboard from './pages/AdminDashboard';
@@ -43,11 +42,22 @@ import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
 import LoadingScreen from './components/LoadingScreen';
 
+/**
+ * The public site, in the Nocturne shell. Everything inside `.nocturne-root`
+ * picks up the dark tokens — including the booking modal and cookie banner,
+ * which are written against the legacy token names the shell bridges.
+ */
+const PublicLayout = () => (
+    <NocturneLayout>
+        <BackToTop />
+        <Outlet />
+        <CookieConsent />
+        <BookingModal />
+    </NocturneLayout>
+);
+
 const AppContent = ({ onRouteChange }: { onRouteChange: () => void }) => {
     const location = useLocation();
-    const isAdminRoute = location.pathname.startsWith('/admin');
-    const isBioLinksRoute = location.pathname === '/links';
-    const showNav = !isAdminRoute && !isBioLinksRoute;
     const prevPathnameRef = useRef(location.pathname);
 
     useEffect(() => {
@@ -62,23 +72,28 @@ const AppContent = ({ onRouteChange }: { onRouteChange: () => void }) => {
         <div className="app-container">
             <StructuredData />
             <ScrollToTop />
-            <ScrollToTop />
-            {showNav && <BackToTop />}
 
-            {showNav && <Navbar />}
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/gallery" element={<Gallery />} />
+                <Route element={<PublicLayout />}>
+                    <Route path="/" element={<NocturneHome />} />
+                    <Route path="/services" element={<NocturneServices />} />
+                    <Route path="/gallery" element={<NocturneGallery />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/patch-notes" element={<PatchNotes />} />
+
+                    {/* Redirects for hash links that might be interpreted as routes */}
+                    <Route path="/about" element={<Navigate to="/" replace state={{ scrollTo: 'about' }} />} />
+                    <Route path="/contact" element={<Navigate to="/" replace state={{ scrollTo: 'contact' }} />} />
+
+                    {/* Catch all - renders 404 page */}
+                    <Route path="*" element={<NotFound />} />
+                </Route>
+
+                {/* Standalone routes — their own chrome, no site nav */}
                 <Route path="/email-test" element={<EmailTest />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/faq" element={<FAQ />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/links" element={<BioLinks />} />
-
-                {/* Redirects for hash links that might be interpreted as routes */}
-                <Route path="/about" element={<Navigate to="/" replace state={{ scrollTo: 'about' }} />} />
-                <Route path="/contact" element={<Navigate to="/" replace state={{ scrollTo: 'contact' }} />} />
 
                 <Route
                     path="/admin"
@@ -88,16 +103,7 @@ const AppContent = ({ onRouteChange }: { onRouteChange: () => void }) => {
                         </ProtectedRoute>
                     }
                 />
-
-                <Route path="/patch-notes" element={<PatchNotes />} />
-
-                {/* Catch all - renders 404 page */}
-                <Route path="*" element={<NotFound />} />
             </Routes>
-
-            {showNav && <Footer />}
-            {showNav && <CookieConsent />}
-            <BookingModal />
         </div >
     );
 };

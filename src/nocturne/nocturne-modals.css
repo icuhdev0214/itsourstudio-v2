@@ -1,0 +1,250 @@
+/*
+ * Nocturne skin for the shared modals — booking, report, feedback.
+ *
+ * Those modals are styled by src/components/ModalStyles.css, which hardcodes a
+ * light palette (white cards, slate borders, slate text) rather than reading
+ * tokens. The admin dashboard shares several of those class names, so this is
+ * an override layer scoped to `.nocturne-root` instead of an edit to the
+ * source file — the admin keeps its light modals until it is themed too.
+ *
+ * Structure only where necessary: this restates colour, not layout.
+ */
+
+/* ── surfaces ───────────────────────────────────────────────────────────── */
+
+.nocturne-root .modal-content,
+.nocturne-root .modal-content.booking-modal,
+.nocturne-root .booking-modal-header,
+.nocturne-root .booking-content,
+.nocturne-root .booking-stepper,
+.nocturne-root .wizard-actions,
+.nocturne-root .modal-content.booking-modal .wizard-actions,
+.nocturne-root .custom-calendar,
+.nocturne-root .calendar-popup-content,
+.nocturne-root .time-selection-container,
+.nocturne-root .booking-summary-box,
+.nocturne-root .booking-summary-mini.updated,
+.nocturne-root .empty-state-box,
+.nocturne-root .payment-card-hero,
+.nocturne-root .qr-hero,
+.nocturne-root .payment-info-overlay,
+.nocturne-root .payment-qr-note,
+.nocturne-root .payment-step .upload-proof-box,
+.nocturne-root .preview-container,
+.nocturne-root .toast {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-divider);
+}
+
+/* One step up the ramp, so a card on a panel still reads as a card. */
+.nocturne-root .package-card,
+.nocturne-root .extension-card,
+.nocturne-root .add-on-option,
+.nocturne-root .form-group,
+.nocturne-root .form-group.date-group,
+.nocturne-root .form-group.extension-group,
+.nocturne-root .package-addons,
+.nocturne-root .add-ons-selector,
+.nocturne-root .upload-dropzone,
+.nocturne-root .dropzone-content,
+.nocturne-root .time-slot-btn,
+.nocturne-root .pagination-btn,
+.nocturne-root .modern-select,
+.nocturne-root .date-input-trigger,
+.nocturne-root .date-input-wrapper input,
+.nocturne-root .calendar-header button,
+.nocturne-root .step-circle,
+.nocturne-root .modal-close,
+.nocturne-root .popup-close-btn,
+.nocturne-root .copy-btn-mini,
+.nocturne-root .wizard-actions button.btn-secondary,
+.nocturne-root .modal-content.booking-modal .wizard-actions .btn-secondary,
+.nocturne-root .input-wrapper input,
+.nocturne-root .input-wrapper textarea,
+.nocturne-root .modal-content input[type='text'],
+.nocturne-root .modal-content input[type='email'],
+.nocturne-root .modal-content input[type='tel'],
+.nocturne-root .modal-content input[type='number'],
+.nocturne-root .modal-content input[type='date'],
+.nocturne-root .modal-content input[type='time'],
+.nocturne-root .modal-content textarea {
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    border-color: var(--color-divider);
+}
+
+.nocturne-root .modal-overlay {
+    background: color-mix(in srgb, #0b0c14 74%, transparent);
+}
+
+/* ── selected / hover states ────────────────────────────────────────────── */
+
+.nocturne-root .package-card:hover,
+.nocturne-root .extension-card:hover,
+.nocturne-root .add-on-option:hover,
+.nocturne-root .time-slot-btn:hover:not(:disabled),
+.nocturne-root .pagination-btn:hover:not(:disabled),
+.nocturne-root .modal-close:hover,
+.nocturne-root .copy-btn:hover,
+.nocturne-root .date-input-trigger:hover,
+.nocturne-root .upload-dropzone:hover,
+.nocturne-root .upload-dropzone:hover .dropzone-content {
+    background: color-mix(in srgb, var(--color-text) 9%, var(--color-surface));
+    border-color: color-mix(in srgb, var(--color-text) 30%, transparent);
+}
+
+.nocturne-root .package-card.selected,
+.nocturne-root .extension-card.selected,
+.nocturne-root .add-on-option.selected,
+.nocturne-root .time-slot-btn.selected,
+.nocturne-root .time-slot-btn.active {
+    background: var(--color-accent-900);
+    border-color: var(--color-accent);
+    box-shadow: none;
+}
+
+.nocturne-root .step-item.active .step-circle {
+    background: var(--color-accent-800);
+    color: var(--color-accent-100);
+    border-color: var(--color-accent);
+}
+
+.nocturne-root .step-item.active {
+    background: transparent;
+}
+
+.nocturne-root .step-circle {
+    border-color: var(--color-neutral-700);
+    color: var(--color-neutral-400);
+}
+
+/* ── type ───────────────────────────────────────────────────────────────── */
+
+.nocturne-root .section-title,
+.nocturne-root .package-name,
+.nocturne-root .detail-group .value,
+.nocturne-root .detail-group .value.number,
+.nocturne-root .mini-item .value,
+.nocturne-root .info-value,
+.nocturne-root .summary-row strong,
+.nocturne-root .summary-row.balance strong,
+.nocturne-root .toast-message,
+.nocturne-root .filename,
+.nocturne-root .date-input-trigger .date-text,
+.nocturne-root .add-on-option {
+    color: var(--color-text);
+}
+
+.nocturne-root .step-subtitle,
+.nocturne-root .step-label,
+.nocturne-root .section-label,
+.nocturne-root .form-group label,
+.nocturne-root .input-group label,
+.nocturne-root .package-duration,
+.nocturne-root .detail-group .label,
+.nocturne-root .mini-item .label,
+.nocturne-root .mini-header,
+.nocturne-root .info-label,
+.nocturne-root .summary-row,
+.nocturne-root .calendar-weekday,
+.nocturne-root .legend-item,
+.nocturne-root .time-legend,
+.nocturne-root .pagination-text,
+.nocturne-root .pagination-btn,
+.nocturne-root .drop-subtext,
+.nocturne-root .empty-state-box p,
+.nocturne-root .payment-qr-note,
+.nocturne-root .brand-tag,
+.nocturne-root .action-text,
+.nocturne-root .input-icon,
+.nocturne-root .icon-upload,
+.nocturne-root .copy-btn,
+.nocturne-root .copy-btn-mini,
+.nocturne-root .modal-close,
+.nocturne-root .popup-close-btn,
+.nocturne-root .calendar-header button,
+.nocturne-root .date-input-trigger .chevron-icon {
+    color: var(--color-neutral-400);
+}
+
+.nocturne-root .modal-content input::placeholder,
+.nocturne-root .modal-content textarea::placeholder,
+.nocturne-root .date-input-trigger .date-text:empty::before {
+    color: var(--color-neutral-600);
+}
+
+.nocturne-root .package-price,
+.nocturne-root .summary-row.amount-now strong {
+    color: var(--color-accent-300);
+}
+
+/* ── calendar ───────────────────────────────────────────────────────────── */
+
+.nocturne-root .calendar-day {
+    color: var(--color-text);
+}
+
+.nocturne-root .calendar-day:hover:not(.disabled) {
+    background: color-mix(in srgb, var(--color-text) 10%, transparent);
+}
+
+.nocturne-root .calendar-day.disabled,
+.nocturne-root .calendar-day.disabled:hover {
+    background: transparent;
+    color: var(--color-neutral-700);
+}
+
+.nocturne-root .calendar-day.selected {
+    background: var(--color-accent-800);
+    color: var(--color-accent-100);
+}
+
+.nocturne-root .calendar-popup-header,
+.nocturne-root .mini-header,
+.nocturne-root .mini-item,
+.nocturne-root .mini-item.highlight,
+.nocturne-root .payment-details-hero,
+.nocturne-root .form-section-divider,
+.nocturne-root .time-legend {
+    border-color: var(--color-divider);
+}
+
+.nocturne-root .time-slot-btn:disabled,
+.nocturne-root .pagination-btn:disabled {
+    background: transparent;
+    color: var(--color-neutral-700);
+    border-color: var(--color-divider);
+}
+
+/* ── focus ──────────────────────────────────────────────────────────────── */
+
+.nocturne-root .modal-content input:focus,
+.nocturne-root .modal-content textarea:focus,
+.nocturne-root .modern-select:focus {
+    background: var(--color-surface-raised);
+    border-color: var(--color-accent);
+    color: var(--color-text);
+}
+
+/* ── primary action ─────────────────────────────────────────────────────── */
+
+/* ModalStyles builds this from --color-terracotta / --color-brown, which the
+   bridge maps to the mid-tone accent — light label on a mid lavender is about
+   2.6:1. Restate it on the darker accent steps so the label clears 7:1. */
+.nocturne-root .modal-content .btn.btn-primary,
+.nocturne-root .wizard-actions .btn-primary,
+.nocturne-root .modal-content .btn-primary.btn-lg {
+    background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-800));
+    border-color: var(--color-accent);
+    color: var(--color-accent-100);
+}
+
+.nocturne-root .modal-content .btn.btn-primary:hover:not(:disabled),
+.nocturne-root .wizard-actions .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-700));
+}
+
+.nocturne-root .modal-content .btn.btn-primary:disabled {
+    opacity: 0.5;
+}

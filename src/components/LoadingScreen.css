@@ -1,14 +1,42 @@
+/*
+ * Loading screen — Nocturne.
+ *
+ * This renders outside `.nocturne-root` (App mounts it as a sibling of the
+ * routed tree), so the token bridge in nocturne.css cannot reach it. The
+ * tokens it needs are therefore declared on `.loading-screen` itself: scoped
+ * to this element, so nothing leaks into the light-mode admin, and matching
+ * src/nocturne/tokens.css value for value.
+ *
+ * The ground is the hero's own base, lit by two soft accent blooms, so the
+ * loader dissolves into the hero behind it rather than cutting to it.
+ */
+
 .loading-screen {
+    --ls-bg: #161826;
+    --ls-text: #e9e9ed;
+    --ls-accent: #9184d9;
+    --ls-accent-300: #d2cefd;
+    --ls-accent-700: #5d5294;
+    --ls-accent-800: #423a6a;
+    --ls-neutral-400: #b2b6ca;
+    --ls-font: 'Inter', system-ui, sans-serif;
+
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
+    /* The glow comes from the two orbs below; this stays the flat hero ground,
+       or the pair compounds into a ground far brighter than the hero the
+       loader fades into. */
+    background: linear-gradient(var(--ls-bg), #1c1e30);
+    color: var(--ls-text);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    /* Above the cookie banner, which also sits at 9999 and, being later in the
+       DOM, otherwise floats over the splash. */
+    z-index: 10000;
     overflow: hidden;
     transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
 }
@@ -37,28 +65,91 @@
     }
 }
 
-/* Animated Logo */
+/* ── Logo, framed by the reticle's brackets ─────────────────────────────── */
+
 .loading-logo {
-    margin-bottom: 2rem;
+    position: relative;
+    width: 300px;
+    height: 132px;
+    margin: 0 auto 2.25rem;
     display: flex;
+    align-items: center;
     justify-content: center;
 }
 
+/* The same corner brackets the pointer reticle draws, held still while the
+   logo floats inside them. */
+.logo-frame {
+    position: absolute;
+    inset: 0;
+    animation: framePulse 3s ease-in-out infinite;
+}
+
+.logo-frame i {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+}
+
+.logo-frame .tl {
+    top: 0;
+    left: 0;
+    border-top: 2px solid var(--ls-accent);
+    border-left: 2px solid var(--ls-accent);
+    border-top-left-radius: 8px;
+}
+
+.logo-frame .tr {
+    top: 0;
+    right: 0;
+    border-top: 2px solid var(--ls-accent);
+    border-right: 2px solid var(--ls-accent);
+    border-top-right-radius: 8px;
+}
+
+.logo-frame .bl {
+    bottom: 0;
+    left: 0;
+    border-bottom: 2px solid var(--ls-accent);
+    border-left: 2px solid var(--ls-accent);
+    border-bottom-left-radius: 8px;
+}
+
+.logo-frame .br {
+    bottom: 0;
+    right: 0;
+    border-bottom: 2px solid var(--ls-accent);
+    border-right: 2px solid var(--ls-accent);
+    border-bottom-right-radius: 8px;
+}
+
+@keyframes framePulse {
+
+    0%,
+    100% {
+        opacity: 0.55;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+}
+
 .logo-container {
-    width: 120px;
-    height: 120px;
+    width: 196px;
     display: flex;
     align-items: center;
     justify-content: center;
     animation: logoFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 10px 30px rgba(191, 106, 57, 0.2));
+    filter: drop-shadow(0 8px 26px rgba(145, 132, 217, 0.4));
 }
 
 .loading-logo-image {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
-    animation: logoGlow 2s ease-in-out infinite;
 }
 
 @keyframes logoFloat {
@@ -69,67 +160,16 @@
     }
 
     50% {
-        transform: translateY(-10px) scale(1.05);
+        transform: translateY(-8px) scale(1.04);
     }
 }
 
-@keyframes logoGlow {
+/* ── Progress ───────────────────────────────────────────────────────────── */
 
-    0%,
-    100% {
-        filter: brightness(1);
-    }
-
-    50% {
-        filter: brightness(1.1);
-    }
-}
-
-@keyframes logoRotate {
-
-    0%,
-    100% {
-        transform: rotate(-5deg);
-    }
-
-    50% {
-        transform: rotate(5deg);
-    }
-}
-
-/* Brand Name */
-.loading-brand {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #3d3d3d;
-    margin-bottom: 2rem;
-    letter-spacing: -0.5px;
-    font-family: var(--font-display, 'Playfair Display', serif);
-    background: linear-gradient(135deg, #bf6a39 0%, #8b4513 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3s ease-in-out infinite;
-    background-size: 200% auto;
-}
-
-@keyframes shimmer {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-}
-
-/* Loading Bar */
 .loading-bar-container {
     width: 200px;
-    height: 4px;
-    background: rgba(191, 106, 57, 0.2);
+    height: 3px;
+    background: color-mix(in srgb, var(--ls-text) 14%, transparent);
     border-radius: 2px;
     margin: 0 auto 1.5rem;
     overflow: hidden;
@@ -138,32 +178,37 @@
 
 .loading-bar {
     height: 100%;
-    background: linear-gradient(90deg, #bf6a39, #d4845f, #bf6a39);
-    background-size: 200% 100%;
+    width: 55%;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--ls-accent-300) 35%,
+            var(--ls-accent-300) 65%,
+            transparent);
     border-radius: 2px;
-    animation: loadingProgress 1.5s ease-in-out infinite;
-    box-shadow: 0 0 10px rgba(191, 106, 57, 0.5);
+    animation: loadingProgress 1.4s ease-in-out infinite;
 }
 
 @keyframes loadingProgress {
     0% {
         transform: translateX(-100%);
-        background-position: 0% 50%;
     }
 
     100% {
-        transform: translateX(200%);
-        background-position: 100% 50%;
+        transform: translateX(280%);
     }
 }
 
-/* Tagline */
+/* ── Tagline ────────────────────────────────────────────────────────────── */
+
+/* Matches Nocturne's eyebrow: 12px, 0.1em tracking, uppercase. */
 .loading-tagline {
-    color: rgba(61, 61, 61, 0.7);
-    font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 2px;
+    font-family: var(--ls-font);
+    color: var(--ls-neutral-400);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    margin: 0;
     animation: pulse 2s ease-in-out infinite;
 }
 
@@ -179,19 +224,20 @@
     }
 }
 
-/* Decorative Orbs */
+/* ── Ambient orbs ───────────────────────────────────────────────────────── */
+
 .loading-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
+    filter: blur(90px);
+    opacity: 0.32;
     animation: orbFloat 8s ease-in-out infinite;
 }
 
 .loading-orb-1 {
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, #bf6a39 0%, transparent 70%);
+    background: radial-gradient(circle, var(--ls-accent-700) 0%, transparent 70%);
     top: -10%;
     left: -10%;
     animation-delay: 0s;
@@ -200,7 +246,7 @@
 .loading-orb-2 {
     width: 350px;
     height: 350px;
-    background: radial-gradient(circle, #d4845f 0%, transparent 70%);
+    background: radial-gradient(circle, var(--ls-accent-800) 0%, transparent 70%);
     bottom: -10%;
     right: -10%;
     animation-delay: 1s;
@@ -222,20 +268,21 @@
     }
 }
 
-/* Responsive Design */
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
-    .loading-brand {
-        font-size: 2rem;
+    .loading-logo {
+        width: 232px;
+        height: 104px;
     }
 
-    .logo-circle {
-        width: 80px;
-        height: 80px;
+    .logo-container {
+        width: 150px;
     }
 
-    .logo-circle svg {
-        width: 48px;
-        height: 48px;
+    .logo-frame i {
+        width: 14px;
+        height: 14px;
     }
 
     .loading-bar-container {
@@ -246,5 +293,22 @@
     .loading-orb-2 {
         width: 250px;
         height: 250px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .loading-content,
+    .logo-frame,
+    .logo-container,
+    .loading-tagline,
+    .loading-orb {
+        animation: none;
+    }
+
+    /* The bar still needs to read as activity, so it stays — slowed, and
+       without the travel that dominates peripheral vision. */
+    .loading-bar {
+        animation-duration: 2.4s;
     }
 }
