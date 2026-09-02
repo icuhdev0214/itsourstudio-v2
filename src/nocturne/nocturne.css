@@ -1,0 +1,1220 @@
+/*
+ * Nocturne — component classes and site chrome.
+ *
+ * Companion to tokens.css. Everything here is scoped under `.nocturne-root`
+ * so it cannot leak into the admin area, which still runs on the light-mode
+ * tokens in src/style.css and shares several token *names* with Nocturne
+ * (--color-surface, --color-text, --radius-*, --shadow-*).
+ *
+ * Sections:
+ *   1. Design-system base + components  (ported from the handoff's styles.css)
+ *   2. WebGL effect layers              (GlowCursor / TargetReticle chrome)
+ *   3. Site chrome                      (nav, hero, sections, footer)
+ *   4. Gallery                          (filters, 3D drift wall, lightbox)
+ *   5. Services                         (alternating package rows)
+ *   6. Responsive + reduced motion
+ *
+ * The handoff's prototype was fixed-width desktop with inline styles. Values
+ * are carried over verbatim; the breakpoints in section 6 are new, since the
+ * design had none.
+ */
+
+@import './tokens.css';
+@import './nocturne-modals.css';
+
+/* The page ground, for the overscroll gutter and any stretch the wrapper does
+   not cover. Literal rather than tokenised: the tokens live inside
+   `.nocturne-root`, and <body> is outside it. */
+body.nocturne-body {
+    background: #161826;
+    color-scheme: dark;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   1. Design-system base + components
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nocturne-root {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 400;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.nocturne-root *,
+.nocturne-root *::before,
+.nocturne-root *::after {
+    box-sizing: border-box;
+}
+
+/* — legacy token bridge —
+
+   The light-mode stylesheet in src/style.css names its colours differently
+   from Nocturne. Anything still rendering inside the shell — the booking and
+   report modals, the FAQ / privacy / patch-notes pages — is written against
+   those names, so mapping them here makes that CSS adopt Nocturne's palette
+   instead of painting light-on-dark. Aliases only; no new values. */
+.nocturne-root {
+    --color-background: var(--color-bg);
+    --color-primary: var(--color-accent);
+    --color-secondary: var(--color-accent-2);
+    --color-dark: var(--color-text);
+    --color-ink: var(--color-text);
+    --color-text-light: var(--color-neutral-400);
+    --color-gray: var(--color-neutral-400);
+    --color-border: var(--color-divider);
+    --color-terracotta: var(--color-accent);
+    --color-copper: var(--color-accent);
+    --color-brown: var(--color-accent);
+    --color-sage: var(--color-accent);
+    --color-rose: var(--color-accent-2);
+    --color-champagne: var(--color-accent-300);
+    --color-cream: var(--color-surface);
+    --color-warm-white: var(--color-surface);
+    --color-mist: var(--color-surface-raised);
+    --color-soft-panel: var(--color-surface);
+    --surface-elevated: var(--color-surface-raised);
+    --surface-subtle: var(--color-surface);
+    --surface-input: var(--color-surface);
+    --surface-inverse: var(--color-neutral-100);
+    --text-on-dark: var(--color-text);
+    --muted-on-dark: var(--color-neutral-300);
+    --nav-bg-scrolled: color-mix(in srgb, #232532 88%, transparent);
+    --nav-text-scrolled: var(--color-text);
+    --nav-border: var(--color-divider);
+    --focus-ring: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    --disabled-text: var(--color-neutral-600);
+    --font-display: var(--font-heading);
+    --gradient-primary: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-800));
+}
+
+/* Secondary pages. Their own stylesheets hardcode a light palette rather than
+   reading tokens, so the ground, the panels and the type are restated here.
+   These pages were not in the handoff — this is enough to make them belong to
+   the same site; a considered Nocturne pass on each is still outstanding. */
+.nocturne-root .faq-page,
+.nocturne-root .privacy-policy-page,
+.nocturne-root .patch-notes-container,
+.nocturne-root .not-found-page {
+    background: transparent;
+}
+
+/* Clear the floating nav, which the light layout did not have to allow for. */
+.nocturne-root .faq-page,
+.nocturne-root .patch-notes-container { padding-top: 132px; }
+.nocturne-root .privacy-policy-page { padding-top: 132px; }
+
+.nocturne-root .faq-item,
+.nocturne-root .faq-answer,
+.nocturne-root .privacy-container,
+.nocturne-root .privacy-policy-page .contact-info {
+    background: var(--color-surface);
+    border-color: var(--color-divider);
+}
+
+.nocturne-root .faq-header h1,
+.nocturne-root .faq-question,
+.nocturne-root .privacy-policy-page h1,
+.nocturne-root .privacy-policy-page h2,
+.nocturne-root .privacy-policy-page strong {
+    color: var(--color-text);
+}
+
+.nocturne-root .faq-header p,
+.nocturne-root .faq-answer-content,
+.nocturne-root .faq-loading,
+.nocturne-root .privacy-policy-page p,
+.nocturne-root .privacy-policy-page li,
+.nocturne-root .privacy-policy-page .last-updated,
+.nocturne-root .privacy-policy-page .contact-info p {
+    color: var(--color-neutral-300);
+}
+
+.nocturne-root .faq-icon,
+.nocturne-root .privacy-policy-page a,
+.nocturne-root .privacy-policy-page li::before {
+    color: var(--color-accent-300);
+}
+
+.nocturne-root .faq-item:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+/* The old gold accent, onto Nocturne's. */
+.nocturne-root .privacy-policy-page h2 {
+    border-bottom-color: var(--color-accent);
+}
+
+.nocturne-root h1,
+.nocturne-root h2,
+.nocturne-root h3,
+.nocturne-root h4,
+.nocturne-root h5,
+.nocturne-root h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin: 0 0 var(--space-2);
+}
+
+.nocturne-root h1 { font-size: 42px; }
+.nocturne-root h2 { font-size: 32px; }
+.nocturne-root h3 { font-size: 25px; }
+.nocturne-root h4 { font-size: 20px; }
+.nocturne-root h5 { font-size: 16px; }
+.nocturne-root h6 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.nocturne-root p { margin: 0 0 var(--space-3); }
+.nocturne-root a { color: var(--color-accent-300); text-decoration: none; text-underline-offset: 3px; }
+.nocturne-root a:hover { color: var(--color-accent-600); }
+.nocturne-root img { display: block; max-width: 100%; }
+.nocturne-root figure { margin: 0; }
+
+.nocturne-root :focus { outline: none; }
+.nocturne-root :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.nocturne-root ::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+.nocturne-root .text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.nocturne-root .lighten { mix-blend-mode: lighten; background-color: transparent; }
+
+/* Rules fade to transparent at both ends instead of stopping cleanly — a
+   Nocturne signature. The ramp is 48px an end (one deck baseline unit). */
+.nocturne-root .hr {
+    height: 1px;
+    border: 0;
+    margin: var(--space-4) 0;
+    background: linear-gradient(to right,
+            transparent, var(--color-divider) 48px,
+            var(--color-divider) calc(100% - 48px), transparent);
+}
+
+/* — buttons — */
+.nocturne-root .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--color-text);
+    background: transparent;
+    border: 1px solid transparent;
+    padding: var(--space-2) calc(var(--space-3) * 1.2);
+    border-radius: var(--radius-md);
+}
+
+.nocturne-root .btn svg { display: block; }
+.nocturne-root .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.nocturne-root .btn-primary { color: var(--color-accent); border-color: var(--color-accent); }
+.nocturne-root .btn-primary:hover { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+.nocturne-root .btn-primary:active { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+.nocturne-root .btn-secondary { border-color: var(--color-divider); }
+.nocturne-root .btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.nocturne-root .btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.nocturne-root .btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.nocturne-root .btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.nocturne-root .btn-icon { width: 36px; height: 36px; padding: 0; }
+.nocturne-root .btn-block { width: 100%; margin-top: var(--space-2); }
+
+/* The pill button the design uses for every page-level call to action. */
+.nocturne-root .nx-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: 14.5px;
+    line-height: 1.2;
+    color: var(--color-accent-300);
+    background: transparent;
+    border: 1px solid var(--color-accent);
+    padding: 14px 28px;
+    border-radius: 999px;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.nocturne-root .nx-pill:hover { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.nocturne-root .nx-pill:active { background: color-mix(in srgb, var(--color-accent) 28%, transparent); }
+
+/* Quiet twin of .nx-pill.
+
+   The handoff hovered this to --color-accent-100 (#f5f4ff) while leaving the
+   label at --color-text (#e9e9ed) — near-white on near-white, so the label
+   disappeared on hover. Deliberate deviation: the hover is a text-tinted wash
+   with an accent edge, which keeps the label legible and still reads as the
+   quiet option next to .nx-pill. */
+.nocturne-root .nx-pill-quiet {
+    color: var(--color-text);
+    border: 1.5px solid var(--color-neutral-700);
+}
+
+.nocturne-root .nx-pill-quiet:hover {
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+    border-color: var(--color-accent-300);
+}
+
+.nocturne-root .nx-pill-lg { font-size: 15px; padding: 15px 30px; }
+.nocturne-root .nx-pill-sm { font-size: 13.5px; padding: 10px 22px; }
+
+/* — forms — */
+.nocturne-root .field > label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+
+.nocturne-root .input {
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 10px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-text);
+    caret-color: var(--color-accent);
+    background: var(--color-surface);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+}
+
+.nocturne-root .input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.nocturne-root .input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+.nocturne-root textarea.input { min-height: 90px; resize: vertical; }
+
+/* — cards — */
+.nocturne-root .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+}
+
+.nocturne-root .card-kicker {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.nocturne-root .card-title {
+    font-family: var(--font-heading);
+    font-weight: var(--font-heading-weight);
+    font-size: 17px;
+    line-height: 1.2;
+}
+
+.nocturne-root .card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.nocturne-root .elev-sm { box-shadow: var(--shadow-sm); }
+.nocturne-root .elev-md { box-shadow: var(--shadow-md); }
+.nocturne-root .elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.nocturne-root .tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    padding: 3px 10px;
+    border-radius: calc(var(--radius-md) * 0.75);
+}
+
+.nocturne-root .tag-accent { background: var(--color-accent-800); color: var(--color-accent-100); }
+.nocturne-root .tag-neutral { background: var(--color-neutral-800); color: var(--color-neutral-100); }
+.nocturne-root .tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* The pill the design uses for "Best selling" and for package feature chips. */
+.nocturne-root .nx-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12.5px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    color: var(--color-accent-200);
+}
+
+.nocturne-root .nx-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    color: var(--color-accent-200);
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+/* — eyebrow / section headings — */
+.nocturne-root .nx-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.nocturne-root .nx-shell { width: min(1120px, 100%); margin: 0 auto; }
+
+@keyframes nx-floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes nx-popin {
+    from { opacity: 0; transform: translateY(14px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2. WebGL effect layers
+
+   Both are decorative overlays that never capture input. The GlowCursor
+   draws *alongside* the native cursor rather than replacing it, so the
+   pointer is never hidden.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nocturne-glowcursor {
+    position: fixed;
+    inset: 0;
+    z-index: 92;
+    pointer-events: none;
+}
+
+.nocturne-glowcursor canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.nocturne-reticle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.nocturne-reticle i {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+}
+
+.nocturne-reticle .tl {
+    top: 0;
+    left: 0;
+    border-top: 2px solid var(--color-accent);
+    border-left: 2px solid var(--color-accent);
+    border-top-left-radius: 6px;
+}
+
+.nocturne-reticle .tr {
+    top: 0;
+    right: 0;
+    border-top: 2px solid var(--color-accent);
+    border-right: 2px solid var(--color-accent);
+    border-top-right-radius: 6px;
+}
+
+.nocturne-reticle .bl {
+    bottom: 0;
+    left: 0;
+    border-bottom: 2px solid var(--color-accent);
+    border-left: 2px solid var(--color-accent);
+    border-bottom-left-radius: 6px;
+}
+
+.nocturne-reticle .br {
+    bottom: 0;
+    right: 0;
+    border-bottom: 2px solid var(--color-accent);
+    border-right: 2px solid var(--color-accent);
+    border-bottom-right-radius: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3. Site chrome — nav, hero, home sections, footer
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-nav {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 9px 10px 9px 18px;
+    border-radius: 999px;
+    background: color-mix(in srgb, #232532 88%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-md);
+    width: min(1120px, calc(100vw - 32px));
+}
+
+.nx-nav-brand {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+}
+
+.nx-nav-brand img { height: 34px; width: auto; }
+
+.nx-nav-link {
+    cursor: pointer;
+    font-size: 13.5px;
+    padding: 6px 4px;
+    color: var(--color-neutral-300);
+    background: none;
+    border: 0;
+    font-family: inherit;
+    transition: color 0.2s ease;
+}
+
+.nx-nav-link:hover { color: var(--color-accent-300); }
+.nx-nav-link.is-active { color: var(--color-accent-300); }
+
+.nx-nav-toggle {
+    display: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--color-divider);
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+}
+
+/* — hero — */
+.nx-hero {
+    position: relative;
+    padding: 140px 40px 80px;
+}
+
+.nx-hero-waves {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Painted when WebGL is unavailable or the visitor asked for reduced motion. */
+.nx-hero-waves.is-fallback { background: var(--waves-fallback); }
+
+/* GradientWaves renders into its own bare container, which it measures to size
+   the drawing buffer — so it has to be given the hero's box explicitly. */
+.nx-waves-layer { position: absolute; inset: 0; }
+.nx-waves-layer.is-fallback { background: var(--waves-fallback); }
+
+.nx-hero-inner {
+    position: relative;
+    z-index: 1;
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    gap: 56px;
+    align-items: center;
+}
+
+.nx-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--color-accent-900);
+    color: var(--color-accent-300);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nx-hero h1 {
+    font-size: 70px;
+    line-height: 1.03;
+    letter-spacing: -0.02em;
+    margin: 22px 0 0;
+    text-wrap: pretty;
+}
+
+.nx-hero-lede {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-neutral-300);
+    max-width: 46ch;
+    margin: 20px 0 0;
+}
+
+.nx-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+.nx-hero-stats { display: flex; flex-wrap: wrap; gap: 36px; margin-top: 42px; }
+.nx-hero-stat-value { font-family: var(--font-heading); font-size: 28px; }
+.nx-hero-stat-label { font-size: 12.5px; color: var(--color-neutral-400); }
+
+/* — hero card stack — */
+.nx-stack {
+    position: relative;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nx-stack-card {
+    position: absolute;
+    width: 170px;
+    height: 220px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid color-mix(in srgb, #e9e9ed 16%, transparent);
+    background-size: cover;
+    background-position: center 28%;
+    transition: transform 0.7s cubic-bezier(0.16, 1.6, 0.3, 1);
+}
+
+.nx-stack-hint {
+    position: absolute;
+    bottom: 4px;
+    font-size: 12px;
+    color: var(--color-neutral-400);
+}
+
+/* — about — */
+.nx-about { padding: 100px 40px; background: var(--color-surface); }
+
+.nx-about-inner {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+}
+
+.nx-collage { position: relative; height: 440px; }
+
+.nx-collage-img {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.nx-collage-img img { width: 100%; height: 100%; object-fit: cover; }
+.nx-collage-1 { left: 0; top: 0; width: 66%; height: 74%; box-shadow: var(--shadow-md); }
+.nx-collage-2 { right: 0; top: 18%; width: 44%; height: 50%; box-shadow: var(--shadow-lg); }
+.nx-collage-3 { left: 16%; bottom: 0; width: 52%; height: 40%; box-shadow: var(--shadow-md); }
+
+.nx-collage-seal {
+    position: absolute;
+    right: 2%;
+    bottom: 2%;
+    width: 126px;
+    height: 126px;
+    border-radius: 999px;
+    background: var(--color-accent-900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--color-accent-300);
+    animation: nx-floaty 6s ease-in-out infinite;
+}
+
+.nx-about h2 { font-size: 44px; line-height: 1.08; margin: 14px 0 0; }
+
+.nx-about-lede {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--color-neutral-300);
+    margin: 18px 0 0;
+    max-width: 52ch;
+}
+
+.nx-about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 30px;
+}
+
+/* The handoff painted these --color-surface on an equally --color-surface
+   section, so they vanished. One step up the ramp gives them an edge. */
+.nx-about-card {
+    background: var(--color-surface-raised);
+    border-radius: var(--radius-md);
+    padding: 18px;
+}
+
+.nx-about-card-title { font-family: var(--font-heading); font-size: 15px; }
+.nx-about-card-body { font-size: 13px; color: var(--color-neutral-400); margin-top: 5px; }
+
+/* — packages — */
+.nx-packages { padding: 100px 40px; }
+
+.nx-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.nx-section-head h2 { font-size: 44px; line-height: 1.08; margin: 14px 0 0; }
+
+.nx-section-link {
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-accent-300);
+    padding-bottom: 8px;
+    background: none;
+    border: 0;
+    font-family: inherit;
+}
+
+.nx-package-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 38px;
+}
+
+.nx-package-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.nx-package-media {
+    height: 210px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.nx-package-media .nx-badge { position: absolute; left: 14px; top: 14px; }
+.nx-package-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+.nx-package-title { font-family: var(--font-heading); font-size: 20px; }
+.nx-package-duration { font-size: 13px; color: var(--color-neutral-400); margin-top: 4px; }
+
+.nx-package-price {
+    font-family: var(--font-heading);
+    font-size: 30px;
+    color: var(--color-accent-300);
+    margin-top: 12px;
+}
+
+.nx-package-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--color-neutral-300);
+    margin-top: 8px;
+}
+
+.nx-package-cta {
+    cursor: pointer;
+    margin-top: auto;
+    padding: 18px 0 0;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    color: var(--color-accent-300);
+    background: none;
+    border: 0;
+    text-align: left;
+}
+
+/* — visit — */
+.nx-visit {
+    padding: 90px 40px 100px;
+    background: var(--color-accent-900);
+    color: var(--color-accent-200);
+}
+
+.nx-visit-inner {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+}
+
+.nx-visit .nx-eyebrow { color: var(--color-accent-300); }
+.nx-visit h2 { font-size: 40px; line-height: 1.1; margin: 14px 0 0; color: var(--color-neutral-100); }
+
+.nx-visit-details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 22px;
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+.nx-visit-social { display: flex; flex-wrap: wrap; gap: 18px; }
+
+.nx-visit-media {
+    height: 340px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.nx-visit-media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* — footer — */
+.nx-footer {
+    background: var(--color-neutral-900);
+    padding: 44px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--color-neutral-400);
+}
+
+.nx-footer a { color: var(--color-neutral-400); }
+.nx-footer a:hover { color: var(--color-accent-300); }
+
+.nx-footer-links { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.nx-footer-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: var(--color-neutral-400);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.nx-footer-btn:hover { color: var(--color-accent-300); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   4. Gallery — filters, 3D drift wall, lightbox
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-page-head { padding: 140px 40px 40px; }
+.nx-page-head h1 { font-size: 56px; line-height: 1.05; margin: 14px 0 0; }
+
+.nx-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+
+.nx-filter {
+    cursor: pointer;
+    font-size: 13.5px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-neutral-300);
+    border: 1.5px solid var(--color-neutral-700);
+    font-family: inherit;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.nx-filter:hover { border-color: var(--color-accent-300); color: var(--color-accent-300); }
+
+.nx-filter.is-active {
+    background: var(--color-accent-800);
+    color: #fff;
+    border-color: var(--color-accent);
+}
+
+.nx-drift-section { padding: 26px 40px 110px; }
+
+.nx-drift {
+    position: relative;
+    width: min(1180px, 100%);
+    height: 640px;
+    margin: 0 auto;
+    overflow: hidden;
+    perspective: 1200px;
+    perspective-origin: 50% 50%;
+    -webkit-mask-image:
+        radial-gradient(ellipse 78% 82% at 50% 46%, #000 40%, transparent 100%),
+        linear-gradient(to top, #000 40%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        radial-gradient(ellipse 78% 82% at 50% 46%, #000 40%, transparent 100%),
+        linear-gradient(to top, #000 40%, transparent 100%);
+    mask-composite: intersect;
+}
+
+.nx-drift-plane {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    flex-direction: row;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    transform: translate(-50%, -50%) scale(1.18) rotateX(16deg) rotateY(-14deg) translateZ(-120px);
+}
+
+.nx-drift-col { position: relative; width: 218px; transform-style: preserve-3d; }
+
+.nx-drift-track {
+    display: flex;
+    flex-direction: column;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.nx-drift-cell {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    flex: 0 0 auto;
+    transform-style: preserve-3d;
+}
+
+.nx-drift-tile {
+    position: absolute;
+    inset: 9px;
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #0b0b12;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.55;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    transform: translateZ(0);
+    transition:
+        transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nx-drift-tile:hover,
+.nx-drift-tile:focus-visible {
+    opacity: 1;
+    transform: translateZ(64px);
+    box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+}
+
+/* Flat fallback for reduced motion / no-JS 3D: a plain responsive grid. */
+.nx-grid-wall {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.nx-grid-tile {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: #0b0b12;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.nx-grid-tile:hover,
+.nx-grid-tile:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+}
+
+.nx-empty {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+    color: var(--color-neutral-400);
+}
+
+/* — lightbox — */
+.nx-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 95;
+    background: color-mix(in srgb, #0b0c14 93%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.nx-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: color-mix(in srgb, #e9e9ed 12%, transparent);
+    color: var(--color-neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    border: 0;
+}
+
+.nx-lightbox-nav:hover { background: color-mix(in srgb, #e9e9ed 20%, transparent); }
+.nx-lightbox-prev { left: 34px; }
+.nx-lightbox-next { right: 34px; }
+
+.nx-lightbox-close {
+    position: absolute;
+    right: 34px;
+    top: 34px;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: color-mix(in srgb, #e9e9ed 12%, transparent);
+    color: var(--color-neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    border: 0;
+}
+
+.nx-lightbox-close:hover { background: color-mix(in srgb, #e9e9ed 20%, transparent); }
+
+.nx-lightbox-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    animation: nx-popin 0.3s ease;
+}
+
+.nx-lightbox-image {
+    width: min(900px, 80vw);
+    height: 72vh;
+    border-radius: var(--radius-lg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.nx-lightbox-caption { font-size: 13.5px; color: var(--color-neutral-300); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   5. Services — alternating package rows
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nx-services { padding: 130px 40px 100px; }
+.nx-services h1 { font-size: 56px; line-height: 1.05; margin: 14px 0 0; }
+
+.nx-service-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    margin-top: 44px;
+}
+
+.nx-service-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    align-items: center;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    background: transparent;
+}
+
+.nx-service-row.is-shaded { background: var(--color-neutral-900); }
+.nx-service-row.is-flipped .nx-service-info { order: 2; }
+.nx-service-row.is-flipped .nx-service-media { order: 1; }
+
+.nx-service-title { font-family: var(--font-heading); font-size: 34px; line-height: 1.1; }
+
+.nx-service-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.nx-service-price { font-family: var(--font-heading); font-size: 34px; color: var(--color-accent-300); }
+.nx-service-duration { font-size: 14px; color: var(--color-neutral-400); }
+
+.nx-service-desc {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--color-neutral-300);
+    margin-top: 10px;
+    max-width: 46ch;
+}
+
+.nx-service-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+    max-width: 52ch;
+}
+
+.nx-service-info .nx-pill { margin-top: 24px; }
+
+.nx-service-media {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    height: 330px;
+}
+
+.nx-service-shot {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.nx-service-shot-main { grid-row: span 2; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   6. Responsive + reduced motion
+
+   The prototype was a fixed desktop canvas. Everything below is new.
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1080px) {
+    .nx-hero { padding: 128px 28px 64px; }
+    .nx-hero h1 { font-size: 54px; }
+    .nx-about, .nx-packages { padding: 80px 28px; }
+    .nx-visit { padding: 72px 28px 80px; }
+    .nx-page-head { padding: 128px 28px 32px; }
+    .nx-drift-section { padding: 20px 28px 88px; }
+    .nx-services { padding: 118px 28px 80px; }
+    .nx-services h1, .nx-page-head h1 { font-size: 46px; }
+    .nx-about h2, .nx-section-head h2 { font-size: 36px; }
+    .nx-package-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 860px) {
+    .nx-nav { gap: 10px; padding: 8px 8px 8px 14px; }
+    .nx-nav-link, .nx-nav .nx-pill { display: none; }
+    .nx-nav-toggle { display: inline-flex; }
+
+    .nx-nav.is-open {
+        flex-wrap: wrap;
+        border-radius: var(--radius-lg);
+        padding-bottom: 14px;
+        position: fixed;
+    }
+
+    /* The toggle is the last child, so an open sheet would wrap it to the
+       bottom — pin it to the corner it opened from. */
+    .nx-nav.is-open .nx-nav-toggle {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+    }
+
+    .nx-nav.is-open .nx-nav-link,
+    .nx-nav.is-open .nx-pill {
+        display: inline-flex;
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .nx-nav.is-open .nx-nav-link { padding: 10px 6px; font-size: 15px; }
+    .nx-nav.is-open .nx-pill { justify-content: center; margin-top: 4px; }
+
+    .nx-hero-inner,
+    .nx-about-inner,
+    .nx-visit-inner { grid-template-columns: 1fr; gap: 40px; }
+
+    .nx-hero h1 { font-size: 42px; }
+    .nx-hero-lede { font-size: 16px; }
+    .nx-hero-stats { gap: 24px; }
+    .nx-stack { height: 380px; }
+    .nx-collage { height: 360px; }
+    .nx-collage-seal { width: 96px; height: 96px; font-size: 12px; }
+    .nx-package-grid { grid-template-columns: 1fr; }
+    .nx-drift { height: 480px; }
+
+    .nx-service-row,
+    .nx-service-row.is-flipped { grid-template-columns: 1fr; gap: 24px; padding: 24px; }
+    .nx-service-row .nx-service-info,
+    .nx-service-row.is-flipped .nx-service-info { order: 1; }
+    .nx-service-row .nx-service-media,
+    .nx-service-row.is-flipped .nx-service-media { order: 2; }
+    .nx-service-media { height: 260px; }
+    .nx-service-title, .nx-service-price { font-size: 27px; }
+
+    .nx-lightbox { padding: 20px; }
+    .nx-lightbox-image { width: 92vw; height: 62vh; }
+    .nx-lightbox-prev { left: 12px; }
+    .nx-lightbox-next { right: 12px; }
+    .nx-lightbox-close { right: 12px; top: 12px; }
+}
+
+@media (max-width: 560px) {
+    .nx-hero { padding: 116px 18px 52px; }
+    .nx-hero h1 { font-size: 34px; }
+    .nx-about, .nx-packages { padding: 64px 18px; }
+    .nx-visit { padding: 60px 18px 68px; }
+    .nx-page-head { padding: 116px 18px 26px; }
+    .nx-drift-section { padding: 16px 18px 72px; }
+    .nx-services { padding: 106px 18px 68px; }
+    .nx-services h1, .nx-page-head h1 { font-size: 34px; }
+    .nx-about h2, .nx-section-head h2 { font-size: 30px; }
+    .nx-about-grid { grid-template-columns: 1fr; }
+    .nx-footer { padding: 32px 18px; }
+    .nx-drift { height: 400px; }
+    .nx-service-media { grid-template-columns: 1fr 1fr; height: 220px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nocturne-root *,
+    .nocturne-root *::before,
+    .nocturne-root *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+
+    .nx-collage-seal { animation: none; }
+}

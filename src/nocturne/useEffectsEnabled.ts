@@ -21,7 +21,15 @@ const supportsWebGL = (): boolean => {
     if (webglSupport !== null) return webglSupport;
     try {
         const canvas = document.createElement('canvas');
-        webglSupport = !!canvas.getContext('webgl2');
+        const gl = canvas.getContext('webgl2');
+        webglSupport = !!gl;
+        // Release it immediately. A browser caps how many live WebGL contexts a
+        // page may hold, and a probe context that is never freed counts against
+        // the two real ones the design needs.
+        if (gl) {
+            const lose = gl.getExtension('WEBGL_lose_context');
+            if (lose) lose.loseContext();
+        }
     } catch {
         webglSupport = false;
     }

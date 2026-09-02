@@ -250,6 +250,18 @@ const GradientWaves = ({
         });
         programRef.current = program;
 
+        /* A failed link leaves ogl's `uniformLocations` unset, so the first
+           draw throws and then repeats every frame. Fall back to the CSS
+           gradient the container already carries. */
+        if (!(program as unknown as { uniformLocations?: unknown }).uniformLocations) {
+            console.warn('GradientWaves: shader program did not link; using the CSS fallback.');
+            programRef.current = null;
+            container.classList.add('is-fallback');
+            const lose = gl.getExtension('WEBGL_lose_context');
+            if (lose) lose.loseContext();
+            return;
+        }
+
         const mesh = new Mesh(gl, { geometry, program });
 
         const setSize = () => {
@@ -298,7 +310,14 @@ const GradientWaves = ({
             const m = program.uniforms.uMouse.value as Float32Array;
             m[0] = currentMouse[0];
             m[1] = currentMouse[1];
-            renderer.render({ scene: mesh });
+            try {
+                renderer.render({ scene: mesh });
+            } catch (error) {
+                console.warn('GradientWaves: render failed; using the CSS fallback.', error);
+                container.classList.add('is-fallback');
+                raf = 0;
+                return;
+            }
             raf = requestAnimationFrame(loop);
         };
         const tryStart = () => {

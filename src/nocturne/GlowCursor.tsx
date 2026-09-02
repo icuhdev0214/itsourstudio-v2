@@ -274,6 +274,19 @@ const GlowCursor = ({
             depthTest: false,
             depthWrite: false,
         });
+        /* If the program failed to link, ogl leaves `uniformLocations` unset and
+           every later `program.use()` throws. That matters more here than in a
+           normal canvas: this one is `mix-blend-mode: screen` over the whole
+           page, so a canvas left holding garbage blows the site out to white.
+           Bail before drawing anything and leave the native cursor alone. */
+        if (!(program as unknown as { uniformLocations?: unknown }).uniformLocations) {
+            console.warn('GlowCursor: shader program did not link; effect disabled.');
+            container.style.display = 'none';
+            const lose = gl.getExtension('WEBGL_lose_context');
+            if (lose) lose.loseContext();
+            return;
+        }
+
         const mesh = new Mesh(gl, { geometry: new Triangle(gl), program });
 
         let width = 1;
@@ -368,9 +381,27 @@ const GlowCursor = ({
             program.uniforms.uTime.value = now * 0.001;
             program.uniforms.uFade.value = fade;
 
-            renderer.render({ scene: mesh });
+            try {
+                renderer.render({ scene: mesh });
+            } catch (error) {
+                // A lost context (tab backgrounded, GPU reset, too many live
+                // contexts) would otherwise throw every frame while leaving a
+                // screen-blended canvas on top of the page.
+                console.warn('GlowCursor: render failed; effect disabled.', error);
+                destroyed = true;
+                container.style.display = 'none';
+                return;
+            }
             if (!destroyed) raf = requestAnimationFrame(render);
         };
+
+        const onContextLost = (e: Event) => {
+            e.preventDefault();
+            destroyed = true;
+            cancelAnimationFrame(raf);
+            container.style.display = 'none';
+        };
+        canvas.addEventListener('webglcontextlost', onContextLost);
 
         const resizeObserver = new ResizeObserver(resize);
         resizeObserver.observe(container);
@@ -389,6 +420,7 @@ const GlowCursor = ({
             window.removeEventListener('pointerenter', updatePointer);
             window.removeEventListener('pointerleave', onPointerLeave);
             window.removeEventListener('resize', resize);
+            canvas.removeEventListener('webglcontextlost', onContextLost);
             mesh.geometry.remove();
             program.remove();
             const lose = gl.getExtension('WEBGL_lose_context');
