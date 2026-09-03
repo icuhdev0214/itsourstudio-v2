@@ -270,7 +270,7 @@ body.nocturne-body {
 }
 
 .nocturne-root .nx-pill-lg { font-size: 15px; padding: 15px 30px; }
-.nocturne-root .nx-pill-sm { font-size: 13.5px; padding: 10px 22px; }
+.nocturne-root .nx-pill-sm { font-size: 13.5px; font-weight: 600; padding: 10px 22px; }
 
 /* — forms — */
 .nocturne-root .field > label {
@@ -489,6 +489,9 @@ body.nocturne-body {
 .nx-nav-link {
     cursor: pointer;
     font-size: 13.5px;
+    /* Heavier than body copy: the nav is a short row of small targets, and
+       at 13.5px the regular weight reads as caption rather than navigation. */
+    font-weight: 600;
     padding: 6px 4px;
     color: var(--role-muted);
     background: none;
