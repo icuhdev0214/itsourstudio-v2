@@ -165,9 +165,9 @@ export interface GradientWavesProps {
 
 /** Defaults are the values the Nocturne hero passes in the design source. */
 const GradientWaves = ({
-    horizonColor = '#f8f3ed',
-    waveColor = '#e8d8c8',
-    crestColor = '#c49a6c',
+    horizonColor = '#faf1e6',
+    waveColor = '#f0c3a5',
+    crestColor = '#c06838',
     speed = 0.4,
     amplitude = 2.5,
     waveScale = 0.6,

@@ -12,13 +12,13 @@
  */
 
 .loading-screen {
-    --ls-bg: #f8f3ed;          /* Cream */
-    --ls-text: #3b2a24;        /* Dark Brown */
-    --ls-accent: #8b5e3c;      /* Medium Brown */
-    --ls-accent-300: #c49a6c;  /* Caramel */
-    --ls-accent-700: #e8d8c8;  /* Light Beige — the blooms, on a light ground */
-    --ls-accent-800: #f2e3d0;
-    --ls-neutral-400: #6a5238;
+    --ls-bg: #faf1e6;          /* Cream */
+    --ls-text: #3d4450;        /* Charcoal */
+    --ls-accent: #c06838;      /* Terracotta */
+    --ls-accent-300: #d49a68;  /* Caramel */
+    --ls-accent-700: #f0c3a5;  /* Light terracotta — the blooms, on a light ground */
+    --ls-accent-800: #f8e6d5;
+    --ls-neutral-400: #7d7871;
     --ls-font: 'Inter', system-ui, sans-serif;
 
     position: fixed;

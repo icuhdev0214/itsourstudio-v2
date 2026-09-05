@@ -23,7 +23,7 @@
 .cookie-consent-banner {
     max-width: 1000px;
     margin: 0 auto;
-    background: linear-gradient(135deg, #4a2c20 0%, #3b2a24 100%);
+    background: linear-gradient(135deg, #474d57 0%, #3d4450 100%);
     border-radius: 16px;
     padding: 1.5rem 2rem;
     display: flex;
@@ -57,7 +57,7 @@
 }
 
 .cookie-content a {
-    color: #c49a6c;
+    color: #f0c3a5;
     text-decoration: none;
     font-weight: 500;
 }
@@ -94,8 +94,8 @@
 }
 
 .btn-accept {
-    background: linear-gradient(135deg, #c49a6c 0%, #a87b4f 100%);
-    color: #3b2a24;
+    background: linear-gradient(135deg, #b05f33 0%, #a1552c 100%);
+    color: #fffdf9;
 }
 
 .btn-accept:hover {

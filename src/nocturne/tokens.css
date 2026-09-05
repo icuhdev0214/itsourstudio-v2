@@ -20,46 +20,51 @@
 
 .nocturne-root {
     /* ── Brand ──────────────────────────────────────────────────────────── */
-    --color-bg: #f8f3ed;            /* Cream        — the page ground */
+    /* Terracotta and cream sampled directly from public/logo/LOGO_var1.png
+       (#c06838, 71% saturation) and the logo ground (#fcf0e4). The charcoal
+       is the studio banner's headline colour — the brand pairs a warm ground
+       with cool type, and the neutral ramp below follows that, running warm
+       at the light end and cool at the dark. */
+    --color-bg: #faf1e6;            /* Cream        — the page ground */
     --color-surface: #fffdf9;       /* Warm White   — cards and panels */
-    --color-surface-raised: #e8d8c8;/* Light Beige  — a card on a panel */
-    --color-text: #3b2a24;          /* Dark Brown   — body copy */
-    --color-accent: #8b5e3c;        /* Medium Brown — the interactive colour */
-    --color-accent-2: #c49a6c;      /* Caramel      — the secondary accent */
-    --color-divider: color-mix(in srgb, #3b2a24 14%, transparent);
+    --color-surface-raised: #f3e3d2;/* Light Beige  — a card on a panel */
+    --color-text: #3d4450;          /* Charcoal     — body copy */
+    --color-accent: #c06838;        /* Terracotta   — the interactive colour */
+    --color-accent-2: #d49a68;      /* Caramel      — the secondary accent */
+    --color-divider: color-mix(in srgb, #3d4450 14%, transparent);
 
     /* ── Tonal ramps ────────────────────────────────────────────────────── */
     /* One shared lightness scale, 100 lightest to 900 darkest, so the same
        step of any role matches the others in visual value. */
     --color-neutral-100: #fffdf9;
-    --color-neutral-200: #f8f3ed;
-    --color-neutral-300: #e8d8c8;
-    --color-neutral-400: #d2bca3;
-    --color-neutral-500: #a88a6a;
-    --color-neutral-600: #856847;
-    --color-neutral-700: #6a5238;
-    --color-neutral-800: #4a2c20;
-    --color-neutral-900: #2e1c14;
+    --color-neutral-200: #faf1e6;
+    --color-neutral-300: #efe2d4;
+    --color-neutral-400: #d5c8bb;
+    --color-neutral-500: #a89e96;
+    --color-neutral-600: #736e67;  /* darkened from #7d7871 to clear 4.5:1 as --role-faint on cream */
+    --color-neutral-700: #5a5c62;
+    --color-neutral-800: #474d57;
+    --color-neutral-900: #3d4450;   /* Charcoal — the banner's headline */
 
-    --color-accent-100: #fbf4eb;
-    --color-accent-200: #f2e3d0;
-    --color-accent-300: #e4cbab;
-    --color-accent-400: #d4b287;
-    --color-accent-500: #c49a6c;    /* Caramel */
-    --color-accent-600: #a87b4f;
-    --color-accent-700: #8b5e3c;    /* Medium Brown */
-    --color-accent-800: #6b4530;
-    --color-accent-900: #4a2c20;    /* Espresso */
+    --color-accent-100: #fdf1ea;
+    --color-accent-200: #f9ddcc;
+    --color-accent-300: #f0c3a5;
+    --color-accent-400: #e2a077;
+    --color-accent-500: #d17f4f;
+    --color-accent-600: #c06838;    /* Terracotta — the logo colour */
+    --color-accent-700: #a1552c;    /* clears 4.5:1 as text on cream */
+    --color-accent-800: #7d4222;
+    --color-accent-900: #532c17;    /* Espresso */
 
-    --color-accent-2-100: #fbf4eb;
-    --color-accent-2-200: #f5e8d8;
-    --color-accent-2-300: #ead3b5;
-    --color-accent-2-400: #d9b98d;
-    --color-accent-2-500: #c49a6c;
-    --color-accent-2-600: #a97f52;
-    --color-accent-2-700: #86643f;
-    --color-accent-2-800: #63492e;
-    --color-accent-2-900: #402f1e;
+    --color-accent-2-100: #fdf4ec;
+    --color-accent-2-200: #f8e6d5;
+    --color-accent-2-300: #f0d0b2;
+    --color-accent-2-400: #e3b389;
+    --color-accent-2-500: #d49a68;  /* Caramel */
+    --color-accent-2-600: #bd8250;
+    --color-accent-2-700: #9c6a40;
+    --color-accent-2-800: #77502f;
+    --color-accent-2-900: #4f351f;
 
     /* ── Roles ──────────────────────────────────────────────────────────── */
 
@@ -91,7 +96,7 @@
 
     /* The scrim behind the lightbox and modals. Dark on either ground; warm
        so it reads as shadow rather than a hole. */
-    --role-scrim: color-mix(in srgb, #2e1c14 92%, transparent);
+    --role-scrim: color-mix(in srgb, #2b2118 92%, transparent);
 
     /* ── Type ───────────────────────────────────────────────────────────── */
     --font-heading: 'Inter', system-ui, sans-serif;
@@ -113,14 +118,14 @@
     /* ── Elevation ──────────────────────────────────────────────────────── */
     /* Derived from the ground: soft ink-tinted shadows on a light theme,
        where the dark palette used a hairline edge plus ambient darkness. */
-    --shadow-sm: 0 1px 2px rgba(59, 42, 36, 0.06), 0 0 0 1px rgba(59, 42, 36, 0.07);
-    --shadow-md: 0 4px 14px rgba(59, 42, 36, 0.10), 0 0 0 1px rgba(59, 42, 36, 0.07);
-    --shadow-lg: 0 16px 40px rgba(59, 42, 36, 0.16), 0 0 0 1px rgba(59, 42, 36, 0.08);
+    --shadow-sm: 0 1px 2px rgba(61, 68, 80, 0.07), 0 0 0 1px rgba(61, 68, 80, 0.08);
+    --shadow-md: 0 4px 14px rgba(61, 68, 80, 0.11), 0 0 0 1px rgba(61, 68, 80, 0.08);
+    --shadow-lg: 0 16px 40px rgba(61, 68, 80, 0.17), 0 0 0 1px rgba(61, 68, 80, 0.09);
 
     /* Hero-height fallback, used when WebGL is unavailable or the visitor has
        asked for reduced motion. Approximates the GradientWaves palette. */
     --waves-fallback:
-        radial-gradient(ellipse 120% 80% at 72% 55%, #e8d8c8 0%, transparent 62%),
-        radial-gradient(ellipse 90% 60% at 30% 40%, #f2e3d0 0%, transparent 70%),
-        linear-gradient(#f8f3ed, #fffdf9);
+        radial-gradient(ellipse 120% 80% at 72% 55%, #f0c3a5 0%, transparent 62%),
+        radial-gradient(ellipse 90% 60% at 30% 40%, #f8e6d5 0%, transparent 70%),
+        linear-gradient(#faf1e6, #fffdf9);
 }

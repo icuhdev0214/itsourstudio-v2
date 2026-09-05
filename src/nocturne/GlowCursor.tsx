@@ -165,8 +165,8 @@ export interface GlowCursorProps {
 
 /** Defaults are the values the Nocturne design passes. */
 const GlowCursor = ({
-    color = '#c49a6c',
-    secondaryColor = '#8b5e3c',
+    color = '#c06838',
+    secondaryColor = '#d49a68',
     trailLength = 40,
     trailWidth = 8,
     trailTaper = 0.8,

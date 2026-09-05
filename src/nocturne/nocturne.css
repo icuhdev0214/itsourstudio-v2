@@ -26,7 +26,7 @@
    not cover. Literal rather than tokenised: the tokens live inside
    `.nocturne-root`, and <body> is outside it. */
 body.nocturne-body {
-    background: #f8f3ed;
+    background: #faf1e6;
     color-scheme: light;
 }
 
