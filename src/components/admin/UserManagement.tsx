@@ -223,7 +223,7 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
                                             borderRadius: '4px',
                                             fontSize: '0.8rem',
                                             fontWeight: 600,
-                                            border: '1px solid #ddd',
+                                            border: '1px solid #ddcab4',
                                             background: user.status === 'active' ? '#e8f5e9' : '#ffebee',
                                             cursor: 'pointer'
                                         }}
@@ -240,7 +240,7 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
                                             title="Edit User"
                                             onClick={() => handleEditUser(user)}
                                         >
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                         </button>
                                         <button
                                             className="action-btn"
@@ -285,7 +285,7 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
                                     className="action-btn"
                                     onClick={() => handleEditUser(user)}
                                 >
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 </button>
                                 <button
                                     className="action-btn"
@@ -345,7 +345,7 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
                     </div>
                 ))}
                 {users.length === 0 && (
-                    <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
+                    <div style={{ textAlign: 'center', padding: '2rem', color: '#a89e96' }}>
                         No users found.
                     </div>
                 )}
@@ -395,7 +395,7 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
                                 </div>
                             )}
                             {editingUser && (
-                                <p style={{ fontSize: '0.85rem', color: '#666', margin: '0.5rem 0' }}>
+                                <p style={{ fontSize: '0.85rem', color: '#5a5c62', margin: '0.5rem 0' }}>
                                     Use the 🔒 button to send password reset email.
                                 </p>
                             )}

@@ -27,7 +27,7 @@
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f0f0f0;
+    border: 1px solid #f5eadd;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -42,7 +42,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f5eadd;
     padding-bottom: 0.75rem;
 }
 
@@ -55,12 +55,12 @@
 .user-name {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #1e293b;
+    color: #3d4450;
 }
 
 .user-email {
     font-size: 0.85rem;
-    color: #64748b;
+    color: #736e67;
     word-break: break-all;
 }
 
@@ -83,6 +83,6 @@
 }
 
 .card-label {
-    color: #64748b;
+    color: #736e67;
     font-weight: 500;
 }

@@ -27,19 +27,25 @@ const LoadingScreen = ({ onLoadComplete, isPageTransition = false }: LoadingScre
     return (
         <div className={`loading-screen ${isLoaded ? 'fade-out' : ''}`}>
             <div className="loading-content">
-                {/* Animated Logo */}
+                {/* Animated Logo, framed by the reticle's corner brackets */}
                 <div className="loading-logo">
+                    <div className="logo-frame" aria-hidden="true">
+                        <i className="tl" />
+                        <i className="tr" />
+                        <i className="bl" />
+                        <i className="br" />
+                    </div>
                     <div className="logo-container">
+                        {/* The nav's wordmark, so the loader and the site read as
+                            one brand. It carries the name, so no separate
+                            heading below it. */}
                         <img
-                            src="/logo/android-chrome-512x512.png"
+                            src="/logo/LOGO_var2.png"
                             alt="it's ouR Studio"
                             className="loading-logo-image"
                         />
                     </div>
                 </div>
-
-                {/* Brand Name */}
-                <h1 className="loading-brand">it's ouR Studio</h1>
 
                 {/* Loading Bar */}
                 <div className="loading-bar-container">

@@ -22,20 +22,20 @@
 }
 
 .btn-nav {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
+    background: #f5eadd;
+    border: 1px solid #ddcab4;
     border-radius: 4px;
     padding: 0.25rem 0.75rem;
     cursor: pointer;
 }
 
 .btn-nav:hover {
-    background: #e2e8f0;
+    background: #ecdfd0;
 }
 
 .ledger-filter {
     padding: 0.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     border-radius: 6px;
     font-size: 1rem;
     font-family: inherit;
@@ -72,7 +72,7 @@
 .ledger-table-wrapper {
     flex: 1;
     overflow: auto;
-    border: 1px solid #333;
+    border: 1px solid #3d4450;
 }
 
 .ledger-table {
@@ -86,17 +86,17 @@
 .ledger-table th,
 .ledger-table td {
     padding: 6px 4px;
-    border: 1px solid #666;
+    border: 1px solid #5a5c62;
     text-align: left;
 }
 
 .ledger-table th {
-    background: #e2e8f0;
+    background: #ecdfd0;
     position: sticky;
     top: 0;
     z-index: 10;
     font-weight: 700;
-    color: #1e293b;
+    color: #3d4450;
     text-align: center;
     text-transform: uppercase;
 }
@@ -193,7 +193,7 @@
 }
 
 .totals-row td {
-    background: #f1f5f9;
+    background: #f5eadd;
     font-weight: 600;
     position: sticky;
     bottom: 0;
