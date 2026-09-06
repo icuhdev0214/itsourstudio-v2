@@ -947,7 +947,7 @@ body.nocturne-body {
 .nx-drift-tile:focus-visible {
     opacity: 1;
     transform: translateZ(64px);
-    box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 20px 46px -16px rgba(61, 68, 80, 0.34);
 }
 
 /* Flat fallback for reduced motion / no-JS 3D: a plain responsive grid. */
@@ -976,7 +976,7 @@ body.nocturne-body {
 .nx-grid-tile:hover,
 .nx-grid-tile:focus-visible {
     transform: translateY(-4px);
-    box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 20px 46px -16px rgba(61, 68, 80, 0.34);
 }
 
 .nx-empty {

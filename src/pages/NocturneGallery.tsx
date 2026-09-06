@@ -1,19 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import DriftWall from '../nocturne/DriftWall';
 import { useEffectsEnabled } from '../nocturne/useEffectsEnabled';
-import { useGallery } from '../nocturne/useStudioData';
+import { useGallery, type GalleryCategory } from '../nocturne/useStudioData';
 
 /**
  * Nocturne gallery — the drifting 3D photo wall with a filter row and a
  * lightbox. Falls back to a flat grid where the 3D scene is inappropriate.
  */
 
-const FILTERS = [
-    { id: 'all', label: 'All Photos' },
-    { id: 'solo', label: 'Solo' },
-    { id: 'duo', label: 'Duo' },
-    { id: 'group', label: 'Group' },
-] as const;
+/* Chips are derived from what the collection actually holds rather than
+   hard-coded, so 'other' photos stay reachable and a category with nothing in
+   it does not offer a chip that leads to an empty wall. */
+const CATEGORY_ORDER: GalleryCategory[] = ['solo', 'duo', 'group', 'other'];
+const CATEGORY_CHIP: Record<GalleryCategory, string> = {
+    solo: 'Solo',
+    duo: 'Duo',
+    group: 'Group',
+    other: 'Other',
+};
 
 const NocturneGallery = () => {
     const { images, loading } = useGallery();
@@ -25,6 +29,22 @@ const NocturneGallery = () => {
         () => (filter === 'all' ? images : images.filter((image) => image.category === filter)),
         [images, filter],
     );
+
+    const filters = useMemo(() => {
+        const present = new Set(images.map((image) => image.category));
+        return [
+            { id: 'all', label: 'All Photos' },
+            ...CATEGORY_ORDER.filter((c) => present.has(c)).map((c) => ({
+                id: c as string,
+                label: CATEGORY_CHIP[c],
+            })),
+        ];
+    }, [images]);
+
+    // A chip can vanish when the collection changes underneath a filter.
+    useEffect(() => {
+        if (filter !== 'all' && !filters.some((f) => f.id === filter)) setFilter('all');
+    }, [filters, filter]);
 
     const current = lightbox >= 0 ? shown[Math.min(lightbox, shown.length - 1)] : null;
 
@@ -58,7 +78,7 @@ const NocturneGallery = () => {
                     <div className="nx-eyebrow">Gallery</div>
                     <h1>Moments captured in our studio</h1>
                     <div className="nx-filters">
-                        {FILTERS.map((entry) => (
+                        {filters.map((entry) => (
                             <button
                                 key={entry.id}
                                 type="button"
@@ -84,7 +104,9 @@ const NocturneGallery = () => {
                     <div className="nx-empty">
                         <h3>No photos here yet</h3>
                         <p>
-                            We haven&apos;t uploaded any {filter !== 'all' ? filter : ''} photos yet.
+                            {filter === 'all'
+                                ? "We haven't uploaded any photos yet."
+                                : `We haven't uploaded any ${filter} photos yet.`}{' '}
                             Check back soon, or book a session and be the first.
                         </p>
                     </div>

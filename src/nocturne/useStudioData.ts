@@ -19,14 +19,36 @@ export const useServices = () => {
             collection(db, 'services'),
             (snapshot) => {
                 if (!snapshot.empty) {
-                    const fetched = snapshot.docs.map((d) => ({
-                        id: d.id,
-                        ...d.data(),
-                    })) as Service[];
-                    setServices(visibleServices(fetched));
-                } else {
-                    setServices(DEFAULT_SERVICES);
+                    const fetched = visibleServices(
+                        snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Service[],
+                    );
+                    setServices(fetched);
+                    setLoading(false);
+
+                    // Text and prices come from Firestore and are trustworthy;
+                    // the image URLs may point at a bucket that is not serving.
+                    const sample = fetched.find((service) => REMOTE.test(service.imageMain ?? ''));
+                    if (sample) {
+                        void storageIsServing(sample.imageMain).then((serving) => {
+                            if (serving) return;
+                            setServices((current) =>
+                                current.map((service) => {
+                                    const local = DEFAULT_SERVICES.find((d) => d.id === service.id)
+                                        ?? DEFAULT_SERVICES[0];
+                                    return {
+                                        ...service,
+                                        imageMain: local.imageMain,
+                                        imageDetail: local.imageDetail,
+                                        imageAction: local.imageAction,
+                                    };
+                                }),
+                            );
+                        });
+                    }
+                    return;
                 }
+
+                setServices(DEFAULT_SERVICES);
                 setLoading(false);
             },
             (error) => {
@@ -41,12 +63,93 @@ export const useServices = () => {
     return { services, loading };
 };
 
+/* ── Storage availability ──────────────────────────────────────────────────
+ * Firestore and Cloud Storage are separate products with separate entitlements,
+ * so the database can answer perfectly while every image URL it hands back is
+ * dead. That is the live failure mode today: the project sits on the Spark
+ * plan, which lost Cloud Storage in Sept 2024, so every /gallery object returns
+ * HTTP 402 and the browser blocks it (ERR_BLOCKED_BY_ORB) — leaving a wall of
+ * empty tiles.
+ *
+ * One canary image settles it for the whole session: the bucket is either
+ * serving or it is not. When it is not, each hook keeps the admin's text and
+ * swaps in the photography bundled under /public.
+ */
+
+const REMOTE = /^https?:\/\//i;
+
+const canLoadImage = (src: string, timeoutMs = 8000): Promise<boolean> =>
+    new Promise((resolve) => {
+        if (typeof Image === 'undefined') return resolve(true);
+        const img = new Image();
+        let settled = false;
+        const done = (ok: boolean) => {
+            if (settled) return;
+            settled = true;
+            img.onload = img.onerror = null;
+            resolve(ok);
+        };
+        img.onload = () => done(true);
+        img.onerror = () => done(false);
+        img.src = src;
+        setTimeout(() => done(false), timeoutMs);
+    });
+
+let storageProbe: Promise<boolean> | null = null;
+
+/** True when remote images load. Probed once per session, then cached. */
+const storageIsServing = (sampleSrc: string): Promise<boolean> => {
+    if (!REMOTE.test(sampleSrc)) return Promise.resolve(true);
+    if (!storageProbe) {
+        storageProbe = canLoadImage(sampleSrc).then((ok) => {
+            if (!ok) {
+                console.warn(
+                    'Cloud Storage images are not loading (the project is on the Spark plan, ' +
+                    'which no longer includes Cloud Storage). Falling back to the photos ' +
+                    'bundled in /public. Upgrade to Blaze to restore uploaded images.',
+                );
+            }
+            return ok;
+        });
+    }
+    return storageProbe;
+};
+
+/** The admin writes a fourth category, 'other'. It has to survive the trip or
+ *  those photos become unreachable by any filter. */
+export type GalleryCategory = 'solo' | 'duo' | 'group' | 'other';
+
 export interface GalleryImage {
     id: string;
     src: string;
-    category: 'solo' | 'duo' | 'group';
+    category: GalleryCategory;
     alt: string;
 }
+
+const CATEGORIES: GalleryCategory[] = ['solo', 'duo', 'group', 'other'];
+
+/** The admin's alt field defaults to '' and is usually left blank, which left
+ *  the lightbox captioned " (1 / 26)" and screen readers hearing "View ". Fall
+ *  back to the category, the way the admin's own list falls back to
+ *  'Untitled'. */
+const CATEGORY_LABEL: Record<GalleryCategory, string> = {
+    solo: 'Solo session',
+    duo: 'Duo session',
+    group: 'Group session',
+    other: 'Studio session',
+};
+
+const normaliseImage = (raw: Partial<GalleryImage> & { id: string }): GalleryImage => {
+    const category = CATEGORIES.includes(raw.category as GalleryCategory)
+        ? (raw.category as GalleryCategory)
+        : 'other';
+    return {
+        id: raw.id,
+        src: raw.src ?? '',
+        category,
+        alt: (raw.alt ?? '').trim() || CATEGORY_LABEL[category],
+    };
+};
 
 /* The studio's own shots, shipped in /public/gallery. Used when the Firestore
    collection is empty or unreachable, so the wall is never blank — the same
@@ -95,11 +198,22 @@ export const useGallery = () => {
                 const q = query(collection(db, 'gallery'), orderBy('createdAt', 'desc'));
                 const snapshot = await getDocs(q);
                 if (cancelled) return;
-                const fetched = snapshot.docs.map((d) => ({
-                    id: d.id,
-                    ...d.data(),
-                })) as GalleryImage[];
-                setImages(fetched.length ? fetched : DEFAULT_GALLERY);
+                const fetched = snapshot.docs
+                    .map((d) => normaliseImage({ id: d.id, ...d.data() }))
+                    // A document with no src renders as an empty tile that
+                    // still occupies a slot and opens a blank lightbox.
+                    .filter((image) => image.src);
+
+                if (!fetched.length) {
+                    setImages(DEFAULT_GALLERY);
+                    return;
+                }
+
+                // Records are fine but their images may not be: check before
+                // painting a wall of empty tiles.
+                const serving = await storageIsServing(fetched[0].src);
+                if (cancelled) return;
+                setImages(serving ? fetched : DEFAULT_GALLERY);
             } catch (error) {
                 console.error('Error fetching gallery, using defaults:', error);
                 if (!cancelled) setImages(DEFAULT_GALLERY);
