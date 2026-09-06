@@ -16,7 +16,7 @@
 }
 
 .modal-content {
-    background: #ffffff;
+    background: #fffdf9;
     border-radius: 24px;
     width: 100%;
     max-width: 950px;
@@ -41,7 +41,7 @@
     top: 1.5rem;
     right: 1.5rem;
     font-size: 1.5rem;
-    color: #64748b;
+    color: #736e67;
     background: transparent;
     border: none;
     border-radius: 50%;
@@ -56,7 +56,7 @@
 }
 
 .modal-close:hover {
-    background: #f1f5f9;
+    background: #f5eadd;
     color: var(--color-terracotta);
     transform: rotate(90deg);
 }
@@ -64,8 +64,8 @@
 /* Header & Stepper */
 .booking-modal-header {
     padding: 2rem 2.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid #f1f5f9;
+    background: #fffdf9;
+    border-bottom: 1px solid #f5eadd;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -75,7 +75,7 @@
 .section-title {
     font-family: var(--font-display);
     font-size: 1.75rem;
-    color: #1e293b;
+    color: #3d4450;
     margin: 0;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -107,8 +107,8 @@
     height: 28px;
     border-radius: 50%;
     background: white;
-    border: 2px solid #e2e8f0;
-    color: #94a3b8;
+    border: 2px solid #ecdfd0;
+    color: #a89e96;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,7 +132,7 @@
 .step-label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: #a89e96;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     transition: all 0.3s ease;
@@ -153,7 +153,7 @@
 .step-line {
     width: 20px;
     height: 2px;
-    background: #e2e8f0;
+    background: #ecdfd0;
     border-radius: 1px;
 }
 
@@ -183,7 +183,7 @@
 }
 
 .step-subtitle {
-    color: #64748b;
+    color: #736e67;
     font-size: 1rem;
     margin: 0;
 }
@@ -198,7 +198,7 @@
 
 .package-card {
     background: white;
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
     border-radius: 16px;
     padding: 1.5rem;
     cursor: pointer;
@@ -210,14 +210,14 @@
 }
 
 .package-card:hover {
-    border-color: #cbd5e1;
+    border-color: #ddcab4;
     transform: translateY(-2px);
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
 }
 
 .package-card.selected {
     border-color: var(--color-terracotta);
-    background: #fffcf8;
+    background: #fffdf9;
     box-shadow: 0 10px 25px -5px rgba(191, 106, 57, 0.15);
 }
 
@@ -234,7 +234,7 @@
 
 .package-duration {
     font-size: 0.85rem;
-    color: #64748b;
+    color: #736e67;
 }
 
 .package-price {
@@ -249,8 +249,8 @@
     margin-top: 0.5rem;
     align-self: center;
     padding: 0.3rem 0.65rem;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+    background: #fdf1ea;
+    border: 1px solid #f9ddcc;
     border-radius: 999px;
     color: #9a4f2c;
     font-size: 0.7rem;
@@ -272,12 +272,12 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
     border-radius: 14px;
     background: white;
     font-size: 0.95rem;
     font-weight: 500;
-    color: #334155;
+    color: #474d57;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -295,17 +295,17 @@
 .date-input-trigger .date-text {
     flex: 1;
     text-align: left;
-    color: #1e293b;
+    color: #3d4450;
 }
 
 .date-input-trigger .date-text:empty::before {
     content: 'Select a date';
-    color: #94a3b8;
+    color: #a89e96;
 }
 
 .date-input-trigger .chevron-icon {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #a89e96;
     transition: transform 0.2s ease;
 }
 
@@ -342,7 +342,7 @@
     justify-content: space-between;
     margin-bottom: 1.25rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #f1f5f9;
+    border-bottom: 2px solid #f5eadd;
 }
 
 .calendar-popup-header h3 {
@@ -353,7 +353,7 @@
 }
 
 .popup-close-btn {
-    background: #f1f5f9;
+    background: #f5eadd;
     border: none;
     width: 36px;
     height: 36px;
@@ -362,13 +362,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #64748b;
+    color: #736e67;
     font-size: 1.25rem;
     transition: all 0.2s ease;
 }
 
 .popup-close-btn:hover {
-    background: #e2e8f0;
+    background: #ecdfd0;
     color: var(--color-dark);
     transform: rotate(90deg);
 }
@@ -381,7 +381,7 @@
     gap: 1rem;
     margin-top: 1.25rem;
     padding: 1rem;
-    background: #f8fafc;
+    background: #faf1e6;
     border-radius: 12px;
 }
 
@@ -391,11 +391,11 @@
     gap: 0.5rem;
     padding: 0.75rem 1.25rem;
     background: white;
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
     border-radius: 10px;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #475569;
+    color: #5a5c62;
     cursor: pointer;
     transition: all 0.2s ease;
     min-width: 90px;
@@ -417,7 +417,7 @@
 .pagination-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
-    background: #f8fafc;
+    background: #faf1e6;
 }
 
 .pagination-info {
@@ -431,7 +431,7 @@
 .pagination-text {
     font-size: 0.75rem;
     font-weight: 500;
-    color: #64748b;
+    color: #736e67;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -446,7 +446,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #cbd5e1;
+    background: #ddcab4;
     transition: all 0.2s ease;
 }
 
@@ -464,7 +464,7 @@
     gap: 1rem;
     margin-top: 1rem;
     padding: 1rem;
-    background: #f8fafc;
+    background: #faf1e6;
     border-radius: 12px;
 }
 
@@ -491,7 +491,7 @@
 /* Date & Time Selection */
 .form-section-divider {
     height: 1px;
-    background: #f1f5f9;
+    background: #f5eadd;
     margin: 2rem 0;
 }
 
@@ -504,7 +504,7 @@
 
 .form-group.date-group,
 .form-group.extension-group {
-    background: #fff;
+    background: #fffdf9;
     border: 1px solid rgba(191, 106, 57, 0.15);
     border-radius: 18px;
     padding: 1.25rem;
@@ -528,7 +528,7 @@
 .date-input-wrapper input {
     width: 100%;
     padding: 1rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
     border-radius: 12px;
     font-size: 1rem;
     color: var(--color-dark);
@@ -553,7 +553,7 @@
 .modern-select {
     width: 100%;
     padding: 1rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
     border-radius: 12px;
     font-size: 1rem;
     color: var(--color-dark);
@@ -574,10 +574,10 @@
 
 /* Time Slots */
 .time-selection-container {
-    background: #ffffff;
+    background: #fffdf9;
     padding: 1.75rem;
     border-radius: 18px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     box-shadow: 0 8px 24px rgba(59, 44, 40, 0.06);
 }
 
@@ -589,7 +589,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    background: #ffffff;
+    background: #fffdf9;
     border: 1px dashed rgba(191, 106, 57, 0.3);
     border-radius: 16px;
 }
@@ -608,8 +608,8 @@
 
 .time-slot-btn {
     padding: 0.75rem 0.5rem;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: #fffdf9;
+    border: 1px solid #ecdfd0;
     border-radius: 10px;
     font-size: 0.9rem;
     color: var(--color-dark);
@@ -633,10 +633,10 @@
 }
 
 .time-slot-btn:disabled {
-    background: #f8fafc;
-    color: #cbd5e1;
+    background: #faf1e6;
+    color: #ddcab4;
     cursor: not-allowed;
-    border-color: #f1f5f9;
+    border-color: #f5eadd;
 }
 
 .time-legend {
@@ -644,7 +644,7 @@
     gap: 1.5rem;
     justify-content: center;
     font-size: 0.85rem;
-    color: #64748b;
+    color: #736e67;
 }
 
 .legend-item {
@@ -661,7 +661,7 @@
 
 .dot.available {
     background: white;
-    border: 1px solid #94a3b8;
+    border: 1px solid #a89e96;
 }
 
 .dot.selected {
@@ -669,7 +669,7 @@
 }
 
 .dot.booked {
-    background: #cbd5e1;
+    background: #ddcab4;
 }
 
 /* Form Inputs Generic */
@@ -682,18 +682,18 @@ input[type="time"],
 textarea {
     width: 100%;
     padding: 1rem 1.25rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     border-radius: 12px;
     font-size: 1rem;
     color: var(--color-dark);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: #f8fafc;
+    background: #faf1e6;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 input:focus,
 textarea:focus {
-    background: #ffffff;
+    background: #fffdf9;
     border-color: var(--color-terracotta);
     box-shadow: 0 0 0 4px rgba(191, 106, 57, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
     transform: translateY(-1px);
@@ -701,7 +701,7 @@ textarea:focus {
 
 input::placeholder,
 textarea::placeholder {
-    color: #94a3b8;
+    color: #a89e96;
     font-weight: 400;
 }
 
@@ -712,7 +712,7 @@ textarea::placeholder {
 }
 
 .form-group {
-    background: #ffffff;
+    background: #fffdf9;
     margin: 2rem 0;
 }
 
@@ -724,7 +724,7 @@ textarea::placeholder {
     justify-content: space-between;
     align-items: center;
     padding-top: 2rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #f5eadd;
     margin-top: 2rem;
 }
 
@@ -753,15 +753,15 @@ textarea::placeholder {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 700;
-    color: #94a3b8;
+    color: #a89e96;
     margin-bottom: 1rem;
 }
 
 .add-ons-selector {
     margin-top: 1.5rem;
     padding: 1.25rem;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+    background: #fdf1ea;
+    border: 1px solid #f9ddcc;
     border-radius: 16px;
 }
 
@@ -778,10 +778,10 @@ textarea::placeholder {
     gap: 0.75rem;
     width: 100%;
     padding: 0.9rem 1rem;
-    background: #ffffff;
-    border: 1px solid #fed7aa;
+    background: #fffdf9;
+    border: 1px solid #f9ddcc;
     border-radius: 12px;
-    color: #334155;
+    color: #474d57;
     cursor: pointer;
     text-align: left;
     transition: all 0.2s ease;
@@ -804,7 +804,7 @@ textarea::placeholder {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: #f8fafc;
+    background: #faf1e6;
     color: var(--color-terracotta);
     font-weight: 800;
 }
@@ -820,7 +820,7 @@ textarea::placeholder {
 /* Payment Card (Left) */
 .payment-card-hero {
     background: white;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     border-radius: 24px;
     padding: 2.5rem;
     display: flex;
@@ -858,7 +858,7 @@ textarea::placeholder {
 
 .brand-tag {
     font-size: 0.75rem;
-    color: #64748b;
+    color: #736e67;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 600;
@@ -869,7 +869,7 @@ textarea::placeholder {
     padding: 1rem;
     border-radius: 16px;
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-    border: 1px solid #f1f5f9;
+    border: 1px solid #f5eadd;
     margin-bottom: 2rem;
     transition: transform 0.3s ease;
 }
@@ -890,7 +890,7 @@ textarea::placeholder {
     display: flex;
     justify-content: space-between;
     padding-top: 2rem;
-    border-top: 2px dashed #e2e8f0;
+    border-top: 2px dashed #ecdfd0;
 }
 
 /* NEW: QR Card Design - Image as Card */
@@ -916,9 +916,9 @@ textarea::placeholder {
 }
 
 .payment-info-overlay {
-    background: #ffffff;
+    background: #fffdf9;
     padding: 1.25rem 1.5rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #f5eadd;
 }
 
 .payment-info-row {
@@ -936,7 +936,7 @@ textarea::placeholder {
 
 .info-label {
     font-size: 0.7rem;
-    color: #94a3b8;
+    color: #a89e96;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
@@ -951,7 +951,7 @@ textarea::placeholder {
 .info-value {
     font-weight: 700;
     font-size: 1rem;
-    color: #1e293b;
+    color: #3d4450;
     font-family: 'SF Mono', 'Menlo', monospace;
 }
 
@@ -961,12 +961,12 @@ textarea::placeholder {
 }
 
 .copy-btn-mini {
-    background: #f1f5f9;
+    background: #f5eadd;
     border: none;
     border-radius: 6px;
     padding: 0.35rem;
     cursor: pointer;
-    color: #64748b;
+    color: #736e67;
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -981,10 +981,10 @@ textarea::placeholder {
 .payment-qr-note {
     margin: 1rem 0 0;
     padding: 0.85rem 1rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #faf1e6;
+    border: 1px solid #ecdfd0;
     border-radius: 10px;
-    color: #64748b;
+    color: #736e67;
     font-size: 0.85rem;
     line-height: 1.45;
 }
@@ -996,7 +996,7 @@ textarea::placeholder {
 
 .detail-group .label {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #a89e96;
     text-transform: uppercase;
     margin-bottom: 0.25rem;
     font-weight: 600;
@@ -1004,13 +1004,13 @@ textarea::placeholder {
 
 .detail-group .value {
     font-weight: 700;
-    color: #1e293b;
+    color: #3d4450;
 }
 
 .detail-group .value.number {
     font-size: 1.1rem;
     font-family: monospace;
-    color: #0f172a;
+    color: #2f3540;
 }
 
 .detail-group .value.amount {
@@ -1026,8 +1026,8 @@ textarea::placeholder {
 }
 
 .booking-summary-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #faf1e6;
+    border: 1px solid #ecdfd0;
     border-radius: 20px;
     padding: 2rem;
 }
@@ -1042,17 +1042,17 @@ textarea::placeholder {
     display: flex;
     justify-content: space-between;
     font-size: 0.95rem;
-    color: #64748b;
+    color: #736e67;
 }
 
 .summary-row strong {
-    color: #1e293b;
+    color: #3d4450;
     font-weight: 600;
 }
 
 .summary-divider {
     height: 1px;
-    background: #e2e8f0;
+    background: #ecdfd0;
     margin: 0.5rem 0;
 }
 
@@ -1078,15 +1078,15 @@ textarea::placeholder {
 .summary-row.amount-now {
     padding: 0.85rem 1rem;
     margin: 0.25rem -1rem 0;
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
+    background: #fdf1ea;
+    border: 1px solid #f9ddcc;
     border-radius: 12px;
     color: #9a4f2c;
     font-weight: 700;
 }
 
 .summary-row.balance strong {
-    color: #334155;
+    color: #474d57;
 }
 
 /* Upload Box */
@@ -1107,7 +1107,7 @@ textarea::placeholder {
 }
 
 .dropzone-content {
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed #ddcab4;
     border-radius: 16px;
     padding: 2rem;
     text-align: center;
@@ -1123,11 +1123,11 @@ textarea::placeholder {
 
 .upload-dropzone:hover .dropzone-content {
     border-color: var(--color-terracotta);
-    background: #fffcf8;
+    background: #fffdf9;
 }
 
 .icon-upload {
-    color: #94a3b8;
+    color: #a89e96;
     transition: color 0.2s;
 }
 
@@ -1155,7 +1155,7 @@ textarea::placeholder {
 
 .filename {
     font-weight: 600;
-    color: #1e293b;
+    color: #3d4450;
     word-break: break-all;
     font-size: 0.9rem;
 }
@@ -1175,7 +1175,7 @@ textarea::placeholder {
 
 .brand-tag {
     font-size: 0.75rem;
-    color: #64748b;
+    color: #736e67;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 600;
@@ -1186,7 +1186,7 @@ textarea::placeholder {
     padding: 1rem;
     border-radius: 16px;
     box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-    border: 1px solid #f1f5f9;
+    border: 1px solid #f5eadd;
     margin-bottom: 2rem;
     transition: transform 0.3s ease;
 }
@@ -1207,7 +1207,7 @@ textarea::placeholder {
     display: flex;
     justify-content: space-between;
     padding-top: 2rem;
-    border-top: 2px dashed #e2e8f0;
+    border-top: 2px dashed #ecdfd0;
 }
 
 .detail-group {
@@ -1217,7 +1217,7 @@ textarea::placeholder {
 
 .detail-group .label {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #a89e96;
     text-transform: uppercase;
     margin-bottom: 0.25rem;
     font-weight: 600;
@@ -1225,13 +1225,13 @@ textarea::placeholder {
 
 .detail-group .value {
     font-weight: 700;
-    color: #1e293b;
+    color: #3d4450;
 }
 
 .detail-group .value.number {
     font-size: 1.1rem;
     font-family: monospace;
-    color: #0f172a;
+    color: #2f3540;
 }
 
 .detail-group .value.amount {
@@ -1247,8 +1247,8 @@ textarea::placeholder {
 }
 
 .booking-summary-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #faf1e6;
+    border: 1px solid #ecdfd0;
     border-radius: 20px;
     padding: 2rem;
 }
@@ -1263,17 +1263,17 @@ textarea::placeholder {
     display: flex;
     justify-content: space-between;
     font-size: 0.95rem;
-    color: #64748b;
+    color: #736e67;
 }
 
 .summary-row strong {
-    color: #1e293b;
+    color: #3d4450;
     font-weight: 600;
 }
 
 .summary-divider {
     height: 1px;
-    background: #e2e8f0;
+    background: #ecdfd0;
     margin: 0.5rem 0;
 }
 
@@ -1302,7 +1302,7 @@ textarea::placeholder {
 }
 
 .dropzone-content {
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed #ddcab4;
     border-radius: 16px;
     padding: 2rem;
     text-align: center;
@@ -1318,11 +1318,11 @@ textarea::placeholder {
 
 .upload-dropzone:hover .dropzone-content {
     border-color: var(--color-terracotta);
-    background: #fffcf8;
+    background: #fffdf9;
 }
 
 .icon-upload {
-    color: #94a3b8;
+    color: #a89e96;
     transition: color 0.2s;
 }
 
@@ -1350,14 +1350,14 @@ textarea::placeholder {
 
 .filename {
     font-weight: 600;
-    color: #1e293b;
+    color: #3d4450;
     word-break: break-all;
     font-size: 0.9rem;
 }
 
 .action-text {
     font-size: 0.8rem;
-    color: #64748b;
+    color: #736e67;
     text-decoration: underline;
 }
 
@@ -1515,7 +1515,7 @@ textarea::placeholder {
     align-items: center;
     gap: 0.75rem;
     animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     min-width: 300px;
     pointer-events: auto;
 }
@@ -1535,7 +1535,7 @@ textarea::placeholder {
 .toast-message {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #1e293b;
+    color: #3d4450;
 }
 
 @keyframes toastSlideIn {
@@ -1557,7 +1557,7 @@ textarea::placeholder {
     cursor: pointer;
     padding: 4px;
     border-radius: 4px;
-    color: #94a3b8;
+    color: #a89e96;
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -1567,7 +1567,7 @@ textarea::placeholder {
 
 .copy-btn:hover {
     color: var(--color-terracotta);
-    background: #fffcf8;
+    background: #fffdf9;
 }
 
 .value-row {
@@ -1582,7 +1582,7 @@ textarea::placeholder {
     height: 200px;
     border-radius: 16px;
     /* overflow: hidden; removed to allow button to exceed bounds if needed */
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
 }
 
 .preview-image {
@@ -1634,7 +1634,7 @@ textarea::placeholder {
 .custom-calendar {
     /* border: 1px solid rgba(191, 106, 57, 0.2); */
     border-radius: 16px;
-    background: #ffffff;
+    background: #fffdf9;
     padding: 1.25rem;
     user-select: none;
     /* box-shadow: 0 8px 24px rgba(59, 44, 40, 0.12); */
@@ -1653,7 +1653,7 @@ textarea::placeholder {
     background: none;
     border: none;
     font-size: 1.2rem;
-    color: #64748b;
+    color: #736e67;
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 50%;
@@ -1722,25 +1722,25 @@ textarea::placeholder {
 
 /* Drag & Drop Upload */
 .upload-dropzone {
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed #ddcab4;
     border-radius: 12px;
     padding: 2rem;
     text-align: center;
     position: relative;
-    background: #f8fafc;
+    background: #faf1e6;
     transition: all 0.3s ease;
     cursor: pointer;
     overflow: hidden;
 }
 
 .upload-dropzone:hover {
-    border-color: #94a3b8;
-    background: #f1f5f9;
+    border-color: #a89e96;
+    background: #f5eadd;
 }
 
 .upload-dropzone.drag-over {
     border-color: var(--color-terracotta);
-    background: #fff7ed;
+    background: #fdf1ea;
     transform: scale(1.02);
 }
 
@@ -1764,7 +1764,7 @@ textarea::placeholder {
 .drop-subtext {
     display: block;
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #a89e96;
     margin-top: 0.25rem;
     font-weight: normal;
 }
@@ -1783,7 +1783,7 @@ textarea::placeholder {
     padding: 1rem 1.25rem;
     border: 1px solid rgba(191, 106, 57, 0.15);
     border-radius: 14px;
-    background: #ffffff;
+    background: #fffdf9;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 6px 16px rgba(59, 44, 40, 0.08);
@@ -1797,7 +1797,7 @@ textarea::placeholder {
 
 .extension-card.selected {
     border-color: var(--color-terracotta);
-    background: #fff4e6;
+    background: #f9ddcc;
     box-shadow: 0 8px 20px -4px rgba(191, 106, 57, 0.3);
 }
 
@@ -1904,7 +1904,7 @@ textarea::placeholder {
 .input-icon {
     position: absolute;
     left: 1rem;
-    color: #94a3b8;
+    color: #a89e96;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1922,7 +1922,7 @@ textarea::placeholder {
     width: 100%;
     padding: 1rem 1rem 1rem 3rem;
     /* Left padding for icon */
-    border: 2px solid #e2e8f0;
+    border: 2px solid #ecdfd0;
     border-radius: 12px;
     font-size: 1rem;
     color: var(--color-dark);
@@ -1943,7 +1943,7 @@ textarea::placeholder {
 
 /* Updated Mini Summary */
 .booking-summary-mini.updated {
-    background: #fffcf8;
+    background: #fffdf9;
     border: 1px solid rgba(191, 106, 57, 0.2);
     border-radius: 16px;
     padding: 0;
@@ -1976,7 +1976,7 @@ textarea::placeholder {
 
 .mini-item .label {
     font-size: 0.75rem;
-    color: #64748b;
+    color: #736e67;
     text-transform: uppercase;
     font-weight: 600;
 }
@@ -2009,14 +2009,14 @@ textarea::placeholder {
 /* Ensure disabled state is clear */
 .calendar-day.disabled {
     cursor: not-allowed;
-    background: #f8fafc;
-    color: #94a3b8;
+    background: #faf1e6;
+    color: #a89e96;
     position: relative;
     opacity: 0.7;
 }
 
 .calendar-day.disabled:hover {
-    background: #f8fafc;
+    background: #faf1e6;
     border-color: transparent;
     transform: none;
     box-shadow: none;
@@ -2032,7 +2032,7 @@ textarea::placeholder {
     .modal-overlay {
         padding: 0 !important;
         align-items: flex-start !important;
-        background: #fafafa !important;
+        background: #faf1e6 !important;
         backdrop-filter: none;
     }
 
@@ -2048,7 +2048,7 @@ textarea::placeholder {
         display: flex;
         flex-direction: column;
         margin: 0 !important;
-        background: #fafafa;
+        background: #faf1e6;
         padding: 1rem;
     }
 
@@ -2057,16 +2057,16 @@ textarea::placeholder {
         right: 0.75rem;
         z-index: 100;
         background: white;
-        color: #64748b;
+        color: #736e67;
         width: 40px;
         height: 40px;
         border-radius: 50%;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        border: 1px solid #f1f5f9;
+        border: 1px solid #f5eadd;
     }
 
     .modal-close:hover {
-        background: #fff4e6;
+        background: #f9ddcc;
         color: var(--color-terracotta);
     }
 
@@ -2077,7 +2077,7 @@ padding: 1rem;
     align-items: flex-start;
     gap: 1rem;
     flex-shrink: 0;
-    background: #FAFAFA;
+    background: #faf1e6;
     border-bottom: none;
     /* box-shadow: 0 2px 12px rgba(0,0,0,0.04); */
     position: sticky;
@@ -2097,7 +2097,7 @@ padding: 1rem;
         justify-content: center;
         gap: 0.5rem;
         position: relative;
-        background: #f1f5f9;
+        background: #f5eadd;
         padding: 0.5rem;
         border-radius: 100px;
     }
@@ -2123,7 +2123,7 @@ padding: 1rem;
         font-size: 0.75rem;
         z-index: 2;
         background: transparent;
-        border: 2px solid #cbd5e1;
+        border: 2px solid #ddcab4;
     }
 
     .step-item.active .step-circle {
@@ -2154,7 +2154,7 @@ padding: 1rem;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         max-height: none !important;
-        background: #fafafa;
+        background: #faf1e6;
     }
 
     .wizard-step {
@@ -2179,7 +2179,7 @@ padding: 1rem;
 
     .step-subtitle {
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: #a89e96;
         margin-top: 0.25rem;
     }
 
@@ -2207,8 +2207,8 @@ padding: 1rem;
         height: 100%;
         min-height: 130px;
         border-radius: 14px;
-        border: 2px solid #f1f5f9;
-        background: #fafafa;
+        border: 2px solid #f5eadd;
+        background: #faf1e6;
         gap: 0.5rem;
     }
 
@@ -2235,7 +2235,7 @@ padding: 1rem;
 
     .package-duration {
         font-size: 0.7rem;
-        color: #94a3b8;
+        color: #a89e96;
     }
 
     .package-price {
@@ -2313,7 +2313,7 @@ padding: 1rem;
     /* ===== SECTION DIVIDER ===== */
     .form-section-divider {
         margin: 1.25rem 0;
-        background: #f1f5f9;
+        background: #f5eadd;
     }
 
     /* ===== DATE & EXTENSION CONTAINER ===== */
@@ -2326,16 +2326,16 @@ padding: 1rem;
     .form-group.extension-group {
         width: 100%;
         margin: 0;
-        background: #fafafa;
+        background: #faf1e6;
         padding: 1rem;
         border-radius: 16px;
-        border: 1px solid #f1f5f9;
+        border: 1px solid #f5eadd;
     }
 
     .form-group label {
         font-size: 0.75rem;
         margin-bottom: 0.75rem;
-        color: #64748b;
+        color: #736e67;
         letter-spacing: 0.08em;
     }
 
@@ -2344,7 +2344,7 @@ padding: 1rem;
         padding: 1rem;
         border-radius: 14px;
         background: white;
-        border: 1px solid #f1f5f9;
+        border: 1px solid #f5eadd;
         box-shadow: none;
     }
 
@@ -2358,7 +2358,7 @@ padding: 1rem;
         width: 32px;
         height: 32px;
         font-size: 1.1rem;
-        background: #f8fafc;
+        background: #faf1e6;
         border-radius: 8px;
     }
 
@@ -2369,7 +2369,7 @@ padding: 1rem;
     .calendar-weekday {
         font-size: 0.65rem;
         margin-bottom: 0.5rem;
-        color: #94a3b8;
+        color: #a89e96;
     }
 
     .calendar-day {
@@ -2399,7 +2399,7 @@ padding: 1rem;
         border-radius: 12px;
         min-height: auto;
         background: white;
-        border: 1px solid #f1f5f9;
+        border: 1px solid #f5eadd;
         box-shadow: none;
     }
 
@@ -2431,8 +2431,8 @@ padding: 1rem;
     .time-selection-container {
         padding: 1rem;
         border-radius: 16px;
-        background: #fafafa;
-        border: 1px solid #f1f5f9;
+        background: #faf1e6;
+        border: 1px solid #f5eadd;
         box-shadow: none;
     }
 
@@ -2449,7 +2449,7 @@ padding: 1rem;
         border-radius: 10px;
         font-weight: 600;
         background: white;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #ecdfd0;
     }
 
     .time-slot-btn.selected {
@@ -2460,9 +2460,9 @@ padding: 1rem;
     }
 
     .time-slot-btn:disabled {
-        background: #f8fafc;
-        color: #cbd5e1;
-        border-color: #f1f5f9;
+        background: #faf1e6;
+        color: #ddcab4;
+        border-color: #f5eadd;
     }
 
     /* ===== TIME LEGEND ===== */
@@ -2474,12 +2474,12 @@ padding: 1rem;
         font-size: 0.7rem;
         margin-top: 0.5rem;
         padding-top: 0.75rem;
-        border-top: 1px solid #f1f5f9;
+        border-top: 1px solid #f5eadd;
     }
 
     .legend-item {
         gap: 0.35rem;
-        color: #64748b;
+        color: #736e67;
     }
 
     .dot {
@@ -2491,7 +2491,7 @@ padding: 1rem;
     .empty-state-box {
         padding: 2rem 1.5rem;
         background: white;
-        border: 2px dashed #e2e8f0;
+        border: 2px dashed #ecdfd0;
         border-radius: 14px;
     }
 
@@ -2502,7 +2502,7 @@ padding: 1rem;
 
     .empty-state-box p {
         font-size: 0.9rem;
-        color: #94a3b8;
+        color: #a89e96;
     }
 
     /* ===== WIZARD ACTIONS - Sticky Bottom ===== */
@@ -2516,8 +2516,8 @@ position: sticky;
     padding: 1rem;
     margin: 0;
     margin-top: 0px;
-    background: #FAFAFA;
-    border-top: 1px solid #f1f5f9;
+    background: #faf1e6;
+    border-top: 1px solid #f5eadd;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
     z-index: 40;
     margin-top: auto;
@@ -2532,8 +2532,8 @@ position: sticky;
     }
 
     .wizard-actions button.btn-secondary {
-        background: #f1f5f9;
-        color: #64748b;
+        background: #f5eadd;
+        color: #736e67;
         border: none;
     }
 
@@ -2599,7 +2599,7 @@ position: sticky;
     .booking-summary-box {
         padding: 1.25rem;
         border-radius: 16px;
-        background: #fafafa;
+        background: #faf1e6;
     }
 
     .summary-row {
@@ -2959,7 +2959,7 @@ position: sticky;
     /* Enhanced Input Labels */
     .input-group label {
         font-size: 0.8rem;
-        color: #475569;
+        color: #5a5c62;
         margin-bottom: 0.5rem;
         font-weight: 600;
         display: flex;
@@ -2983,7 +2983,7 @@ position: sticky;
         padding: 0.875rem 1rem 0.875rem 3.25rem !important;
         border-radius: 14px;
         background-color: white;
-        border: 2px solid #e2e8f0;
+        border: 2px solid #ecdfd0;
         width: 100%;
         min-height: 54px; /* Comfortable tap target */
         box-shadow: none;
@@ -3002,7 +3002,7 @@ position: sticky;
         left: 1rem !important;
         top: 50% !important;
         transform: translateY(-50%) !important;
-        color: #94a3b8;
+        color: #a89e96;
         z-index: 5;
         width: 20px;
         display: flex;
@@ -3052,10 +3052,10 @@ position: sticky;
 
     .mini-header {
         background: transparent;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid #f5eadd;
         padding: 0 0 0.75rem 0;
         font-size: 0.7rem;
-        color: #94a3b8;
+        color: #a89e96;
         font-weight: 700;
         letter-spacing: 0.12em;
         margin-bottom: 0.875rem;
@@ -3076,7 +3076,7 @@ position: sticky;
         width: 100%;
         gap: 1rem;
         padding: 0.5rem 0;
-        border-bottom: 1px dashed #f1f5f9;
+        border-bottom: 1px dashed #f5eadd;
     }
 
     .mini-item:last-child:not(.highlight) {
@@ -3085,7 +3085,7 @@ position: sticky;
 
     .mini-item .label {
         font-size: 0.85rem;
-        color: #64748b;
+        color: #736e67;
         font-weight: 500;
         text-transform: none;
     }
@@ -3093,7 +3093,7 @@ position: sticky;
     .mini-item .value {
         font-size: 0.9rem;
         font-weight: 600;
-        color: #1e293b;
+        color: #3d4450;
         text-align: right;
     }
 
@@ -3101,7 +3101,7 @@ position: sticky;
         margin-top: 0.5rem;
         padding-top: 1rem;
         padding-bottom: 0;
-        border-top: 2px solid #f1f5f9;
+        border-top: 2px solid #f5eadd;
         border-bottom: none;
     }
 
@@ -3123,8 +3123,8 @@ position: sticky;
     gap: 1rem;
     padding: 1.5rem 0 0;
     margin: 2rem auto 0;
-    background: #ffffff;
-    border-top: 1px solid #f1f5f9;
+    background: #fffdf9;
+    border-top: 1px solid #f5eadd;
     box-shadow: none;
     z-index: 30;
 }
@@ -3140,7 +3140,7 @@ position: sticky;
 .modal-content.booking-modal .wizard-actions .btn-secondary {
     justify-self: stretch;
     color: var(--color-terracotta);
-    background: #ffffff;
+    background: #fffdf9;
     border: 2px solid var(--color-terracotta);
     box-shadow: none;
 }
@@ -3212,7 +3212,7 @@ position: sticky;
     width: 100%;
     max-width: 100%;
     padding: 1.5rem;
-    background: #ffffff;
+    background: #fffdf9;
     border: 1px solid #dbe4f0;
     border-radius: 16px;
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
@@ -3220,7 +3220,7 @@ position: sticky;
 
 .payment-step .section-label {
     text-align: center;
-    color: #1f2937;
+    color: #3d4450;
 }
 
 .payment-step .booking-summary-box,

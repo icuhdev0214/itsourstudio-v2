@@ -20,7 +20,7 @@
 }
 
 .report-stat-label {
-    color: #64748b;
+    color: #736e67;
     font-size: 0.875rem;
     font-weight: 500;
 }
@@ -28,7 +28,7 @@
 .report-stat-value {
     font-size: 2rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #2f3540;
 }
 
 .reports-grid {
@@ -43,7 +43,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
 }
 
 .report-card:hover {
@@ -53,11 +53,11 @@
 
 .report-header {
     padding: 1rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f5eadd;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f8fafc;
+    background: #faf1e6;
 }
 
 .report-type-badge {
@@ -85,13 +85,13 @@
 }
 
 .badge-other {
-    background-color: #f1f5f9;
-    color: #64748b;
+    background-color: #f5eadd;
+    color: #736e67;
 }
 
 .report-status-select {
     padding: 0.25rem 0.5rem;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #ddcab4;
     border-radius: 4px;
     font-size: 0.75rem;
     background: white;
@@ -118,7 +118,7 @@
 }
 
 .report-desc {
-    color: #334155;
+    color: #474d57;
     font-size: 0.95rem;
     line-height: 1.5;
     margin-bottom: 1rem;
@@ -127,11 +127,11 @@
 
 .report-meta {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #a89e96;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #f5eadd;
     padding-top: 0.75rem;
     margin-top: 0.75rem;
 }
@@ -144,8 +144,8 @@
 
 .report-actions {
     padding: 0.75rem 1rem;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
+    background: #faf1e6;
+    border-top: 1px solid #ecdfd0;
     display: flex;
     justify-content: flex-end;
 }
@@ -169,7 +169,7 @@
 .empty-state {
     text-align: center;
     padding: 3rem;
-    color: #94a3b8;
+    color: #a89e96;
 }
 
 /* Mobile Optimization (up to 320px-480px) */

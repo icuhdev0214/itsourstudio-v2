@@ -13,7 +13,7 @@
 }
 
 .analytics-card {
-    background: #ffffff;
+    background: #fffdf9;
     border-radius: 16px;
     padding: 1.5rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
@@ -45,12 +45,12 @@
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
     font-weight: 500;
-    color: #64748b;
+    color: #736e67;
 }
 
 .progress-track {
     height: 8px;
-    background: #f1f5f9;
+    background: #f5eadd;
     border-radius: 4px;
     overflow: hidden;
 }
@@ -66,7 +66,7 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f5eadd;
     transition: background 0.2s;
 }
 
@@ -75,15 +75,15 @@
 }
 
 .package-item:hover {
-    background: #f8fafc;
+    background: #faf1e6;
     border-radius: 8px;
 }
 
 .package-rank {
     width: 28px;
     height: 28px;
-    background: #f1f5f9;
-    color: #64748b;
+    background: #f5eadd;
+    color: #736e67;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -94,7 +94,7 @@
 }
 
 .package-item:nth-child(1) .package-rank {
-    background: #fff7ed;
+    background: #fdf1ea;
     color: var(--color-primary);
 }
 
@@ -112,7 +112,7 @@
 
 .package-count {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #a89e96;
 }
 
 .package-trend {

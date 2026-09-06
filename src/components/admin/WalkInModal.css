@@ -1,14 +1,14 @@
 /* Brand Colors Mapped */
 :root {
-    --walkin-primary: #ea580c;
+    --walkin-primary: #c06838;
     /* Vibrat Orange */
-    --walkin-primary-subtle: #fff7ed;
+    --walkin-primary-subtle: #fdf1ea;
     /* Very light orange bg */
-    --walkin-text: #1e293b;
-    --walkin-text-muted: #64748b;
-    --walkin-border: #e2e8f0;
-    --walkin-bg: #ffffff;
-    --walkin-input-bg: #f8fafc;
+    --walkin-text: #3d4450;
+    --walkin-text-muted: #736e67;
+    --walkin-border: #ecdfd0;
+    --walkin-bg: #fffdf9;
+    --walkin-input-bg: #faf1e6;
 }
 
 .walkin-overlay {
@@ -115,10 +115,10 @@
 }
 
 .ref-number-box {
-    background: #fff7ed;
+    background: #fdf1ea;
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    border: 1px solid #fed7aa;
+    border: 1px solid #f9ddcc;
     text-align: right;
     min-width: 140px;
 }
@@ -126,7 +126,7 @@
 .ref-label {
     display: block;
     font-size: 0.75rem;
-    color: #ea580c;
+    color: #c06838;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -134,7 +134,7 @@
 .ref-value {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #9a3412;
+    color: #7d4222;
     font-family: monospace;
 }
 
@@ -156,7 +156,7 @@
 /* RIGHT: Summary */
 .walkin-summary-column {
     flex: 0.9;
-    background: #f8fafc;
+    background: #faf1e6;
     border-radius: 16px;
     padding: 1.25rem;
     border: 1px solid var(--walkin-border);
@@ -199,12 +199,12 @@
 .form-group select:focus {
     outline: none;
     border-color: var(--walkin-primary);
-    background: #fff;
+    background: #fffdf9;
     box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.1);
 }
 
 .form-group input::placeholder {
-    color: #cbd5e1;
+    color: #ddcab4;
 }
 
 .form-row {
@@ -279,7 +279,7 @@
 .payment-label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #64748b;
+    color: #736e67;
     margin-bottom: 0.5rem;
     display: block;
 }
@@ -294,8 +294,8 @@
     padding: 0.75rem;
     border-radius: 8px;
     background: white;
-    border: 1px solid #e2e8f0;
-    color: #64748b;
+    border: 1px solid #ecdfd0;
+    color: #736e67;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -307,12 +307,12 @@
 }
 
 .payment-btn:hover {
-    background: #f8fafc;
+    background: #faf1e6;
 }
 
 .payment-btn.cash.active {
     border-color: var(--walkin-primary);
-    background: #fff7ed;
+    background: #fdf1ea;
     color: var(--walkin-primary);
     box-shadow: 0 2px 4px rgba(234, 88, 12, 0.1);
 }
@@ -368,7 +368,7 @@
 }
 
 .btn-start-session:disabled {
-    background: #cbd5e1;
+    background: #ddcab4;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -433,13 +433,13 @@
 }
 
 .btn-minimize {
-    background: #f1f5f9;
-    color: #475569;
+    background: #f5eadd;
+    color: #5a5c62;
 }
 
 .btn-minimize:hover {
-    background: #e2e8f0;
-    color: #1e293b;
+    background: #ecdfd0;
+    color: #3d4450;
 }
 
 .btn-finish-action {
@@ -519,7 +519,7 @@
         order: 2;
         margin-top: auto;
         border: none;
-        background: #f8fafc;
+        background: #faf1e6;
         margin: 0 -1.25rem -2rem -1.25rem;
         padding: 1.5rem 1.25rem 2rem 1.25rem;
         border-radius: 20px 20px 0 0;

@@ -352,7 +352,7 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                             </button>
 
                             {items.length > 0 && (
-                                <span style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                                <span style={{ color: '#736e67', fontSize: '0.9rem' }}>
                                     Total: {items.length}
                                 </span>
                             )}
@@ -388,14 +388,14 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                                     />
                                                     <span className="slider"></span>
                                                 </label>
-                                                <span className="toggle-label" style={{ fontSize: '0.75rem', color: item.showInCarousel ? 'var(--color-primary)' : '#94a3b8', display: 'none' }}>
+                                                <span className="toggle-label" style={{ fontSize: '0.75rem', color: item.showInCarousel ? 'var(--color-primary)' : '#a89e96', display: 'none' }}>
                                                     {item.showInCarousel ? 'In Carousel' : 'Hidden'}
                                                 </span>
                                             </div>
                                             <button
                                                 className="btn btn-sm"
                                                 onClick={() => openQuickEdit(item)}
-                                                style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b' }}
+                                                style={{ background: '#faf1e6', border: '1px solid #ecdfd0', color: '#736e67' }}
                                             >
                                                 Edit
                                             </button>
@@ -422,7 +422,7 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                 >
                                     Previous
                                 </button>
-                                <span style={{ color: '#64748b', fontWeight: 500 }}>
+                                <span style={{ color: '#736e67', fontWeight: 500 }}>
                                     Page {currentPage} of {totalPages}
                                 </span>
                                 <button
@@ -443,7 +443,7 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                     <div className="gallery-grid-header">
                                         <div>
                                             <h3 style={{ margin: 0 }}>All Gallery Photos</h3>
-                                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
+                                            <p style={{ margin: 0, color: '#736e67', fontSize: '0.9rem' }}>
                                                 Manage your entire collection ({items.length} items)
                                             </p>
                                         </div>
@@ -475,7 +475,7 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                                         </button>
                                                         <button
                                                             onClick={() => handleToggleCarousel(item)}
-                                                            style={{ marginTop: '0.5rem', fontSize: '0.8rem', background: item.showInCarousel ? '#dcfce7' : '#f1f5f9', color: item.showInCarousel ? '#166534' : '#64748b' }}
+                                                            style={{ marginTop: '0.5rem', fontSize: '0.8rem', background: item.showInCarousel ? '#dcfce7' : '#f5eadd', color: item.showInCarousel ? '#166534' : '#736e67' }}
                                                         >
                                                             {item.showInCarousel ? 'Remove from Carousel' : 'Add to Carousel'}
                                                         </button>
@@ -518,7 +518,7 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                             style={{ resize: 'vertical' }}
                                             autoFocus
                                         />
-                                        <small style={{ color: '#94a3b8', display: 'block', marginTop: '0.5rem' }}>
+                                        <small style={{ color: '#a89e96', display: 'block', marginTop: '0.5rem' }}>
                                             This text appears when visitors hover over the image.
                                         </small>
                                     </div>

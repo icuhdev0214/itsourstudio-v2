@@ -1,0 +1,57 @@
+/*
+ * Admin — brand token overrides.
+ *
+ * The dashboard predates the Nocturne work and reads a handful of legacy
+ * custom properties from src/style.css, whose :root still carries the old
+ * studio palette — most visibly `--color-primary`, which resolves to the sage
+ * green `--studio-sage` in 55 admin rules.
+ *
+ * The literal colours in Admin.css and components/admin/*.css were remapped to
+ * the brand ramp directly. This file covers what is left: the variables those
+ * files reference but do not define. Scoped to the two admin roots so the
+ * public site's own tokens are untouched.
+ *
+ * Palette source: src/nocturne/tokens.css — keep the two in step.
+ */
+
+.admin-layout,
+.admin-login-page {
+    /* Brand */
+    --color-primary: #c06838;        /* Terracotta, was --studio-sage */
+    --color-primary-rgb: 192, 104, 56;
+    --color-dark: #3d4450;           /* Charcoal, was --studio-ink */
+    --color-text: #3d4450;
+    --color-text-light: #736e67;     /* AA-safe muted on the cream ground */
+
+    /* Grounds */
+    --color-background: #faf1e6;
+    --color-surface: #fffdf9;
+    --color-border: #ecdfd0;
+
+    /* The brand sets Inter throughout; the dashboard asked for Playfair
+       Display, which appears nowhere else in the identity. */
+    --font-display: 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* The walk-in modal ships its own private scale, keyed to the orange it used
+   as an accent. Re-point it at the brand rather than leaving one modal orange. */
+.admin-layout .walkin-modal,
+.admin-layout .walkin-overlay,
+.walkin-modal,
+.walkin-overlay {
+    --walkin-primary: #c06838;
+    --walkin-primary-subtle: #fdf1ea;
+    --walkin-bg: #fffdf9;
+    --walkin-text: #3d4450;
+    --walkin-text-muted: #736e67;
+    --walkin-border: #ecdfd0;
+    --walkin-input-bg: #fffdf9;
+}
+
+/* Anything the dashboard paints with the accent as small text needs the darker
+   step to stay readable: raw terracotta is 3.56:1 on cream, under AA. */
+.admin-layout .text-accent,
+.admin-layout a:not([class]) {
+    color: #a1552c;
+}
