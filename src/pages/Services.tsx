@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { visibleServices } from '../utils/serviceCatalog';
 
-interface Service {
+export interface Service {
     id: string;
     title: string;
     price: string;
@@ -18,7 +18,7 @@ interface Service {
     order?: number;
 }
 
-const DEFAULT_SERVICES: Service[] = [
+export const DEFAULT_SERVICES: Service[] = [
     {
         id: 'solo',
         title: 'Solo Package',

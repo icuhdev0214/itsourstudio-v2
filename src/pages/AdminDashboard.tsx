@@ -18,6 +18,7 @@ import InvoiceModal from '../components/admin/InvoiceModal';
 import { UserPlus } from 'lucide-react';
 import { loadEmailTemplate } from '../utils/loadEmailTemplate';
 import '../components/admin/FloatingTimer.css';
+import '../nocturne/admin-theme.css';
 
 
 interface Booking {
@@ -592,7 +593,7 @@ const AdminDashboard = () => {
                 ctx.fill();
 
                 // Draw white exclamation mark
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = '#fffdf9';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
@@ -1019,7 +1020,7 @@ const AdminDashboard = () => {
             <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <h1 className="sidebar-brand" style={{ fontSize: '1.5rem', fontFamily: 'var(--font-display)', color: 'var(--color-primary)', margin: 0 }}>ItsourStudio.</h1>
-                    <p className="sidebar-role" style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 600, marginTop: '0.25rem', letterSpacing: '1px' }}>ADMIN WORKSPACE</p>
+                    <p className="sidebar-role" style={{ fontSize: '0.75rem', color: '#b3aaa2', fontWeight: 600, marginTop: '0.25rem', letterSpacing: '1px' }}>ADMIN WORKSPACE</p>
                 </div>
                 <nav className="sidebar-nav">
                     <button className={`nav-item ${activeTab === 'bookings' ? 'active' : ''}`} onClick={() => handleTabChange('bookings')}>
@@ -1068,7 +1069,7 @@ const AdminDashboard = () => {
                     </button>
                 </nav>
 
-                <div className="sidebar-footer" style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f0f0f0' }}>
+                <div className="sidebar-footer" style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f5eadd' }}>
                     <button className="nav-item" onClick={() => setIsReportModalOpen(true)} style={{ color: '#ef4444' }}>
                         <svg className="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                         <span className="nav-label">Report Issue</span>
@@ -1104,7 +1105,7 @@ const AdminDashboard = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px',
-                                background: 'linear-gradient(135deg, #bf6a39 0%, #8b5e3b 100%)',
+                                background: 'linear-gradient(135deg, #c06838 0%, #a1552c 100%)',
                                 color: 'white',
                                 border: 'none',
                                 padding: '8px 16px',
@@ -1115,12 +1116,12 @@ const AdminDashboard = () => {
                                 transition: 'all 0.2s ease'
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #8b5e3b 0%, #6d4a2f 100%)';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #a1552c 0%, #7d4222 100%)';
                                 e.currentTarget.style.transform = 'translateY(-2px)';
                                 e.currentTarget.style.boxShadow = '0 6px 16px rgba(191, 106, 57, 0.4)';
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'linear-gradient(135deg, #bf6a39 0%, #8b5e3b 100%)';
+                                e.currentTarget.style.background = 'linear-gradient(135deg, #c06838 0%, #a1552c 100%)';
                                 e.currentTarget.style.transform = 'translateY(0)';
                                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(191, 106, 57, 0.3)';
                             }}
@@ -1205,7 +1206,7 @@ const AdminDashboard = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>{data.key}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#736e67', fontWeight: '500' }}>{data.key}</span>
                                     </div>
                                 ))}
                             </div>
@@ -1260,7 +1261,7 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
                                         ))}
-                                    {bookings.length === 0 && <p style={{ color: '#999', fontSize: '0.9rem', textAlign: 'center', margin: '1rem' }}>No data available</p>}
+                                    {bookings.length === 0 && <p style={{ color: '#a89e96', fontSize: '0.9rem', textAlign: 'center', margin: '1rem' }}>No data available</p>}
                                 </div>
                             </div>
                         </div>
@@ -1280,7 +1281,7 @@ const AdminDashboard = () => {
                     <div className="bookings-section">
                         <div className="bookings-header">
                             <h3>Calendar Management</h3>
-                            <p style={{ color: '#666', fontSize: '0.9rem' }}>Click a date to block/unblock it for bookings.</p>
+                            <p style={{ color: '#5a5c62', fontSize: '0.9rem' }}>Click a date to block/unblock it for bookings.</p>
                         </div>
                         <div className="calendar-container-padding">
                             <div className="custom-calendar-admin" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -1297,10 +1298,10 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className="calendar-grid-admin" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem' }}>
                                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-                                        <div key={d} style={{ textAlign: 'center', fontWeight: 'bold', padding: '0.5rem', color: '#64748b' }}>{d}</div>
+                                        <div key={d} style={{ textAlign: 'center', fontWeight: 'bold', padding: '0.5rem', color: '#736e67' }}>{d}</div>
                                     ))}
                                     {Array.from({ length: getFirstDayOfMonth(calendarMonth) }).map((_, i) => (
-                                        <div key={`empty-${i}`} style={{ padding: '1rem', background: '#f8fafc' }}></div>
+                                        <div key={`empty-${i}`} style={{ padding: '1rem', background: '#faf1e6' }}></div>
                                     ))}
                                     {Array.from({ length: getDaysInMonth(calendarMonth) }).map((_, i) => {
                                         const day = i + 1;
@@ -1318,8 +1319,8 @@ const AdminDashboard = () => {
                                                 style={{
                                                     minHeight: '100px', // Increased height to fit bookings
                                                     padding: '0.5rem',
-                                                    background: isUnavailable ? '#fee2e2' : (isPast ? '#f8fafc' : '#ffffff'), // Different bg for past
-                                                    border: '1px solid #e2e8f0',
+                                                    background: isUnavailable ? '#fee2e2' : (isPast ? '#faf1e6' : '#fffdf9'), // Different bg for past
+                                                    border: '1px solid #ecdfd0',
                                                     borderRadius: '8px',
                                                     cursor: 'pointer',
                                                     opacity: isPast ? 0.8 : 1,
@@ -1382,7 +1383,7 @@ const AdminDashboard = () => {
                                                     </div>
                                                 ))}
                                                 {dayBookings.length > 3 && (
-                                                    <div style={{ fontSize: '0.7rem', color: '#64748b', paddingLeft: '4px' }}>
+                                                    <div style={{ fontSize: '0.7rem', color: '#736e67', paddingLeft: '4px' }}>
                                                         + {dayBookings.length - 3} more
                                                     </div>
                                                 )}
@@ -1534,18 +1535,18 @@ const AdminDashboard = () => {
                                                 <td data-label="Client">
                                                     <div style={{ fontWeight: 500 }}>{booking.fullName}</div>
                                                     {booking.referenceNumber && (
-                                                        <div style={{ fontSize: '0.75rem', color: '#bf6a39', fontWeight: 600, fontFamily: 'monospace' }}>{booking.referenceNumber}</div>
+                                                        <div style={{ fontSize: '0.75rem', color: '#c06838', fontWeight: 600, fontFamily: 'monospace' }}>{booking.referenceNumber}</div>
                                                     )}
-                                                    <div style={{ fontSize: '0.8rem', color: '#888' }}>{booking.email}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: '#888' }}>{booking.phone}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#a89e96' }}>{booking.email}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#a89e96' }}>{booking.phone}</div>
                                                 </td>
                                                 <td data-label="Date & Time">
                                                     <div>{booking.date}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: '#888' }}>{booking.time}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#a89e96' }}>{booking.time}</div>
                                                 </td>
                                                 <td data-label="Created At">
                                                     <div style={{ fontSize: '0.9rem' }}>{booking.createdAt?.seconds ? new Date(booking.createdAt.seconds * 1000).toLocaleDateString() : '-'}</div>
-                                                    <div style={{ fontSize: '0.8rem', color: '#888' }}>{booking.createdAt?.seconds ? new Date(booking.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: '#a89e96' }}>{booking.createdAt?.seconds ? new Date(booking.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</div>
                                                 </td>
                                                 <td data-label="Package">{booking.package}</td>
                                                 <td data-label="Status">
@@ -1588,7 +1589,7 @@ const AdminDashboard = () => {
                                         ))}
                                         {processedBookings.length === 0 && (
                                             <tr>
-                                                <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                                                <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#a89e96' }}>
                                                     {searchTerm || statusFilter !== 'all' ? 'No bookings match filters' : 'No bookings found.'}
                                                 </td>
                                             </tr>
@@ -1656,11 +1657,11 @@ const AdminDashboard = () => {
                             }}>
                                 {galleryItems.map((item) => (
                                     <div key={item.id} style={{
-                                        border: '1px solid #eee',
+                                        border: '1px solid #ecdfd0',
                                         borderRadius: '8px',
                                         overflow: 'hidden',
                                         position: 'relative',
-                                        background: '#fff',
+                                        background: '#fffdf9',
                                         boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                                     }}>
                                         <div style={{ aspectRatio: '3/4', position: 'relative' }}>
@@ -1684,7 +1685,7 @@ const AdminDashboard = () => {
                                             </div>
                                         </div>
                                         <div style={{ padding: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '0.85rem', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>
+                                            <span style={{ fontSize: '0.85rem', color: '#5a5c62', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>
                                                 {item.alt || 'No Title'}
                                             </span>
                                             <button
@@ -1704,7 +1705,7 @@ const AdminDashboard = () => {
                                     </div>
                                 ))}
                                 {galleryItems.length === 0 && (
-                                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: '#999' }}>
+                                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: '#a89e96' }}>
                                         No images in gallery yet.
                                     </div>
                                 )}
@@ -1727,18 +1728,18 @@ const AdminDashboard = () => {
 
                                 {/* File Drop/Select Area */}
                                 <div style={{
-                                    border: '2px dashed #ddd',
+                                    border: '2px dashed #ddcab4',
                                     borderRadius: '8px',
                                     padding: '2rem',
                                     textAlign: 'center',
                                     cursor: uploading ? 'not-allowed' : 'pointer',
                                     position: 'relative',
-                                    background: '#fafafa'
+                                    background: '#faf1e6'
                                 }} onClick={() => !uploading && document.getElementById('gallery-upload')?.click()}>
 
                                     <div>
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                        <p style={{ marginTop: '0.5rem', color: '#666' }}>
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ddcab4" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        <p style={{ marginTop: '0.5rem', color: '#5a5c62' }}>
                                             {uploading ? 'Uploading...' : 'Click to select images (Max 15MB each)'}
                                         </p>
                                     </div>
@@ -1763,7 +1764,7 @@ const AdminDashboard = () => {
                                         maxHeight: '200px',
                                         overflowY: 'auto',
                                         padding: '0.5rem',
-                                        background: '#f1f5f9',
+                                        background: '#f5eadd',
                                         borderRadius: '8px'
                                     }}>
                                         {galleryPreviews.map((src, index) => (
@@ -1800,7 +1801,7 @@ const AdminDashboard = () => {
 
                                 {/* Progress Bar */}
                                 {uploading && (
-                                    <div style={{ width: '100%', height: '8px', background: '#eee', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ width: '100%', height: '8px', background: '#ecdfd0', borderRadius: '4px', overflow: 'hidden' }}>
                                         <div style={{
                                             width: `${(uploadProgress.current / uploadProgress.total) * 100}%`,
                                             height: '100%',
@@ -1821,10 +1822,10 @@ const AdminDashboard = () => {
                                             width: '100%',
                                             padding: '0.75rem 1rem',
                                             fontSize: '0.95rem',
-                                            border: '2px solid #e2e8f0',
+                                            border: '2px solid #ecdfd0',
                                             borderRadius: '8px',
-                                            backgroundColor: '#ffffff',
-                                            color: '#1e293b',
+                                            backgroundColor: '#fffdf9',
+                                            color: '#3d4450',
                                             cursor: 'pointer',
                                             transition: 'all 0.2s ease',
                                             appearance: 'none',
@@ -1835,8 +1836,8 @@ const AdminDashboard = () => {
                                             paddingRight: '2.5rem',
                                             fontWeight: '500'
                                         }}
-                                        onFocus={(e) => e.target.style.borderColor = '#bf6a39'}
-                                        onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                                        onFocus={(e) => e.target.style.borderColor = '#c06838'}
+                                        onBlur={(e) => e.target.style.borderColor = '#ecdfd0'}
                                     >
                                         <option value="solo">Solo</option>
                                         <option value="duo">Duo</option>
@@ -1857,19 +1858,19 @@ const AdminDashboard = () => {
                                             width: '100%',
                                             padding: '0.75rem 1rem',
                                             fontSize: '0.95rem',
-                                            border: '2px solid #e2e8f0',
+                                            border: '2px solid #ecdfd0',
                                             borderRadius: '8px',
-                                            backgroundColor: '#ffffff',
-                                            color: '#1e293b',
+                                            backgroundColor: '#fffdf9',
+                                            color: '#3d4450',
                                             transition: 'all 0.2s ease',
                                             fontWeight: '500'
                                         }}
                                         onFocus={(e) => {
-                                            e.target.style.borderColor = '#bf6a39';
+                                            e.target.style.borderColor = '#c06838';
                                             e.target.style.boxShadow = '0 0 0 3px rgba(191, 106, 57, 0.1)';
                                         }}
                                         onBlur={(e) => {
-                                            e.target.style.borderColor = '#e2e8f0';
+                                            e.target.style.borderColor = '#ecdfd0';
                                             e.target.style.boxShadow = 'none';
                                         }}
                                     />
@@ -1951,13 +1952,13 @@ const AdminDashboard = () => {
                         </div>
 
                         <div style={{ marginBottom: '1.5rem', maxHeight: '40vh', overflowY: 'auto' }}>
-                            <h4 style={{ fontSize: '0.9rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '1rem' }}>Scheduled Sessions</h4>
+                            <h4 style={{ fontSize: '0.9rem', color: '#5a5c62', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '1rem' }}>Scheduled Sessions</h4>
                             {calendarModal.dayBookings.length > 0 ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                     {calendarModal.dayBookings.map(booking => (
                                         <div key={booking.id} style={{
                                             padding: '1rem',
-                                            background: '#f8fafc',
+                                            background: '#faf1e6',
                                             borderRadius: '8px',
                                             borderLeft: `4px solid ${booking.status === 'confirmed' ? '#2e7d32' : '#f59e0b'}`,
                                             display: 'flex',
@@ -1965,8 +1966,8 @@ const AdminDashboard = () => {
                                             alignItems: 'center'
                                         }}>
                                             <div>
-                                                <div style={{ fontWeight: '600', color: '#333' }}>{booking.time} - {booking.fullName}</div>
-                                                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{booking.package}</div>
+                                                <div style={{ fontWeight: '600', color: '#3d4450' }}>{booking.time} - {booking.fullName}</div>
+                                                <div style={{ fontSize: '0.85rem', color: '#736e67' }}>{booking.package}</div>
                                             </div>
                                             <span className={`status-badge status-${booking.status}`} style={{ fontSize: '0.7rem', padding: '0.2rem 0.6rem' }}>
                                                 {booking.status}
@@ -1975,18 +1976,18 @@ const AdminDashboard = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <p style={{ color: '#94a3b8', fontStyle: 'italic', padding: '1rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center' }}>
+                                <p style={{ color: '#a89e96', fontStyle: 'italic', padding: '1rem', background: '#faf1e6', borderRadius: '8px', textAlign: 'center' }}>
                                     No scheduled sessions for this day.
                                 </p>
                             )}
                         </div>
 
-                        <div style={{ borderTop: '1px solid #e2e8f0', margin: '1.5rem 0', paddingTop: '1.5rem' }}>
+                        <div style={{ borderTop: '1px solid #ecdfd0', margin: '1.5rem 0', paddingTop: '1.5rem' }}>
                             <h4 style={{ fontSize: '0.9rem', color: calendarModal.type === 'block' ? '#ef4444' : '#10b981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '1rem' }}>
                                 {calendarModal.type === 'block' ? 'Block Availability' : 'Restore Availability'}
                             </h4>
 
-                            <p style={{ marginBottom: '1rem', color: '#666', fontSize: '0.9rem' }}>
+                            <p style={{ marginBottom: '1rem', color: '#5a5c62', fontSize: '0.9rem' }}>
                                 {calendarModal.type === 'block'
                                     ? `Mark this date as unavailable for new bookings.`
                                     : `Remove the administrative block (${unavailableDates[calendarModal.date || '']}) and allow bookings.`
@@ -2038,7 +2039,7 @@ const AdminDashboard = () => {
                                 <span className="toast-title">{toast.title}</span>
                                 <span className="toast-message">{toast.message}</span>
                             </div>
-                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999' }}>&times;</button>
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#a89e96' }}>&times;</button>
                         </div>
                     ))}
                 </div>
@@ -2060,7 +2061,7 @@ const AdminDashboard = () => {
                     backdropFilter: 'blur(2px)'
                 }} onClick={() => setIsReportModalOpen(false)}>
                     <div style={{
-                        background: '#fff',
+                        background: '#fffdf9',
                         padding: '2rem',
                         borderRadius: '12px',
                         width: '90%',
@@ -2070,20 +2071,20 @@ const AdminDashboard = () => {
                         <h4 style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: 0 }}>
                             <span>⚠️</span> Report a Technical Issue
                         </h4>
-                        <p style={{ color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                        <p style={{ color: '#736e67', marginBottom: '1.5rem', lineHeight: '1.5' }}>
                             Describe the issue you're facing. Our IT team will review it shortly.
                         </p>
 
                         <form onSubmit={handleSubmitReport}>
                             <div style={{ marginBottom: '1rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#0f172a' }}>Subject</label>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#2f3540' }}>Subject</label>
                                 <input
                                     type="text"
                                     style={{
                                         width: '100%',
                                         padding: '0.75rem',
                                         borderRadius: '6px',
-                                        border: '1px solid #e2e8f0',
+                                        border: '1px solid #ecdfd0',
                                         fontSize: '0.9rem'
                                     }}
                                     value={reportSubject}
@@ -2094,13 +2095,13 @@ const AdminDashboard = () => {
                             </div>
 
                             <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#0f172a' }}>Description</label>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#2f3540' }}>Description</label>
                                 <textarea
                                     style={{
                                         width: '100%',
                                         padding: '0.75rem',
                                         borderRadius: '6px',
-                                        border: '1px solid #e2e8f0',
+                                        border: '1px solid #ecdfd0',
                                         minHeight: '120px',
                                         fontSize: '0.9rem',
                                         fontFamily: 'inherit'
@@ -2114,8 +2115,8 @@ const AdminDashboard = () => {
                             </div>
 
                             <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#0f172a' }}>Screenshot (Optional)</label>
-                                <div style={{ border: '2px dashed #e2e8f0', padding: '1rem', borderRadius: '6px', textAlign: 'center' }}>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#2f3540' }}>Screenshot (Optional)</label>
+                                <div style={{ border: '2px dashed #ecdfd0', padding: '1rem', borderRadius: '6px', textAlign: 'center' }}>
                                     {!screenshotPreview ? (
                                         <>
                                             <input
@@ -2131,13 +2132,13 @@ const AdminDashboard = () => {
                                                     }
                                                 }}
                                             />
-                                            <label htmlFor="screenshot-upload" style={{ cursor: 'pointer', color: '#64748b', fontSize: '0.9rem' }}>
+                                            <label htmlFor="screenshot-upload" style={{ cursor: 'pointer', color: '#736e67', fontSize: '0.9rem' }}>
                                                 <span style={{ color: '#ef4444', fontWeight: 500 }}>Click to upload</span> or drag and drop
                                             </label>
                                         </>
                                     ) : (
                                         <div style={{ position: 'relative', display: 'inline-block' }}>
-                                            <img src={screenshotPreview} alt="Screenshot Preview" style={{ maxHeight: '100px', borderRadius: '4px', border: '1px solid #e2e8f0' }} />
+                                            <img src={screenshotPreview} alt="Screenshot Preview" style={{ maxHeight: '100px', borderRadius: '4px', border: '1px solid #ecdfd0' }} />
                                             <button
                                                 type="button"
                                                 onClick={() => {
@@ -2169,7 +2170,7 @@ const AdminDashboard = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                <button type="button" className="btn" style={{ background: '#f1f5f9', color: '#475569', border: 'none' }} onClick={() => setIsReportModalOpen(false)} disabled={isSubmittingReport}>
+                                <button type="button" className="btn" style={{ background: '#f5eadd', color: '#5a5c62', border: 'none' }} onClick={() => setIsReportModalOpen(false)} disabled={isSubmittingReport}>
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn" style={{ background: '#ef4444', color: 'white', border: 'none' }} disabled={isSubmittingReport}>

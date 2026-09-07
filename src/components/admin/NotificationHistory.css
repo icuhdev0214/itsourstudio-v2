@@ -7,7 +7,7 @@
     width: 100%;
     min-height: 100vh;
     padding: 16px;
-    background: linear-gradient(135deg, #fff4e6 0%, #f9efe0 100%);
+    background: linear-gradient(135deg, #f9ddcc 0%, #fdf1ea 100%);
 }
 
 /* === Header Section === */
@@ -20,7 +20,7 @@
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    border: 1px solid #e2d5c9;
+    border: 1px solid #efe2d4;
 }
 
 .notification-history-title-section {
@@ -32,10 +32,10 @@
 .notification-history-title {
     font-size: 24px;
     font-weight: 700;
-    color: #3b2c28;
+    color: #3d4450;
     margin: 0;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #3b2c28 0%, #8b5e3b 100%);
+    background: linear-gradient(135deg, #3d4450 0%, #a1552c 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -43,7 +43,7 @@
 
 .notification-history-subtitle {
     font-size: 14px;
-    color: #ada3a4;
+    color: #a89e96;
     margin: 0;
     line-height: 1.5;
 }
@@ -63,7 +63,7 @@
     padding: 16px;
     border-radius: 12px;
     margin-bottom: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
@@ -84,18 +84,18 @@
 }
 
 .notification-filter-tabs::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #ddcab4;
     border-radius: 2px;
 }
 
 .filter-tab {
     padding: 10px 18px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #faf1e6;
+    border: 1px solid #ecdfd0;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: #64748b;
+    color: #736e67;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
@@ -110,23 +110,23 @@
 }
 
 .filter-tab.active {
-    background: linear-gradient(135deg, #bf6a39 0%, #8b5e3b 100%);
+    background: linear-gradient(135deg, #c06838 0%, #a1552c 100%);
     color: white;
-    border-color: #bf6a39;
+    border-color: #c06838;
     box-shadow: 0 4px 12px rgba(191, 106, 57, 0.3);
 }
 
 .filter-tab:hover:not(.active) {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
+    background: #f5eadd;
+    border-color: #ddcab4;
 }
 
 /* === Buttons === */
 .btn-back {
-    background: linear-gradient(135deg, #fff4e6 0%, #f9efe0 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #f9ddcc 0%, #fdf1ea 100%);
+    border: 1px solid #ecdfd0;
     border-radius: 12px;
-    color: #8b5e3b;
+    color: #a1552c;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     min-width: 44px;
@@ -144,21 +144,21 @@
 }
 
 .btn-back:hover {
-    background: linear-gradient(135deg, #f9efe0 0%, #f4e5d4 100%);
-    border-color: #d4b59f;
-    color: #bf6a39;
+    background: linear-gradient(135deg, #fdf1ea 0%, #f8e6d5 100%);
+    border-color: #e3b389;
+    color: #c06838;
     box-shadow: 0 4px 8px rgba(2, 132, 199, 0.15);
 }
 
 .btn-mark-all {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #fff4e6 0%, #f9efe0 100%);
-    border: 1px solid #e2d5c9;
+    background: linear-gradient(135deg, #f9ddcc 0%, #fdf1ea 100%);
+    border: 1px solid #efe2d4;
     border-radius: 12px;
     font-size: 15px;
     font-weight: 600;
-    color: #8b5e3b;
+    color: #a1552c;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 48px;
@@ -170,20 +170,20 @@
 }
 
 .btn-mark-all:hover {
-    background: linear-gradient(135deg, #f9efe0 0%, #f4e5d4 100%);
-    border-color: #d4b59f;
-    color: #bf6a39;
+    background: linear-gradient(135deg, #fdf1ea 0%, #f8e6d5 100%);
+    border-color: #e3b389;
+    color: #c06838;
     box-shadow: 0 4px 8px rgba(191, 106, 57, 0.15);
 }
 
 .btn-load-more {
     padding: 14px 32px;
-    background: linear-gradient(135deg, #fff4e6 0%, #f9efe0 100%);
-    border: 1px solid #e2d5c9;
+    background: linear-gradient(135deg, #f9ddcc 0%, #fdf1ea 100%);
+    border: 1px solid #efe2d4;
     border-radius: 12px;
     font-size: 15px;
     font-weight: 600;
-    color: #8b5e3b;
+    color: #a1552c;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 48px;
@@ -195,9 +195,9 @@
 }
 
 .btn-load-more:hover {
-    background: linear-gradient(135deg, #f9efe0 0%, #f4e5d4 100%);
-    border-color: #d4b59f;
-    color: #bf6a39;
+    background: linear-gradient(135deg, #fdf1ea 0%, #f8e6d5 100%);
+    border-color: #e3b389;
+    color: #c06838;
     box-shadow: 0 4px 8px rgba(191, 106, 57, 0.15);
 }
 
@@ -212,7 +212,7 @@
 /* === History Item === */
 .notification-history-item {
     background: white;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     border-radius: 12px;
     padding: 12px;
     /* Reduced from 16px for mobile compactness */
@@ -233,12 +233,12 @@
 
 .notification-history-item:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: #cbd5e1;
+    border-color: #ddcab4;
 }
 
 .notification-history-item.unread {
-    background: linear-gradient(to right, #fff4e6 0%, #ffffff 100%);
-    border-left: 4px solid #bf6a39;
+    background: linear-gradient(to right, #f9ddcc 0%, #fffdf9 100%);
+    border-left: 4px solid #c06838;
 }
 
 /* === Icon === */
@@ -250,8 +250,8 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
-    border: 1.5px solid #e2e8f0;
+    background: linear-gradient(135deg, #faf1e6 0%, #eff6ff 100%);
+    border: 1.5px solid #ecdfd0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
@@ -266,8 +266,8 @@
 }
 
 .notification-history-icon.system {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-color: #e2e8f0;
+    background: linear-gradient(135deg, #faf1e6 0%, #f5eadd 100%);
+    border-color: #ecdfd0;
 }
 
 /* === Content === */
@@ -280,7 +280,7 @@
 .notification-history-item-title {
     font-size: 15px;
     font-weight: 600;
-    color: #1e293b;
+    color: #3d4450;
     margin: 0 0 6px;
     line-height: 1.4;
     display: -webkit-box;
@@ -292,7 +292,7 @@
 
 .notification-history-item-message {
     font-size: 14px;
-    color: #64748b;
+    color: #736e67;
     margin: 0 0 8px;
     line-height: 1.5;
     display: none;
@@ -301,7 +301,7 @@
 
 .notification-history-item-time {
     font-size: 12px;
-    color: #94a3b8;
+    color: #a89e96;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -324,7 +324,7 @@
 
 .notification-action-delete {
     background: none;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     color: #ef4444;
     cursor: pointer;
     padding: 10px;
@@ -355,7 +355,7 @@
     padding: 60px 24px;
     background: white;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ecdfd0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
@@ -363,24 +363,24 @@
     width: 64px;
     height: 64px;
     margin: 0 auto 16px;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: linear-gradient(135deg, #faf1e6 0%, #f5eadd 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #cbd5e1;
+    color: #ddcab4;
 }
 
 .notification-history-empty-title {
     font-size: 18px;
     font-weight: 600;
-    color: #475569;
+    color: #5a5c62;
     margin: 0 0 8px;
 }
 
 .notification-history-empty-text {
     font-size: 14px;
-    color: #94a3b8;
+    color: #a89e96;
     margin: 0;
     line-height: 1.6;
 }
@@ -389,7 +389,7 @@
 .notification-history-loading {
     text-align: center;
     padding: 60px 24px;
-    color: #64748b;
+    color: #736e67;
     font-size: 15px;
 }
 
@@ -397,8 +397,8 @@
     width: 40px;
     height: 40px;
     margin: 0 auto 16px;
-    border: 3px solid #e2e8f0;
-    border-top-color: #bf6a39;
+    border: 3px solid #ecdfd0;
+    border-top-color: #c06838;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -496,7 +496,7 @@
     /* Show time separator dot on tablet and up */
     .notification-history-item-time::before {
         content: '•';
-        color: #cbd5e1;
+        color: #ddcab4;
         font-size: 16px;
         line-height: 1;
         display: inline;
@@ -547,7 +547,7 @@
 .btn-load-more:focus-visible,
 .notification-history-item:focus-visible,
 .notification-action-delete:focus-visible {
-    outline: 2px solid #bf6a39;
+    outline: 2px solid #c06838;
     outline-offset: 2px;
 }
 
@@ -568,7 +568,7 @@
    ============================================ */
 
 .text-blue-500 {
-    color: #bf6a39;
+    color: #c06838;
 }
 
 .text-amber-500 {
@@ -576,5 +576,5 @@
 }
 
 .text-slate-500 {
-    color: #64748b;
+    color: #736e67;
 }

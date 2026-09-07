@@ -14,7 +14,7 @@
 }
 
 .feedback-modal-content {
-    background: #ffffff;
+    background: #fffdf9;
     border: 1px solid rgba(191, 106, 57, 0.2);
     border-radius: 24px;
     width: 90%;
@@ -23,7 +23,7 @@
     position: relative;
     box-shadow: 0 25px 50px -12px rgba(59, 44, 40, 0.25);
     animation: slideUp 0.3s ease-out;
-    color: #3b2c28;
+    color: #3d4450;
 }
 
 .feedback-modal-close {
@@ -32,7 +32,7 @@
     right: 1.5rem;
     background: transparent;
     border: none;
-    color: #ada3a4;
+    color: #a89e96;
     font-size: 1.5rem;
     cursor: pointer;
     transition: all 0.2s;
@@ -45,8 +45,8 @@
 }
 
 .feedback-modal-close:hover {
-    color: #bf6a39;
-    background: #fff4e6;
+    color: #c06838;
+    background: #f9ddcc;
     transform: rotate(90deg);
 }
 
@@ -55,12 +55,12 @@
     font-size: 1.75rem;
     font-weight: 700;
     font-family: 'League Spartan', sans-serif;
-    color: #3b2c28;
+    color: #3d4450;
     letter-spacing: -0.02em;
 }
 
 .feedback-modal-header p {
-    color: #ada3a4;
+    color: #a89e96;
     margin-bottom: 1.5rem;
     font-size: 1rem;
 }
@@ -73,7 +73,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #3b2c28;
+    color: #3d4450;
     font-size: 0.95rem;
 }
 
@@ -81,10 +81,10 @@
 .feedback-form-textarea {
     width: 100%;
     padding: 0.875rem;
-    background-color: #fff4e6;
-    border: 2px solid #f1f5f9;
+    background-color: #f9ddcc;
+    border: 2px solid #f5eadd;
     border-radius: 12px;
-    color: #3b2c28;
+    color: #3d4450;
     font-size: 1rem;
     transition: all 0.2s;
     font-family: 'Quicksand', sans-serif;
@@ -93,14 +93,14 @@
 .feedback-form-input:focus,
 .feedback-form-textarea:focus {
     outline: none;
-    border-color: #bf6a39;
-    background-color: #ffffff;
+    border-color: #c06838;
+    background-color: #fffdf9;
     box-shadow: 0 0 0 3px rgba(191, 106, 57, 0.1);
 }
 
 .feedback-form-input::placeholder,
 .feedback-form-textarea::placeholder {
-    color: #ada3a4;
+    color: #a89e96;
 }
 
 /* Fix for browser autofill */
@@ -108,8 +108,8 @@
 .feedback-form-input:-webkit-autofill:hover,
 .feedback-form-input:-webkit-autofill:focus,
 .feedback-form-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #fff4e6 inset !important;
-    -webkit-text-fill-color: #3b2c28 !important;
+    -webkit-box-shadow: 0 0 0 30px #f9ddcc inset !important;
+    -webkit-text-fill-color: #3d4450 !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -129,7 +129,7 @@
 .star-rating span {
     cursor: pointer;
     transition: all 0.2s;
-    color: #e2e8f0;
+    color: #ecdfd0;
 }
 
 .star-rating span.filled {
@@ -144,10 +144,10 @@
 .feedback-submit-btn {
     width: 100%;
     padding: 0.875rem;
-    background: linear-gradient(135deg, #bf6a39, #8b5e3b);
+    background: linear-gradient(135deg, #c06838, #a1552c);
     border: none;
     border-radius: 12px;
-    color: #ffffff;
+    color: #fffdf9;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s;
@@ -179,18 +179,18 @@
     font-size: 3.5rem;
     margin-bottom: 1rem;
     display: block;
-    color: #bf6a39;
+    color: #c06838;
 }
 
 .feedback-success-message h3 {
-    color: #3b2c28;
+    color: #3d4450;
     margin-bottom: 0.5rem;
     font-family: 'League Spartan', sans-serif;
     font-size: 1.5rem;
 }
 
 .feedback-success-message p {
-    color: #ada3a4;
+    color: #a89e96;
 }
 
 @keyframes fadeIn {

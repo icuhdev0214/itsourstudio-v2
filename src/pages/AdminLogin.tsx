@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from 'firebase/auth';
 import { db, auth } from '../firebase';
 import './Admin.css';
+import '../nocturne/admin-theme.css';
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
