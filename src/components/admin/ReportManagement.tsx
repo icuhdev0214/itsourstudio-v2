@@ -96,11 +96,11 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
             </div>
 
             <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <h3 style={{ margin: 0, color: '#1e293b' }}>Issue Tracker</h3>
+                <h3 style={{ margin: 0, color: '#3d4450' }}>Issue Tracker</h3>
                 <select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value as any)}
-                    style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}
+                    style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid #ecdfd0' }}
                 >
                     <option value="all">All Status</option>
                     <option value="new">New</option>
@@ -132,7 +132,7 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
                                 </select>
                             </div>
                             <div className="report-body">
-                                {report.subject && <h4 style={{ margin: '0 0 0.5rem', color: '#334155' }}>{report.subject}</h4>}
+                                {report.subject && <h4 style={{ margin: '0 0 0.5rem', color: '#474d57' }}>{report.subject}</h4>}
                                 <p className="report-desc">{report.description}</p>
                                 <div className="report-meta">
                                     <div className="report-meta-item">
@@ -153,7 +153,7 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
                                     )}
                                 </div>
                                 {report.screenshot && (
-                                    <div style={{ marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                                    <div style={{ marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', border: '1px solid #ecdfd0' }}>
                                         <a href={report.screenshot} target="_blank" rel="noopener noreferrer">
                                             <img
                                                 src={report.screenshot}
@@ -161,7 +161,7 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
                                                 style={{ width: '100%', height: '150px', objectFit: 'cover', display: 'block' }}
                                             />
                                         </a>
-                                        <div style={{ padding: '0.5rem', background: '#f8fafc', fontSize: '0.75rem', color: '#64748b', textAlign: 'center' }}>
+                                        <div style={{ padding: '0.5rem', background: '#faf1e6', fontSize: '0.75rem', color: '#736e67', textAlign: 'center' }}>
                                             Click to view full image
                                         </div>
                                     </div>

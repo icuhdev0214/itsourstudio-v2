@@ -107,7 +107,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
     const [backdropForm, setBackdropForm] = useState<BackdropColor>({
         id: '',
         name: '',
-        hex: '#ffffff',
+        hex: '#fffdf9',
         textColor: '#000000',
         accentColor: '#888888',
         description: '',
@@ -327,7 +327,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
         setBackdropForm({
             id: '',
             name: '',
-            hex: '#ffffff',
+            hex: '#fffdf9',
             textColor: '#000000',
             accentColor: '#888888',
             description: '',
@@ -1056,7 +1056,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                                         handleEditBackdrop(bd);
                                                     }}
                                                 >
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                                 </button>
                                                 <button
                                                     className="action-btn"
@@ -1073,7 +1073,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                     ))}
                                 </div>
                                 {backdrops.length === 0 && (
-                                    <div style={{ textAlign: 'center', padding: '2rem', color: '#999', fontStyle: 'italic' }}>
+                                    <div style={{ textAlign: 'center', padding: '2rem', color: '#a89e96', fontStyle: 'italic' }}>
                                         No backdrops found. Add one above.
                                     </div>
                                 )}
@@ -1086,7 +1086,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                         <div className="modal-overlay" onClick={() => setIsBackdropModalOpen(false)}>
                             <div className="modal-content" onClick={e => e.stopPropagation()}>
                                 <button className="modal-close-btn" onClick={() => setIsBackdropModalOpen(false)}>×</button>
-                                <h3 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: '#1e293b' }}>
+                                <h3 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: '#3d4450' }}>
                                     {editingBackdropId ? 'Edit Backdrop' : 'Add New Backdrop'}
                                 </h3>
 
@@ -1113,7 +1113,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                                             height: '40px',
                                                             backgroundColor: backdropForm.hex,
                                                             borderRadius: '4px',
-                                                            border: '1px solid #ddd',
+                                                            border: '1px solid #ddcab4',
                                                             cursor: 'pointer',
                                                             marginBottom: '0.5rem'
                                                         }}
@@ -1151,7 +1151,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                                             height: '40px',
                                                             backgroundColor: backdropForm.textColor,
                                                             borderRadius: '4px',
-                                                            border: '1px solid #ddd',
+                                                            border: '1px solid #ddcab4',
                                                             cursor: 'pointer',
                                                             marginBottom: '0.5rem'
                                                         }}
@@ -1189,7 +1189,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                                             height: '40px',
                                                             backgroundColor: backdropForm.accentColor,
                                                             borderRadius: '4px',
-                                                            border: '1px solid #ddd',
+                                                            border: '1px solid #ddcab4',
                                                             cursor: 'pointer',
                                                             marginBottom: '0.5rem'
                                                         }}

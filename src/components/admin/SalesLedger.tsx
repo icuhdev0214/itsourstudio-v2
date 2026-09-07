@@ -512,14 +512,14 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                     minHeight: '60vh',
                     padding: '40px 20px',
                     textAlign: 'center',
-                    background: 'linear-gradient(135deg, #fff4e6 0%, #f9efe0 100%)',
+                    background: 'linear-gradient(135deg, #f9ddcc 0%, #fdf1ea 100%)',
                     borderRadius: '16px',
                     margin: '20px'
                 }}>
                     <div style={{
                         width: '80px',
                         height: '80px',
-                        background: 'linear-gradient(135deg, #bf6a39 0%, #8b5e3b 100%)',
+                        background: 'linear-gradient(135deg, #c06838 0%, #a1552c 100%)',
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
@@ -530,7 +530,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                         <Monitor size={40} color="white" />
                     </div>
                     <h2 style={{
-                        color: '#3b2c28',
+                        color: '#3d4450',
                         fontSize: '24px',
                         fontWeight: '700',
                         marginBottom: '12px',
@@ -539,7 +539,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                         Desktop Only
                     </h2>
                     <p style={{
-                        color: '#8b5e3b',
+                        color: '#a1552c',
                         fontSize: '16px',
                         lineHeight: '1.6',
                         maxWidth: '400px',
@@ -548,7 +548,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                         The Sales Ledger requires a larger screen to display all columns and data properly.
                     </p>
                     <p style={{
-                        color: '#ada3a4',
+                        color: '#a89e96',
                         fontSize: '14px',
                         fontWeight: '600'
                     }}>
@@ -656,7 +656,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                             <td>{booking?.phone}</td>
 
                                             {/* TIME SLOT LABEL - Always matched to fixed array */}
-                                            <td style={{ fontWeight: '600', background: row.isUnmatched ? '#fff7ed' : '#f0f9ff' }}>{row.timeLabel}</td>
+                                            <td style={{ fontWeight: '600', background: row.isUnmatched ? '#fdf1ea' : '#f0f9ff' }}>{row.timeLabel}</td>
 
                                             <td>{booking?.package}</td>
                                             <td style={{ textAlign: 'center' }}>{renderStatusBadge(booking)}</td>

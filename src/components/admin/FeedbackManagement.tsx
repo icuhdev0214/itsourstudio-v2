@@ -164,7 +164,7 @@ const FeedbackManagement = ({ showToast }: FeedbackManagementProps) => {
                     </div>
                 ))}
                 {feedbacks.length === 0 && !loading && (
-                    <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
+                    <div style={{ textAlign: 'center', padding: '2rem', color: '#a89e96' }}>
                         No feedbacks found.
                     </div>
                 )}

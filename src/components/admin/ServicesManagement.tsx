@@ -964,8 +964,8 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                             className="btn btn-sm"
                                             style={{
                                                 background: 'transparent',
-                                                border: '1px solid #94a3b8',
-                                                color: '#64748b',
+                                                border: '1px solid #a89e96',
+                                                color: '#736e67',
                                                 padding: '0.4rem 1rem',
                                                 borderRadius: '6px',
                                                 cursor: 'pointer',
@@ -976,8 +976,8 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                                 e.currentTarget.style.color = '#0ea5e9';
                                             }}
                                             onMouseOut={(e) => {
-                                                e.currentTarget.style.borderColor = '#94a3b8';
-                                                e.currentTarget.style.color = '#64748b';
+                                                e.currentTarget.style.borderColor = '#a89e96';
+                                                e.currentTarget.style.color = '#736e67';
                                             }}
                                             onClick={() => handleEdit(service)}
                                         >
