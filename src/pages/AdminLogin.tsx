@@ -89,8 +89,8 @@ const AdminLogin = () => {
                                 <circle cx="12" cy="13" r="3" />
                             </svg>
                         </div>
-                        <h1 className="brand-title">Studio Admin</h1>
-                        <p className="brand-subtitle">Enter your credentials to access the dashboard</p>
+                        <h1 className="brand-title">it's ouR Studio Admin</h1>
+                        <p className="brand-subtitle">Manage bookings, gallery, content, and reports.</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="login-form-premium">
@@ -194,7 +194,7 @@ const AdminLogin = () => {
                     </form>
 
                     <div className="login-footer">
-                        <p>© 2024 Itsour Studio. Secure Admin Portal.</p>
+                        <p>© 2026 it's ouR Studio. Admin workspace.</p>
                     </div>
                 </div>
             </div>

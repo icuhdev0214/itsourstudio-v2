@@ -1014,12 +1014,12 @@ const AdminDashboard = () => {
                 <button className="menu-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
-                <span className="mobile-brand">ItsourStudio.</span>
+                <span className="mobile-brand">it's ouR Studio</span>
             </div>
             {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
             <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <h1 className="sidebar-brand" style={{ fontSize: '1.5rem', fontFamily: 'var(--font-display)', color: 'var(--color-primary)', margin: 0 }}>ItsourStudio.</h1>
+                    <h1 className="sidebar-brand" style={{ fontSize: '1.5rem', fontFamily: 'var(--font-display)', color: 'var(--color-primary)', margin: 0 }}>it's ouR Studio</h1>
                     <p className="sidebar-role" style={{ fontSize: '0.75rem', color: '#b3aaa2', fontWeight: 600, marginTop: '0.25rem', letterSpacing: '1px' }}>ADMIN WORKSPACE</p>
                 </div>
                 <nav className="sidebar-nav">
