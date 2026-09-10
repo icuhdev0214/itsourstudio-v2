@@ -110,6 +110,7 @@ const NocturneFooter = () => {
                 <div className="nx-footer-links">
                     <Link to="/faq">FAQ</Link>
                     <Link to="/privacy-policy">Privacy Policy</Link>
+                    <Link to="/terms">Terms &amp; Conditions</Link>
                     <button type="button" className="nx-footer-btn" onClick={() => setReportOpen(true)}>
                         Report an Issue
                     </button>

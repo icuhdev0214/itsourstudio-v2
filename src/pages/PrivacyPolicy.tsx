@@ -131,7 +131,7 @@ const PrivacyPolicy = () => {
                     </p>
                     <div className="contact-info">
                         <p><strong>It's ouR Studio</strong></p>
-                        <p>Email: itsourstudio1@gmail.ccom</p>
+                        <p>Email: itsourstudio1@gmail.com</p>
                         <p>Phone: 0905 336 7103</p>
                     </div>
                 </section>
