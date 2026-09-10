@@ -1,0 +1,119 @@
+.terms-page {
+    min-height: 100vh;
+    padding: 6rem 1.5rem 4rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.terms-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.terms-page h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.terms-page .last-updated {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.terms-page section {
+    margin-bottom: 2rem;
+}
+
+.terms-page h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #c9a86c;
+    display: inline-block;
+}
+
+.terms-page p {
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.terms-page ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
+}
+
+.terms-page li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+.terms-page li::before {
+    content: "•";
+    color: #c9a86c;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.terms-page strong {
+    color: #1a1a2e;
+}
+
+.terms-page .contact-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.terms-page .contact-info p {
+    margin-bottom: 0.5rem;
+}
+
+.terms-page a {
+    color: #c9a86c;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.terms-page a:hover {
+    color: #a88a4c;
+    text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .terms-page {
+        padding: 5rem 1rem 3rem;
+    }
+
+    .terms-container {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .terms-page h1 {
+        font-size: 1.8rem;
+    }
+
+    .terms-page h2 {
+        font-size: 1.1rem;
+    }
+}

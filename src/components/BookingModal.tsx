@@ -713,7 +713,7 @@ const BookingModal = () => {
         e.preventDefault();
 
         if (!privacyConsent) {
-            showToast("Please accept the Privacy Policy to proceed with your booking.", 'error');
+            showToast("Please accept the Privacy Policy and Terms & Conditions to proceed with your booking.", 'error');
             return;
         }
 
@@ -801,7 +801,14 @@ const BookingModal = () => {
                 durationTotal,
                 paymentProofPath,
                 status: 'pending',
-                createdAt: serverTimestamp()
+                createdAt: serverTimestamp(),
+                // Consent proof for the Privacy Policy / Terms & Conditions checkbox above.
+                // Versions are each page's "Last Updated" date, so a later policy edit doesn't
+                // silently change what an old booking is treated as having agreed to.
+                consentAccepted: privacyConsent,
+                consentAcceptedAt: serverTimestamp(),
+                privacyPolicyVersion: '2025-12-20',
+                termsVersion: '2026-09-10'
             });
 
             // Sync to public booked_slots for availability checking
@@ -1450,7 +1457,11 @@ const BookingModal = () => {
                                             <a href="/privacy-policy" target="_blank" style={{ color: '#c9a86c', fontWeight: 500 }}>
                                                 Privacy Policy
                                             </a>{' '}
-                                            in accordance with the Data Privacy Act of 2012 (RA 10173).
+                                            in accordance with the Data Privacy Act of 2012 (RA 10173), and to the{' '}
+                                            <a href="/terms" target="_blank" style={{ color: '#c9a86c', fontWeight: 500 }}>
+                                                Terms &amp; Conditions
+                                            </a>{' '}
+                                            governing this booking.
                                         </span>
                                     </label>
                                 </div>

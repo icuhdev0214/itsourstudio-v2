@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, CheckCircle, Banknote, Smartphone } from 'lucide-react';
+import { X, CheckCircle, Banknote, Smartphone, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { db } from '../../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import ConfirmPopup from '../ConfirmPopup';
@@ -248,6 +248,42 @@ const InvoiceModal = ({ isOpen, onClose, booking, onUpdate, onStatusEmail }: Inv
                                         'PAYMENT PENDING'
                                     )}
                                 </div>
+                            </div>
+
+                            <div className="sidebar-card summary-card">
+                                <h3>Consent Record</h3>
+                                {booking.consentAccepted ? (
+                                    <>
+                                        <div className="summary-row">
+                                            <span><ShieldCheck size={16} className="text-success" style={{ verticalAlign: 'text-bottom', marginRight: '0.35rem' }} />Privacy Policy &amp; Terms</span>
+                                            <span className="text-success">Accepted</span>
+                                        </div>
+                                        <div className="summary-row">
+                                            <span>Accepted On</span>
+                                            <span>
+                                                {booking.consentAcceptedAt?.seconds
+                                                    ? new Date(booking.consentAcceptedAt.seconds * 1000).toLocaleString()
+                                                    : (booking.createdAt?.seconds ? new Date(booking.createdAt.seconds * 1000).toLocaleString() : '-')}
+                                            </span>
+                                        </div>
+                                        {(booking.privacyPolicyVersion || booking.termsVersion) && (
+                                            <div className="summary-row">
+                                                <span>Policy Versions</span>
+                                                <span style={{ fontSize: '0.8rem' }}>
+                                                    {[
+                                                        booking.privacyPolicyVersion && `Privacy ${booking.privacyPolicyVersion}`,
+                                                        booking.termsVersion && `Terms ${booking.termsVersion}`
+                                                    ].filter(Boolean).join(' · ')}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="summary-row">
+                                        <span><ShieldAlert size={16} className="text-danger" style={{ verticalAlign: 'text-bottom', marginRight: '0.35rem' }} />Privacy Policy &amp; Terms</span>
+                                        <span className="text-danger">Not recorded (older booking)</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Downpayment Section */}
