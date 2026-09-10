@@ -78,7 +78,7 @@ const NocturneHome = () => {
                             <button
                                 type="button"
                                 data-target
-                                className="nx-pill nx-pill-lg nx-pill-quiet"
+                                className="nx-pill nx-pill-lg"
                                 onClick={() => navigate('/services')}
                             >
                                 See packages
