@@ -3406,3 +3406,15 @@ position: sticky;
     color: var(--color-text);
     border-color: var(--color-border);
 }
+
+/* Selected time slot, hardcoded.
+   This used to share a declaration with .wizard-actions .btn-primary via
+   --gradient-primary / --text-on-dark, but that chain was not resolving
+   reliably here in production (background came out transparent, leaving
+   white text on the page's own cream ground - unreadable). Fixed values,
+   no variable indirection, so it can't silently break again. */
+.time-slot-btn.selected {
+    background: #c06838;
+    color: #ffffff;
+    border-color: #c06838;
+}
