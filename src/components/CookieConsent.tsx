@@ -39,7 +39,8 @@ const CookieConsent = () => {
                         We use cookies and similar technologies to enhance your experience,
                         analyze site traffic, and for analytics purposes. By clicking "Accept All,"
                         you consent to our use of cookies in accordance with our{' '}
-                        <a href="/privacy-policy">Privacy Policy</a> and the
+                        <a href="/privacy-policy">Privacy Policy</a> and{' '}
+                        <a href="/terms">Terms &amp; Conditions</a>, and the
                         Data Privacy Act of 2012 (RA 10173).
                     </p>
                 </div>

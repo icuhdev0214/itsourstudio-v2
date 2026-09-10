@@ -6,6 +6,7 @@ import NocturneServices from './pages/NocturneServices';
 import NocturneGallery from './pages/NocturneGallery';
 import EmailTest from './pages/EmailTest';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import CookieConsent from './components/CookieConsent';
@@ -79,6 +80,7 @@ const AppContent = ({ onRouteChange }: { onRouteChange: () => void }) => {
                     <Route path="/services" element={<NocturneServices />} />
                     <Route path="/gallery" element={<NocturneGallery />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<TermsAndConditions />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/patch-notes" element={<PatchNotes />} />
 
