@@ -77,6 +77,15 @@
     background: color-mix(in srgb, #2b2118 74%, transparent);
 }
 
+/* Scroll-for-more hint at the bottom of .booking-content: never re-themed,
+   so it faded to hardcoded solid white regardless of what it lands on top
+   of. .booking-content itself is --color-surface (see above), so that's
+   the correct fade target - a white patch looked like a rendering glitch
+   whenever it landed over the tan add-ons/summary cards instead. */
+.nocturne-root .scroll-indicator-overlay {
+    background: linear-gradient(to top, var(--color-surface) 10%, transparent 100%);
+}
+
 /* ── selected / hover states ────────────────────────────────────────────── */
 
 .nocturne-root .package-card:hover,
