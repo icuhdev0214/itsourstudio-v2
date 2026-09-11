@@ -82,7 +82,7 @@ body.nocturne-body {
     --surface-subtle: var(--color-surface);
     --surface-input: var(--color-surface);
     --surface-inverse: var(--color-neutral-100);
-    --text-on-dark: var(--color-text);
+    --text-on-dark: var(--color-surface);
     --muted-on-dark: var(--color-neutral-300);
     --nav-bg-scrolled: color-mix(in srgb, #232532 88%, transparent);
     --nav-text-scrolled: var(--color-text);
