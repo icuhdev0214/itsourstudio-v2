@@ -86,17 +86,17 @@ const NocturneHome = () => {
                         </div>
 
                         <div className="nx-hero-stats">
-                            <div>
+                            <div className="nx-hero-stat">
                                 <div className="nx-hero-stat-value">
                                     {Number.isFinite(startingPrice) ? peso(startingPrice) : '₱299'}
                                 </div>
                                 <div className="nx-hero-stat-label">starting price</div>
                             </div>
-                            <div>
+                            <div className="nx-hero-stat">
                                 <div className="nx-hero-stat-value">{services.length}</div>
                                 <div className="nx-hero-stat-label">packages</div>
                             </div>
-                            <div>
+                            <div className="nx-hero-stat">
                                 <div className="nx-hero-stat-value">50%</div>
                                 <div className="nx-hero-stat-label">downpayment to reserve</div>
                             </div>

@@ -41,6 +41,7 @@
 .nocturne-root .package-card,
 .nocturne-root .extension-card,
 .nocturne-root .add-on-option,
+.nocturne-root .booking-success-container,
 .nocturne-root .form-group,
 .nocturne-root .form-group.date-group,
 .nocturne-root .form-group.extension-group,
@@ -58,8 +59,6 @@
 .nocturne-root .modal-close,
 .nocturne-root .popup-close-btn,
 .nocturne-root .copy-btn-mini,
-.nocturne-root .wizard-actions button.btn-secondary,
-.nocturne-root .modal-content.booking-modal .wizard-actions .btn-secondary,
 .nocturne-root .input-wrapper input,
 .nocturne-root .input-wrapper textarea,
 .nocturne-root .modal-content input[type='text'],
@@ -76,6 +75,15 @@
 
 .nocturne-root .modal-overlay {
     background: color-mix(in srgb, #2b2118 74%, transparent);
+}
+
+/* Scroll-for-more hint at the bottom of .booking-content: never re-themed,
+   so it faded to hardcoded solid white regardless of what it lands on top
+   of. .booking-content itself is --color-surface (see above), so that's
+   the correct fade target - a white patch looked like a rendering glitch
+   whenever it landed over the tan add-ons/summary cards instead. */
+.nocturne-root .scroll-indicator-overlay {
+    background: linear-gradient(to top, var(--color-surface) 10%, transparent 100%);
 }
 
 /* ── selected / hover states ────────────────────────────────────────────── */
@@ -181,6 +189,27 @@
     color: var(--role-faint);
 }
 
+/* --role-faint (tokens.css) is calibrated for 4.5:1 against the page's pale
+   cream ground (--color-bg) — contrast against --color-surface (white, what
+   .booking-summary-box uses) and --color-surface-raised (the tan
+   .add-ons-selector uses) both come out under 4:1. One step darker in the
+   same neutral ramp clears ~5:1 against either, without darkening
+   --role-faint globally, which is fine everywhere else it's used against
+   the paler ground.
+
+   The label text in .summary-row is a bare <span> child, and ModalStyles.css
+   sets `.summary-row span { color: var(--color-text-light) }` directly on
+   that span (bridged even lighter, to --color-neutral-400) — a rule that
+   directly targets an element always wins over a parent rule's inherited
+   value, regardless of the parent rule's specificity, so `.summary-row`
+   alone here would never have reached the actual text. Targeting the span
+   itself is required. */
+.nocturne-root .booking-summary-box .summary-row,
+.nocturne-root .booking-summary-box .summary-row span,
+.nocturne-root .add-ons-selector .section-label {
+    color: var(--color-neutral-700);
+}
+
 .nocturne-root .modal-content input::placeholder,
 .nocturne-root .modal-content textarea::placeholder,
 .nocturne-root .date-input-trigger .date-text:empty::before {
@@ -247,17 +276,53 @@
    2.6:1. Restate it on the darker accent steps so the label clears 7:1. */
 .nocturne-root .modal-content .btn.btn-primary,
 .nocturne-root .wizard-actions .btn-primary,
-.nocturne-root .modal-content .btn-primary.btn-lg {
+.nocturne-root .modal-content .btn-primary.btn-lg,
+.nocturne-root .wizard-actions .btn-secondary,
+.nocturne-root .modal-content.booking-modal .wizard-actions .btn-secondary {
     background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-800));
     border-color: var(--color-accent);
     color: var(--color-accent-100);
 }
 
 .nocturne-root .modal-content .btn.btn-primary:hover:not(:disabled),
-.nocturne-root .wizard-actions .btn-primary:hover:not(:disabled) {
+.nocturne-root .wizard-actions .btn-primary:hover:not(:disabled),
+.nocturne-root .wizard-actions .btn-secondary:hover:not(:disabled) {
     background: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-700));
 }
 
 .nocturne-root .modal-content .btn.btn-primary:disabled {
     opacity: 0.5;
+}
+
+/* Every button pair in the booking wizard (Back/Next, Back/Complete
+   Booking, and the step-4 Close/Book Another Session pair above) now
+   shares one visual treatment rather than a primary/secondary
+   distinction, per explicit direction — not the usual convention, but
+   the call here for this flow. */
+
+/* Success screen (step 4) buttons sit in .modal-actions, not .wizard-actions
+   like every other step — so none of the rules above reached "Book Another
+   Session" (a plain .btn-secondary), leaving it on the pre-Nocturne light
+   button while "Close" (.btn-primary) picked up the rule above. Force both
+   to the same explicit layout and the same primary treatment rather than
+   relying on whatever .btn's default inline-flex sizing happens to do. */
+.nocturne-root .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.nocturne-root .modal-actions .btn {
+    width: 100%;
+}
+
+.nocturne-root .modal-actions .btn.btn-secondary {
+    background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-800));
+    border-color: var(--color-accent);
+    color: var(--color-accent-100);
+}
+
+.nocturne-root .modal-actions .btn.btn-secondary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-700));
 }
