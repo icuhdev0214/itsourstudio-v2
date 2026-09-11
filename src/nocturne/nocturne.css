@@ -1225,11 +1225,26 @@ body.nocturne-body {
     .nx-services h1, .nx-page-head h1 { font-size: 34px; }
     .nx-about h2, .nx-section-head h2 { font-size: 30px; }
     .nx-about-grid { grid-template-columns: 1fr; }
-    .nx-footer { padding: 32px 18px; }
     .nx-drift { height: 400px; }
     .nx-service-media { grid-template-columns: 1fr 1fr; height: 220px; }
     .nx-hero-stats { gap: 16px; }
     .nx-hero-stat-value { font-size: 22px; }
+
+    /* Three unequal-width blocks (copyright, link row, address) don't
+       divide cleanly into two columns, so stack to one instead of
+       leaving each wrapped flex line left-aligned with an uneven gap
+       to whatever's next to it (the space-between distribution that
+       works for the desktop's single wide row breaks down once items
+       wrap to their own lines). */
+    .nx-footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 32px 18px;
+        gap: 14px;
+    }
+
+    .nx-footer-links { justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -59,8 +59,6 @@
 .nocturne-root .modal-close,
 .nocturne-root .popup-close-btn,
 .nocturne-root .copy-btn-mini,
-.nocturne-root .wizard-actions button.btn-secondary,
-.nocturne-root .modal-content.booking-modal .wizard-actions .btn-secondary,
 .nocturne-root .input-wrapper input,
 .nocturne-root .input-wrapper textarea,
 .nocturne-root .modal-content input[type='text'],
@@ -269,20 +267,29 @@
    2.6:1. Restate it on the darker accent steps so the label clears 7:1. */
 .nocturne-root .modal-content .btn.btn-primary,
 .nocturne-root .wizard-actions .btn-primary,
-.nocturne-root .modal-content .btn-primary.btn-lg {
+.nocturne-root .modal-content .btn-primary.btn-lg,
+.nocturne-root .wizard-actions .btn-secondary,
+.nocturne-root .modal-content.booking-modal .wizard-actions .btn-secondary {
     background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-800));
     border-color: var(--color-accent);
     color: var(--color-accent-100);
 }
 
 .nocturne-root .modal-content .btn.btn-primary:hover:not(:disabled),
-.nocturne-root .wizard-actions .btn-primary:hover:not(:disabled) {
+.nocturne-root .wizard-actions .btn-primary:hover:not(:disabled),
+.nocturne-root .wizard-actions .btn-secondary:hover:not(:disabled) {
     background: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-700));
 }
 
 .nocturne-root .modal-content .btn.btn-primary:disabled {
     opacity: 0.5;
 }
+
+/* Every button pair in the booking wizard (Back/Next, Back/Complete
+   Booking, and the step-4 Close/Book Another Session pair above) now
+   shares one visual treatment rather than a primary/secondary
+   distinction, per explicit direction — not the usual convention, but
+   the call here for this flow. */
 
 /* Success screen (step 4) buttons sit in .modal-actions, not .wizard-actions
    like every other step — so none of the rules above reached "Book Another

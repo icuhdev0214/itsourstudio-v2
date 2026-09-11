@@ -763,11 +763,13 @@ textarea::placeholder {
     background: #fdf1ea;
     border: 1px solid #f9ddcc;
     border-radius: 16px;
+    text-align: center;
 }
 
 .add-ons-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 240px));
+    justify-content: center;
     gap: 0.75rem;
 }
 
