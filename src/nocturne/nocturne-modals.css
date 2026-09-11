@@ -101,7 +101,20 @@
 .nocturne-root .time-slot-btn.active {
     background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
     border-color: var(--color-accent);
-    box-shadow: none;
+    color: var(--color-text);
+    box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+/* time-slot-btn has no child element to carry its own colour the way
+   package-card/extension-card/add-on-option's labels do — the button text
+   is the element's own text node, so it needs the accent border backed by
+   a background light enough for --color-text, not just an accent-tinted
+   background with no colour rule at all (which left it inheriting white
+   from elsewhere and rendering unreadable). */
+.nocturne-root .time-slot-btn.selected,
+.nocturne-root .time-slot-btn.active {
+    background: color-mix(in srgb, var(--color-accent) 22%, var(--color-surface));
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
 
 .nocturne-root .step-item.active .step-circle {
