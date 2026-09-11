@@ -581,6 +581,7 @@ body.nocturne-body {
 .nx-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 
 .nx-hero-stats { display: flex; flex-wrap: wrap; gap: 36px; margin-top: 42px; }
+.nx-hero-stat { flex: 1 1 0; min-width: 0; }
 .nx-hero-stat-value { font-family: var(--font-heading); font-size: 28px; }
 .nx-hero-stat-label { font-size: 12.5px; color: var(--role-faint); }
 
@@ -1227,6 +1228,8 @@ body.nocturne-body {
     .nx-footer { padding: 32px 18px; }
     .nx-drift { height: 400px; }
     .nx-service-media { grid-template-columns: 1fr 1fr; height: 220px; }
+    .nx-hero-stats { gap: 16px; }
+    .nx-hero-stat-value { font-size: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
