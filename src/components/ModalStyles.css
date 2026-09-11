@@ -206,6 +206,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: 0.5rem;
 }
 
@@ -2204,7 +2206,8 @@ padding: 1rem;
     .package-card {
         padding: 1rem;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        text-align: center;
         justify-content: space-between;
         height: 100%;
         min-height: 130px;
