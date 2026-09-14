@@ -198,7 +198,7 @@
     padding: 1rem;
     /* Mobile: Reduced padding */
     color: #474d57;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-body, 'Inter', system-ui, -apple-system, sans-serif);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
