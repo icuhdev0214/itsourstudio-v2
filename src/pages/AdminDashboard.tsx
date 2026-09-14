@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, storage, auth } from '../firebase';
+import { timeToMinutes } from '../utils/dateLocal';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, where, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { compressImage } from '../utils/compressImage';
@@ -763,11 +764,54 @@ const AdminDashboard = () => {
     };
 
     const handleStatusChange = async (id: string, newStatus: string) => {
+        const booking = bookings.find(b => b.id === id);
+
         let reason = '';
         if (newStatus === 'rejected') {
             const result = prompt("Please enter a reason for rejection:", "Bookings are full");
             if (result === null) return; // Cancelled
             reason = result;
+        }
+
+        if (newStatus === 'confirmed' && booking) {
+            // Overlap check: two racing "pending" bookings for the same/overlapping
+            // slot can both reach this list (see BookingModal's own slot-lock fix
+            // for the create-time race). Approving both here would double-book the
+            // session, so re-check against every other active booking before
+            // confirming - unlike the create-time race, a plain query is fine here
+            // since this is a single trusted staff action, not a multi-client race.
+            if (booking.time && booking.durationTotal) {
+                const proposedStart = timeToMinutes(booking.time);
+                const proposedEnd = proposedStart + Number(booking.durationTotal);
+
+                const q = query(collection(db, 'bookings'), where('date', '==', booking.date));
+                const snapshot = await getDocs(q);
+                const conflict = snapshot.docs.some(docSnap => {
+                    if (docSnap.id === id) return false;
+                    const data = docSnap.data();
+                    if (data.status !== 'pending' && data.status !== 'confirmed' && data.status !== 'completed') return false;
+                    if (!data.time || !data.durationTotal) return false;
+                    const existingStart = timeToMinutes(data.time);
+                    const existingEnd = existingStart + Number(data.durationTotal);
+                    return proposedStart < existingEnd && proposedEnd > existingStart;
+                });
+
+                if (conflict) {
+                    showToast('error', 'Slot Conflict', 'Another active booking overlaps this date/time. Resolve that booking first before confirming this one.');
+                    return;
+                }
+            }
+
+            // Payment check: confirming without any recorded payment is easy to do
+            // by accident from this dropdown, and InvoiceModal would independently
+            // show "PAYMENT PENDING" on an already-"confirmed" booking - a
+            // contradiction that's easy for staff to miss. Warn, don't block: a
+            // confirm-before-payment-verified workflow can be legitimate.
+            const totalPaid = (Number(booking.downpaymentAmount) || 0) + (Number(booking.fullPaymentCash) || 0) + (Number(booking.fullPaymentGcash) || 0);
+            if (totalPaid <= 0 && Number(booking.totalPrice) > 0) {
+                const proceed = window.confirm("No payment has been recorded for this booking yet. Confirm anyway?");
+                if (!proceed) return;
+            }
         }
 
         try {
@@ -785,10 +829,19 @@ const AdminDashboard = () => {
                 console.log("Slot doc not found, skipping sync");
             }
 
+            // Release the exact-slot lock (see BookingModal's slot_locks fix) so the
+            // date/time becomes claimable again once this booking is no longer active.
+            if ((newStatus === 'rejected' || newStatus === 'cancelled') && booking?.date && booking?.time) {
+                try {
+                    await deleteDoc(doc(db, 'slot_locks', `${booking.date}_${booking.time}`));
+                } catch (err) {
+                    console.log("Slot lock not found, skipping release");
+                }
+            }
+
             showToast('success', 'Status Updated', `Booking marked as ${newStatus}`);
 
-            // Find the booking object to send email
-            const booking = bookings.find(b => b.id === id);
+            // Send email using the booking object found above
             if (booking && (newStatus === 'confirmed' || newStatus === 'completed' || newStatus === 'rejected')) {
                 await sendEmailNotification(booking, newStatus, reason);
             }
@@ -801,10 +854,20 @@ const AdminDashboard = () => {
 
     const handleDelete = async (id: string) => {
         if (window.confirm("Are you sure you want to delete this booking? This action cannot be undone.")) {
+            const booking = bookings.find(b => b.id === id);
             try {
                 await deleteDoc(doc(db, 'bookings', id));
                 // Sync delete to booked_slots
                 await deleteDoc(doc(db, 'booked_slots', id));
+
+                // Release the exact-slot lock (see BookingModal's slot_locks fix)
+                if (booking?.date && booking?.time) {
+                    try {
+                        await deleteDoc(doc(db, 'slot_locks', `${booking.date}_${booking.time}`));
+                    } catch (err) {
+                        console.log("Slot lock not found, skipping release");
+                    }
+                }
 
                 showToast('success', 'Deleted', 'Booking deleted successfully');
             } catch (error) {
