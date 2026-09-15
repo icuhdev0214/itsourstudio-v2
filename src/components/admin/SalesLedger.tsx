@@ -4,6 +4,7 @@ import { collection, query, where, onSnapshot, doc, updateDoc, writeBatch, serve
 import * as XLSX from 'xlsx';
 import { Pencil, Save, X, Trash2, PlusCircle, Monitor } from 'lucide-react';
 import { calculateRequiredDownpayment } from '../../utils/payment';
+import { formatLocalDateString, getBusinessDateString, parseLocalDateString } from '../../utils/dateLocal';
 import './SalesLedger.css';
 
 interface Booking {
@@ -128,8 +129,8 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<Partial<Booking>>({});
 
-    // Default to today
-    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+    // Default to today (Asia/Manila business date, not UTC)
+    const [selectedDate, setSelectedDate] = useState<string>(getBusinessDateString());
 
     // Mobile detection
     const [isMobile, setIsMobile] = useState(false);
@@ -359,6 +360,15 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                 if (startIndex === 0 && data.length > 2) startIndex = 2; // Default fallback
 
                 const bookingsToAdd: any[] = [];
+                let skippedDuplicates = 0;
+                // Seed with bookings already on file for this date, so re-importing
+                // the same spreadsheet (or a file that overlaps a previous import)
+                // doesn't create duplicate records.
+                const seenKeys = new Set(
+                    bookings
+                        .filter(b => b.date === selectedDate)
+                        .map(b => `${String(b.fullName || '').trim().toLowerCase()}|${String(b.time || '').trim().toLowerCase()}`)
+                );
 
                 for (let i = startIndex; i < data.length; i++) {
                     const row = data[i];
@@ -391,6 +401,11 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                     const clientName = row[2]; // Name
                     if (!clientName) continue;
 
+                    // Skip rows that already exist for this date (matched by name +
+                    // time). Without this, re-importing the same spreadsheet - an
+                    // easy mistake - silently duplicates every row on every run.
+                    const normalizedName = String(clientName).trim().toLowerCase();
+
                     // Parse Time (Col 5)
                     const timeRaw = row[5];
 
@@ -410,6 +425,13 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
 
                     // Package (Col 6)
                     const pkg = row[6] || 'Unknown';
+
+                    const dedupeKey = `${normalizedName}|${String(timeStart || '').trim().toLowerCase()}`;
+                    if (seenKeys.has(dedupeKey)) {
+                        skippedDuplicates++;
+                        continue;
+                    }
+                    seenKeys.add(dedupeKey);
 
                     // Mapping
                     const bookingData = {
@@ -441,8 +463,10 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                     bookingsToAdd.push(bookingData);
                 }
 
+                const duplicateNote = skippedDuplicates > 0 ? ` (${skippedDuplicates} duplicate row${skippedDuplicates === 1 ? '' : 's'} already on file skipped)` : '';
+
                 if (bookingsToAdd.length > 0) {
-                    if (confirm(`Found ${bookingsToAdd.length} bookings for ${selectedDate}. Import them?`)) {
+                    if (confirm(`Found ${bookingsToAdd.length} new bookings for ${selectedDate}${duplicateNote}. Import them?`)) {
 
                         // Batch write
                         const batch = writeBatch(db);
@@ -463,9 +487,11 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                         }
 
                         await batch.commit();
-                        showToast('success', 'Import Successful', `${bookingsToAdd.length} records imported.`);
+                        showToast('success', 'Import Successful', `${bookingsToAdd.length} records imported.${duplicateNote}`);
 
                     }
+                } else if (skippedDuplicates > 0) {
+                    showToast('error', 'No New Records', `All ${skippedDuplicates} row(s) in this file already exist for ${selectedDate}.`);
                 } else {
                     showToast('error', 'No Data Found', 'No valid booking rows found in file.');
                 }
@@ -560,17 +586,17 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                     <div className="ledger-header">
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <h3 style={{ color: '#ef4444', fontFamily: 'monospace', fontSize: '1.5rem', fontWeight: 'bold' }}>
-                                {new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }).toUpperCase()}
+                                {parseLocalDateString(selectedDate).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }).toUpperCase()}
                             </h3>
                             <span style={{ color: '#000', fontWeight: 'bold' }}>
-                                {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}
+                                {parseLocalDateString(selectedDate).toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}
                             </span>
                         </div>
                         <div className="ledger-controls">
                             <button onClick={() => {
-                                const d = new Date(selectedDate);
+                                const d = parseLocalDateString(selectedDate);
                                 d.setDate(d.getDate() - 1);
-                                setSelectedDate(d.toISOString().split('T')[0]);
+                                setSelectedDate(formatLocalDateString(d));
                             }} className="btn-nav">◀</button>
 
                             <input
@@ -582,9 +608,9 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                             />
 
                             <button onClick={() => {
-                                const d = new Date(selectedDate);
+                                const d = parseLocalDateString(selectedDate);
                                 d.setDate(d.getDate() + 1);
-                                setSelectedDate(d.toISOString().split('T')[0]);
+                                setSelectedDate(formatLocalDateString(d));
                             }} className="btn-nav">▶</button>
 
                             <label className="btn-import-excel">

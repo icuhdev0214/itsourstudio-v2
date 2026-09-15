@@ -198,7 +198,7 @@
     padding: 1rem;
     /* Mobile: Reduced padding */
     color: #474d57;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-body, 'Inter', system-ui, -apple-system, sans-serif);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -704,7 +704,7 @@
 /* ========================================
    STATUS BADGE
    ======================================== */
-.status-badge {
+.invoice-container .status-badge {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -725,7 +725,7 @@
 }
 
 @media (min-width: 768px) {
-    .status-badge {
+    .invoice-container .status-badge {
         padding: 0.875rem 1.5rem;
         /* Desktop: Even more generous padding */
         min-width: 220px;
@@ -734,7 +734,7 @@
     }
 }
 
-.status-badge.paid {
+.invoice-container .status-badge.paid {
     background: #d1fae5;
     color: #059669;
     box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
@@ -742,7 +742,7 @@
     /* Add subtle border for paid state */
 }
 
-.status-badge.pending {
+.invoice-container .status-badge.pending {
     background: #fdf1ea;
     color: #c06838;
     border: 2px dashed #e3b389;

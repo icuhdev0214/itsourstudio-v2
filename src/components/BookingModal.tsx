@@ -1,12 +1,13 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebase';
-import { collection, addDoc, setDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs, doc, getDoc, onSnapshot, runTransaction } from 'firebase/firestore';
 import { ref, uploadBytes } from 'firebase/storage';
 import { sanitizeName, sanitizeEmail, sanitizePhoneNumber, sanitizeText } from '../utils/sanitize';
 import { generateBookingReference } from '../utils/generateReference';
 import { calculatePaymentBreakdown } from '../utils/payment';
 import { visibleServices } from '../utils/serviceCatalog';
 import { loadEmailTemplate } from '../utils/loadEmailTemplate';
+import { parseLocalDateString, timeToMinutes } from '../utils/dateLocal';
 import paymentQr from '../assets/payment_qr.png';
 import './ModalStyles.css';
 import { useBooking } from '../context/BookingContext';
@@ -268,11 +269,6 @@ const BookingModal = () => {
         showToast(`${label} copied to clipboard!`, 'success');
     };
 
-    const timeToMinutes = (timeStr: string) => {
-        const [hours, minutes] = timeStr.split(':').map(Number);
-        return hours * 60 + minutes;
-    };
-
     useEffect(() => {
         const fetchBookings = async () => {
             if (!formData.date) return;
@@ -440,7 +436,7 @@ const BookingModal = () => {
 
     const formatSelectedDate = (dateStr: string) => {
         if (!dateStr) return 'Select a date';
-        const date = new Date(dateStr);
+        const date = parseLocalDateString(dateStr);
         return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
     };
 
@@ -503,7 +499,7 @@ const BookingModal = () => {
     const generateTimeSlots = (dateString: string) => {
         if (!dateString) return [];
 
-        const date = new Date(dateString);
+        const date = parseLocalDateString(dateString);
         const day = date.getDay();
         const isWeekend = day === 0 || day === 6;
 
@@ -776,49 +772,88 @@ const BookingModal = () => {
             // Generate unique booking reference
             const bookingReference = generateBookingReference();
 
-            const docRef = await addDoc(collection(db, 'bookings'), {
-                referenceNumber: bookingReference,
-                fullName: sanitizedFullName,
-                email: sanitizedEmail,
-                phone: sanitizedPhone,
-                package: formData.package,
-                date: formData.date,
-                time: formData.time,
-                notes: sanitizedNotes,
-                extensionDuration: formData.extensionDuration,
-                extensionLabel: selectedExtensionOption?.label || (formData.extensionDuration ? `+${formData.extensionDuration} mins` : 'No Extension'),
-                serviceAmount: basePrice,
-                extensionAmount: extensionPrice,
-                addOns: selectedAddOns.map(addOn => `${addOn.name} (₱${addOn.price})`).join(', '),
-                selectedAddOns,
-                addOnsAmount,
-                totalPrice,
-                totalIncludesAddOns: true,
-                downpayment,
-                requiredDownpayment: paymentBreakdown.requiredDownpayment,
-                amountToPayNow: paymentBreakdown.amountToPayNow,
-                remainingBalance: paymentBreakdown.remainingBalance,
-                durationTotal,
-                paymentProofPath,
-                status: 'pending',
-                createdAt: serverTimestamp(),
-                // Consent proof for the Privacy Policy / Terms & Conditions checkbox above.
-                // Versions are each page's "Last Updated" date, so a later policy edit doesn't
-                // silently change what an old booking is treated as having agreed to.
-                consentAccepted: privacyConsent,
-                consentAcceptedAt: serverTimestamp(),
-                privacyPolicyVersion: '2025-12-20',
-                termsVersion: '2026-09-10'
+            // 2. Atomic slot claim (closes the race checkAvailability() alone can't
+            // close). checkAvailability() above is a plain query - two submissions
+            // racing within its round-trip can both pass it. The Firestore web SDK
+            // can't run an arbitrary query inside a transaction, so instead this
+            // claims a deterministic "exact slot" lock doc keyed by date+time:
+            // whichever submission's transaction commits first wins the slot, and
+            // the other is rejected atomically instead of relying on timing.
+            // This guarantees no two bookings can ever share the exact same
+            // date+time; the broader (rarer) variable-duration overlap case still
+            // relies on the pre-check above and admin's own overlap check on confirm.
+            const slotLockRef = doc(db, 'slot_locks', `${formData.date}_${formData.time}`);
+            const bookingRef = doc(collection(db, 'bookings'));
+
+            await runTransaction(db, async (transaction) => {
+                const lockSnap = await transaction.get(slotLockRef);
+                if (lockSnap.exists()) {
+                    const lockData = lockSnap.data();
+                    if (lockData.status !== 'rejected' && lockData.status !== 'cancelled') {
+                        throw new Error('SLOT_TAKEN');
+                    }
+                }
+
+                transaction.set(bookingRef, {
+                    referenceNumber: bookingReference,
+                    fullName: sanitizedFullName,
+                    email: sanitizedEmail,
+                    phone: sanitizedPhone,
+                    package: formData.package,
+                    date: formData.date,
+                    time: formData.time,
+                    notes: sanitizedNotes,
+                    extensionDuration: formData.extensionDuration,
+                    extensionLabel: selectedExtensionOption?.label || (formData.extensionDuration ? `+${formData.extensionDuration} mins` : 'No Extension'),
+                    serviceAmount: basePrice,
+                    extensionAmount: extensionPrice,
+                    addOns: selectedAddOns.map(addOn => `${addOn.name} (₱${addOn.price})`).join(', '),
+                    selectedAddOns,
+                    addOnsAmount,
+                    totalPrice,
+                    totalIncludesAddOns: true,
+                    downpayment,
+                    requiredDownpayment: paymentBreakdown.requiredDownpayment,
+                    amountToPayNow: paymentBreakdown.amountToPayNow,
+                    remainingBalance: paymentBreakdown.remainingBalance,
+                    durationTotal,
+                    paymentProofPath,
+                    status: 'pending',
+                    createdAt: serverTimestamp(),
+                    // Consent proof for the Privacy Policy / Terms & Conditions checkbox above.
+                    // Versions are each page's "Last Updated" date, so a later policy edit doesn't
+                    // silently change what an old booking is treated as having agreed to.
+                    consentAccepted: privacyConsent,
+                    consentAcceptedAt: serverTimestamp(),
+                    privacyPolicyVersion: '2025-12-20',
+                    termsVersion: '2026-09-10'
+                });
+
+                // Sync to public booked_slots for availability checking
+                transaction.set(doc(db, 'booked_slots', bookingRef.id), {
+                    date: formData.date,
+                    time: formData.time,
+                    durationTotal: durationTotal,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                transaction.set(slotLockRef, {
+                    bookingId: bookingRef.id,
+                    date: formData.date,
+                    time: formData.time,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+            }).catch((err) => {
+                if (err instanceof Error && err.message === 'SLOT_TAKEN') {
+                    setFormData(prev => ({ ...prev, time: '' })); // Clear invalid time
+                    throw new Error("⚠️ This slot was just booked by someone else! Please choose another time.");
+                }
+                throw err;
             });
 
-            // Sync to public booked_slots for availability checking
-            await setDoc(doc(db, 'booked_slots', docRef.id), {
-                date: formData.date,
-                time: formData.time,
-                durationTotal: durationTotal,
-                status: 'pending',
-                createdAt: serverTimestamp()
-            });
+            const docRef = bookingRef;
 
             // Create Admin Notification
             await addDoc(collection(db, 'notifications'), {
@@ -960,8 +995,8 @@ const BookingModal = () => {
                             <p>Your booking was saved. If an email does not arrive, please keep your booking reference and wait for admin confirmation.</p>
                         )}
                         <div className="modal-actions">
-                            <button className="btn btn-primary" onClick={() => { setStep(1); closeBooking(); }}>Close</button>
-                            <button className="btn btn-secondary" onClick={() => setStep(1)}>Book Another Session</button>
+                            <button className="btn btn-primary" onClick={() => setStep(1)}>Book Another Session</button>
+                            <button className="btn btn-secondary" onClick={() => { setStep(1); closeBooking(); }}>Close</button>
                         </div>
                     </div>
                 ) : (

@@ -31,6 +31,17 @@ service cloud.firestore {
       allow create: if true;
       allow write: if request.auth != null;
     }
+
+    // Slot Locks - atomic per-exact-date-time claim, keyed by "{date}_{time}",
+    // used inside a Firestore transaction to prevent two customers from both
+    // booking the same slot in a race. No PII. Public read/create (a customer
+    // claims the slot when booking); auth-only update/delete (admin releases
+    // the lock when rejecting/cancelling/deleting the booking that holds it).
+    match /slot_locks/{lockId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if request.auth != null;
+    }
     
     // Feedback/Testimonials - Public create/read, Auth for admin
     match /feedbacks/{feedbackId} {
