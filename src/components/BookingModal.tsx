@@ -995,8 +995,8 @@ const BookingModal = () => {
                             <p>Your booking was saved. If an email does not arrive, please keep your booking reference and wait for admin confirmation.</p>
                         )}
                         <div className="modal-actions">
-                            <button className="btn btn-primary" onClick={() => { setStep(1); closeBooking(); }}>Close</button>
-                            <button className="btn btn-secondary" onClick={() => setStep(1)}>Book Another Session</button>
+                            <button className="btn btn-primary" onClick={() => setStep(1)}>Book Another Session</button>
+                            <button className="btn btn-secondary" onClick={() => { setStep(1); closeBooking(); }}>Close</button>
                         </div>
                     </div>
                 ) : (
