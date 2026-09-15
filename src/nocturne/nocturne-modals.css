@@ -315,6 +315,8 @@
 
 .nocturne-root .modal-actions .btn {
     width: 100%;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
 }
 
 .nocturne-root .modal-actions .btn.btn-secondary {

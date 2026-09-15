@@ -24,7 +24,7 @@
 .btn-nav {
     background: #f5eadd;
     border: 1px solid #ddcab4;
-    border-radius: 4px;
+    border-radius: 6px;
     padding: 0.25rem 0.75rem;
     cursor: pointer;
 }
@@ -42,7 +42,7 @@
 }
 
 .btn-export-excel {
-    background: #10b981;
+    background: var(--color-primary, #c06838);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -52,10 +52,14 @@
     margin-left: 1rem;
 }
 
+.btn-export-excel:hover {
+    background: #a1552c;
+}
+
 .btn-import-excel {
-    background: #3b82f6;
-    color: white;
-    border: none;
+    background: #fdf1ea;
+    color: var(--color-primary, #c06838);
+    border: 1px solid #e3b389;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
@@ -66,7 +70,7 @@
 }
 
 .btn-import-excel:hover {
-    background: #2563eb;
+    background: #f5eadd;
 }
 
 .ledger-table-wrapper {
@@ -143,23 +147,23 @@
 }
 
 .ledger-status-badge.status-pending {
-    background: #fef3c7;
-    color: #92400e;
+    background: #fff8e1;
+    color: #f57c00;
 }
 
 .ledger-status-badge.status-confirmed {
-    background: #dcfce7;
-    color: #166534;
+    background: #e8f5e9;
+    color: #2e7d32;
 }
 
 .ledger-status-badge.status-completed {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #e3f2fd;
+    color: #1565c0;
 }
 
 .ledger-status-badge.status-rejected {
-    background: #fee2e2;
-    color: #991b1b;
+    background: #ffebee;
+    color: #c62828;
 }
 
 .empty-row {

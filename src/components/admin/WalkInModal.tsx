@@ -4,6 +4,7 @@ import { db } from '../../firebase';
 import { collection, addDoc, query, where, getDocs, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { X, AlertTriangle, Play, CheckCircle } from 'lucide-react';
 import { generateBookingReference } from '../../utils/generateReference';
+import { getBusinessDateString, getBusinessTimeString, timeToMinutes } from '../../utils/dateLocal';
 import './WalkInModal.css';
 
 // Reusing package definitions (Ideally this should be in a shared config file)
@@ -101,10 +102,10 @@ const WalkInModal = ({ isOpen, onClose, showToast, activeTimer, setActiveTimer }
             setConflictWarning(null);
 
             const now = new Date();
-            const dateStr = now.toISOString().split('T')[0];
+            const dateStr = getBusinessDateString(now);
 
             // Calculate end time
-            const startMinutes = now.getHours() * 60 + now.getMinutes();
+            const startMinutes = timeToMinutes(getBusinessTimeString(now));
             const endMinutes = startMinutes + totalDuration;
 
             // Query existing bookings for today
@@ -117,8 +118,7 @@ const WalkInModal = ({ isOpen, onClose, showToast, activeTimer, setActiveTimer }
                     const data = doc.data();
                     if (data.status === 'confirmed' || data.status === 'pending') {
                         if (data.time && data.durationTotal) {
-                            const [h, m] = data.time.split(':').map(Number);
-                            const existStart = h * 60 + m;
+                            const existStart = timeToMinutes(data.time);
                             const existEnd = existStart + data.durationTotal;
 
                             // Overlap Logic
@@ -152,8 +152,8 @@ const WalkInModal = ({ isOpen, onClose, showToast, activeTimer, setActiveTimer }
 
         try {
             const now = new Date();
-            const dateStr = now.toISOString().split('T')[0];
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            const dateStr = getBusinessDateString(now);
+            const timeStr = getBusinessTimeString(now);
 
             // Create Booking Data with Ledger Fields
             const bookingData = {
