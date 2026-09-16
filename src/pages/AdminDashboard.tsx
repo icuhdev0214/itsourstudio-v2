@@ -216,7 +216,16 @@ const AdminDashboard = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' }>({ key: 'createdAt', direction: 'desc' });
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => localStorage.getItem('adminSidebarCollapsed') === 'true');
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    const toggleSidebarCollapsed = () => {
+        setIsSidebarCollapsed(prev => {
+            const next = !prev;
+            localStorage.setItem('adminSidebarCollapsed', String(next));
+            return next;
+        });
+    };
 
     // Report Issue State
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -1072,7 +1081,7 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div className="admin-layout">
+        <div className={`admin-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
             <div className="mobile-header-bar">
                 <button className="menu-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -1080,10 +1089,23 @@ const AdminDashboard = () => {
                 <span className="mobile-brand">it's ouR Studio</span>
             </div>
             {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
-            <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+            <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}>
                 <div className="sidebar-header">
-                    <h1 className="sidebar-brand" style={{ fontSize: '1.5rem', fontFamily: 'var(--font-display)', color: 'var(--color-primary)', margin: 0 }}>it's ouR Studio</h1>
-                    <p className="sidebar-role" style={{ fontSize: '0.75rem', color: '#b3aaa2', fontWeight: 600, marginTop: '0.25rem', letterSpacing: '1px' }}>ADMIN WORKSPACE</p>
+                    <div className="sidebar-brand-group">
+                        <h1 className="sidebar-brand" style={{ fontSize: '1.5rem', fontFamily: 'var(--font-display)', color: 'var(--color-primary)', margin: 0 }}>it's ouR Studio</h1>
+                        <p className="sidebar-role" style={{ fontSize: '0.75rem', color: '#b3aaa2', fontWeight: 600, marginTop: '0.25rem', letterSpacing: '1px' }}>ADMIN WORKSPACE</p>
+                    </div>
+                    <button
+                        type="button"
+                        className="sidebar-collapse-toggle"
+                        onClick={toggleSidebarCollapsed}
+                        aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                        title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            {isSidebarCollapsed ? <polyline points="9 18 15 12 9 6"></polyline> : <polyline points="15 18 9 12 15 6"></polyline>}
+                        </svg>
+                    </button>
                 </div>
                 <nav className="sidebar-nav">
                     <button className={`nav-item ${activeTab === 'bookings' ? 'active' : ''}`} onClick={() => handleTabChange('bookings')}>

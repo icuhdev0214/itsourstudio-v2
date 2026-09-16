@@ -118,6 +118,15 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
     // Navigation State
     const [activeSection, setActiveSection] = useState<'promoBanner' | 'seasonalPromo' | 'about' | 'footer' | 'backdrops' | 'faq' | 'services' | 'gallery' | 'emailTemplates'>('promoBanner');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(true); // For mobile view navigation
+    const [isContentSidebarCollapsed, setIsContentSidebarCollapsed] = useState(() => localStorage.getItem('adminContentSidebarCollapsed') === 'true');
+
+    const toggleContentSidebarCollapsed = () => {
+        setIsContentSidebarCollapsed(prev => {
+            const next = !prev;
+            localStorage.setItem('adminContentSidebarCollapsed', String(next));
+            return next;
+        });
+    };
     const [isBackdropModalOpen, setIsBackdropModalOpen] = useState(false);
 
     // FAQ State
@@ -438,7 +447,18 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
         <div className={`content-management ${isMobileMenuOpen ? 'mobile-menu-open' : 'mobile-content-open'}`}>
             <div className="bookings-section content-layout">
                 {/* Sidebar / Menu */}
-                <div className="content-sidebar">
+                <div className={`content-sidebar ${isContentSidebarCollapsed ? 'collapsed' : ''}`}>
+                    <button
+                        type="button"
+                        className="content-sidebar-collapse-toggle"
+                        onClick={toggleContentSidebarCollapsed}
+                        aria-label={isContentSidebarCollapsed ? 'Expand menu' : 'Collapse menu'}
+                        title={isContentSidebarCollapsed ? 'Expand menu' : 'Collapse menu'}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            {isContentSidebarCollapsed ? <polyline points="9 18 15 12 9 6"></polyline> : <polyline points="15 18 9 12 15 6"></polyline>}
+                        </svg>
+                    </button>
                     <div className="sidebar-group-title">Site Sections</div>
                     <button
                         className={`content-nav-btn ${activeSection === 'promoBanner' ? 'active' : ''}`}

@@ -1235,12 +1235,70 @@
     z-index: 100;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
     color: #ecdfd0;
+    transition: width 0.2s ease, padding 0.2s ease;
 }
 
 .sidebar-header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.sidebar-collapse-toggle {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ecdfd0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.sidebar-collapse-toggle:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* Collapsed state: user-toggled icon rail, independent of viewport width.
+   Works identically inside the mobile off-canvas drawer (below) since the
+   toggle button lives in .sidebar-header, which renders in both contexts. */
+.admin-sidebar.collapsed {
+    width: 80px;
+    padding: 2rem 0.75rem;
+    align-items: center;
+}
+
+.admin-sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    border-bottom: none;
+    margin-bottom: 1rem;
+    padding-bottom: 0;
+}
+
+.admin-sidebar.collapsed .sidebar-brand-group {
+    display: none;
+}
+
+.admin-sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 1rem;
+}
+
+.admin-sidebar.collapsed .nav-label {
+    display: none;
+}
+
+.admin-layout.sidebar-collapsed .admin-main {
+    margin-left: 80px;
+    width: calc(100% - 80px);
 }
 
 .sidebar-title {
@@ -1312,6 +1370,7 @@
     /* Offset for sidebar */
     padding: 2rem;
     width: calc(100% - 280px);
+    transition: margin-left 0.2s ease, width 0.2s ease;
 }
 
 /* Enhancing Cards for Premium Feel */
@@ -1381,35 +1440,9 @@
     }
 }
 
-/* Responsive Sidebar (Mobile) */
-@media (max-width: 1024px) {
-    .admin-sidebar {
-        width: 80px;
-        /* Collapsed width */
-        padding: 2rem 0.75rem;
-        align-items: center;
-    }
-
-    .nav-item {
-        padding: 1rem;
-        justify-content: center;
-    }
-
-    .nav-label {
-        display: none;
-        /* Hide text on tablet */
-    }
-
-    .sidebar-header {
-        display: none;
-    }
-
-    .admin-main {
-        margin-left: 80px;
-        width: calc(100% - 80px);
-    }
-}
-
+/* Responsive Sidebar (Mobile) - collapse is now user-toggled (see
+   .admin-sidebar.collapsed above) rather than forced by viewport width, so
+   there's no separate 1024px auto-collapse breakpoint here anymore. */
 @media (max-width: 768px) {
     .admin-layout {
         flex-direction: column;
@@ -1446,7 +1479,7 @@
     }
 
     .sidebar-header {
-        display: block;
+        display: flex;
     }
 
     .nav-item {
