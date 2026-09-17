@@ -333,6 +333,97 @@
     transform: scale(1.05);
 }
 
+/* Unified Image Upload Control (preview card + toolbar + dropzone) */
+.img-upload-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #ecdfd0;
+    background: #fffdf9;
+    max-width: 320px;
+}
+
+.img-upload-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.img-upload-toolbar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.img-icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: all 0.15s ease;
+}
+
+.img-icon-btn:hover {
+    transform: scale(1.05);
+}
+
+.img-icon-btn.replace:hover {
+    background: #faf1e6;
+}
+
+.img-icon-btn.remove:hover {
+    background: #fee2e2;
+}
+
+.img-upload-dropzone {
+    border: 2px dashed #e3b389;
+    border-radius: 12px;
+    background: #fdf1ea;
+    padding: 1.75rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    max-width: 320px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.img-upload-dropzone:hover,
+.img-upload-dropzone.drag-active {
+    background: #fbe7d4;
+    border-color: #c06838;
+}
+
+.img-upload-dropzone .up-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #fffdf9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.6rem;
+}
+
+.img-upload-dropzone .dz-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a1552c;
+}
+
+.img-upload-dropzone .dz-sub {
+    font-size: 0.75rem;
+    color: #736e67;
+    margin-top: 3px;
+}
+
 .proof-link {
     display: flex;
     align-items: center;

@@ -1665,7 +1665,10 @@ const AdminDashboard = () => {
                                                     <button
                                                         className="action-btn"
                                                         title="Delete Booking"
-                                                        onClick={() => handleDelete(booking.id)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDelete(booking.id);
+                                                        }}
                                                     >
                                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                     </button>
@@ -1774,17 +1777,11 @@ const AdminDashboard = () => {
                                                 {item.alt || 'No Title'}
                                             </span>
                                             <button
+                                                className="action-btn"
                                                 onClick={() => handleDeleteGalleryItem(item.id)}
-                                                style={{
-                                                    background: 'none',
-                                                    border: 'none',
-                                                    color: '#c62828',
-                                                    cursor: 'pointer',
-                                                    padding: '4px'
-                                                }}
                                                 title="Delete Image"
                                             >
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                             </button>
                                         </div>
                                     </div>
@@ -1858,13 +1855,13 @@ const AdminDashboard = () => {
                                                 {!uploading && (
                                                     <button
                                                         type="button"
+                                                        title="Remove"
                                                         onClick={(e) => { e.stopPropagation(); removeGalleryFile(index); }}
                                                         style={{
                                                             position: 'absolute',
                                                             top: '2px',
                                                             right: '2px',
                                                             background: 'rgba(0,0,0,0.6)',
-                                                            color: 'white',
                                                             border: 'none',
                                                             borderRadius: '50%',
                                                             width: '20px',
@@ -1872,11 +1869,10 @@ const AdminDashboard = () => {
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             justifyContent: 'center',
-                                                            cursor: 'pointer',
-                                                            fontSize: '12px'
+                                                            cursor: 'pointer'
                                                         }}
                                                     >
-                                                        &times;
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                     </button>
                                                 )}
                                             </div>
@@ -2201,7 +2197,7 @@ const AdminDashboard = () => {
 
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#2f3540' }}>Screenshot (Optional)</label>
-                                <div style={{ border: '2px dashed #ecdfd0', padding: '1rem', borderRadius: '6px', textAlign: 'center' }}>
+                                <div>
                                     {!screenshotPreview ? (
                                         <>
                                             <input
@@ -2217,38 +2213,49 @@ const AdminDashboard = () => {
                                                     }
                                                 }}
                                             />
-                                            <label htmlFor="screenshot-upload" style={{ cursor: 'pointer', color: '#736e67', fontSize: '0.9rem' }}>
-                                                <span style={{ color: '#ef4444', fontWeight: 500 }}>Click to upload</span> or drag and drop
+                                            <label className="img-upload-dropzone" htmlFor="screenshot-upload" style={{ display: 'block' }}>
+                                                <div className="up-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></div>
+                                                <div className="dz-title">Click to upload</div>
+                                                <div className="dz-sub">PNG or JPG, up to 15MB</div>
                                             </label>
                                         </>
                                     ) : (
-                                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                                            <img src={screenshotPreview} alt="Screenshot Preview" style={{ maxHeight: '100px', borderRadius: '4px', border: '1px solid #ecdfd0' }} />
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setScreenshotFile(null);
-                                                    setScreenshotPreview(null);
+                                        <div className="img-upload-card" style={{ maxWidth: '220px' }}>
+                                            <img src={screenshotPreview} alt="Screenshot Preview" />
+                                            <div className="img-upload-toolbar">
+                                                <button
+                                                    type="button"
+                                                    className="img-icon-btn replace"
+                                                    title="Replace image"
+                                                    onClick={() => document.getElementById('screenshot-upload')?.click()}
+                                                >
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="img-icon-btn remove"
+                                                    title="Remove image"
+                                                    onClick={() => {
+                                                        setScreenshotFile(null);
+                                                        setScreenshotPreview(null);
+                                                    }}
+                                                >
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                id="screenshot-upload"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        setScreenshotFile(file);
+                                                        setScreenshotPreview(URL.createObjectURL(file));
+                                                    }
                                                 }}
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: '-8px',
-                                                    right: '-8px',
-                                                    background: '#ef4444',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '50%',
-                                                    width: '20px',
-                                                    height: '20px',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    cursor: 'pointer',
-                                                    fontSize: '12px'
-                                                }}
-                                            >
-                                                ✕
-                                            </button>
+                                            />
                                         </div>
                                     )}
                                 </div>

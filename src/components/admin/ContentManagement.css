@@ -743,9 +743,10 @@
     padding-top: 1rem;
 }
 
-.faq-actions button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
+.faq-actions .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .faq-empty-state {

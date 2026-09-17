@@ -241,13 +241,22 @@ const BioLinkManagement = ({ showToast }: Props) => {
                 </div>
 
                 <div className="profile-card">
-                    <div className="avatar-upload" onClick={() => document.getElementById('p-upload')?.click()}>
+                    <div className="avatar-upload">
                         <img
                             src={profile.profileImage || '/logo/android-chrome-512x512.png'}
                             alt="Avatar"
                             onError={(e) => { (e.target as HTMLImageElement).src = '/logo/android-chrome-512x512.png'; }}
                         />
-                        <div className="overlay">📷</div>
+                        <div className="overlay">
+                            <button type="button" className="mini-icon-btn" title="Replace image" onClick={() => document.getElementById('p-upload')?.click()}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+                            </button>
+                            {profile.profileImage && (
+                                <button type="button" className="mini-icon-btn" title="Remove image" onClick={() => updateProfile('profileImage', '')}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            )}
+                        </div>
                         <input id="p-upload" type="file" hidden onChange={e => handleImageUpload(e, 'profile')} />
                     </div>
 
@@ -288,8 +297,22 @@ const BioLinkManagement = ({ showToast }: Props) => {
 
                 <div className="bg-config">
                     <label>Background Image</label>
-                    <div className="bg-preview" onClick={() => document.getElementById('bg-upload')?.click()} style={{ backgroundImage: `url(${profile.backgroundImage})` }}>
-                        <span>Click to Change Background</span>
+                    <div
+                        className="bg-preview"
+                        onClick={!profile.backgroundImage ? () => document.getElementById('bg-upload')?.click() : undefined}
+                        style={{ backgroundImage: profile.backgroundImage ? `url(${profile.backgroundImage})` : undefined, cursor: profile.backgroundImage ? 'default' : 'pointer' }}
+                    >
+                        <div className="bg-preview-actions">
+                            <button type="button" className="mini-icon-btn" title="Replace image" onClick={() => document.getElementById('bg-upload')?.click()}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+                            </button>
+                            {profile.backgroundImage && (
+                                <button type="button" className="mini-icon-btn" title="Remove image" onClick={() => updateProfile('backgroundImage', '')}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            )}
+                        </div>
+                        {!profile.backgroundImage && <span>Click to add Background</span>}
                         <input id="bg-upload" type="file" hidden onChange={e => handleImageUpload(e, 'background')} />
                     </div>
                 </div>
@@ -356,8 +379,12 @@ const BioLinkManagement = ({ showToast }: Props) => {
                                     <button onClick={() => toggleStatus(link)} title="Toggle Visibility">
                                         {link.isActive ? '👁️' : '🚫'}
                                     </button>
-                                    <button onClick={() => openLinkModal(link)} title="Edit">✏️</button>
-                                    <button className="danger" onClick={() => deleteLink(link.id)} title="Delete">🗑️</button>
+                                    <button className="action-btn" onClick={() => openLinkModal(link)} title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    </button>
+                                    <button className="action-btn danger" onClick={() => deleteLink(link.id)} title="Delete">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    </button>
                                 </div>
                             </div>
                         ))

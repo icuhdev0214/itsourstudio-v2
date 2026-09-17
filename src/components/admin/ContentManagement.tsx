@@ -717,27 +717,27 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                     <div className="full-width">
                                         <label className="form-label">Promo Image</label>
                                         {content.seasonalPromo.imageUrl && !seasonalImageFile && !replacingImage.seasonal ? (
-                                            <div className="current-image-preview">
-                                                <div className="preview-label">Current Image</div>
+                                            <div className="img-upload-card">
                                                 <img
                                                     src={content.seasonalPromo.imageUrl}
                                                     alt="Current seasonal promo"
                                                 />
-                                                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                                                <div className="img-upload-toolbar">
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline"
+                                                        className="img-icon-btn replace"
+                                                        title="Replace image"
                                                         onClick={() => setReplacingImage(prev => ({ ...prev, seasonal: true }))}
                                                     >
-                                                        Replace Image
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline"
-                                                        style={{ borderColor: '#ef4444', color: '#ef4444' }}
+                                                        className="img-icon-btn remove"
+                                                        title="Remove image"
                                                         onClick={() => handleRemoveCurrentContentImage('seasonal')}
                                                     >
-                                                        Remove Image
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                     </button>
                                                 </div>
                                             </div>
@@ -846,27 +846,27 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                     <div className="full-width">
                                         <label className="form-label">Section Image</label>
                                         {content.about.imageUrl && !aboutImageFile && !replacingImage.about ? (
-                                            <div className="current-image-preview">
-                                                <div className="preview-label">Current Image</div>
+                                            <div className="img-upload-card">
                                                 <img
                                                     src={content.about.imageUrl}
                                                     alt="Current about"
                                                 />
-                                                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                                                <div className="img-upload-toolbar">
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline"
+                                                        className="img-icon-btn replace"
+                                                        title="Replace image"
                                                         onClick={() => setReplacingImage(prev => ({ ...prev, about: true }))}
                                                     >
-                                                        Replace Image
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline"
-                                                        style={{ borderColor: '#ef4444', color: '#ef4444' }}
+                                                        className="img-icon-btn remove"
+                                                        title="Remove image"
                                                         onClick={() => handleRemoveCurrentContentImage('about')}
                                                     >
-                                                        Remove Image
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                     </button>
                                                 </div>
                                             </div>
@@ -1306,11 +1306,11 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                                 {faq.answer}
                                             </div>
                                             <div className="faq-actions">
-                                                <button className="btn btn-outline" onClick={() => handleEditFaq(faq)}>
-                                                    <span style={{ marginRight: '5px' }}>✏️</span> Edit
+                                                <button className="action-btn" title="Edit" onClick={() => handleEditFaq(faq)}>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                                 </button>
-                                                <button className="btn btn-outline" style={{ borderColor: '#ef4444', color: '#ef4444' }} onClick={() => handleDeleteFaq(faq.id)}>
-                                                    <span style={{ marginRight: '5px' }}>🗑️</span> Delete
+                                                <button className="action-btn" title="Delete" onClick={() => handleDeleteFaq(faq.id)}>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                 </button>
                                             </div>
                                         </div>

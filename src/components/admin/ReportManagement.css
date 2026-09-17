@@ -150,22 +150,6 @@
     justify-content: flex-end;
 }
 
-.btn-delete-report {
-    color: #ef4444;
-    background: none;
-    border: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.btn-delete-report:hover {
-    background: #fee2e2;
-}
-
 .empty-state {
     text-align: center;
     padding: 3rem;
