@@ -90,9 +90,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     opacity: 0;
     transition: opacity 0.2s;
-    font-size: 1.5rem;
+}
+
+.mini-icon-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+}
+
+.mini-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .invisible-input {
@@ -171,6 +188,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     color: white;
     font-size: 0.75rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
@@ -180,6 +198,14 @@
 
 .bg-preview:hover {
     opacity: 0.9;
+}
+
+.bg-preview-actions {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    gap: 4px;
 }
 
 .btn-utility {
@@ -394,6 +420,9 @@
     border: 1px solid transparent;
     background: transparent;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .lc-actions button:hover {

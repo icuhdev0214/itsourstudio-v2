@@ -720,7 +720,7 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                                                         </div>
                                                     ) : (
                                                         <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
-                                                            <button className="btn-edit-mini" onClick={() => startEdit(booking)} title="Edit">
+                                                            <button className="btn-edit-mini" onClick={() => startEdit(booking)} title="Edit" style={{ color: '#5a5c62' }}>
                                                                 <Pencil size={16} />
                                                             </button>
                                                             <button className="btn-delete-mini" onClick={() => handleDelete(booking.id)} title="Delete" style={{ color: '#ef4444' }}>

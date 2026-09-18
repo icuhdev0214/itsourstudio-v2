@@ -875,13 +875,25 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                     <label className="form-label">Main Image</label>
                                     <div className="image-uploader">
                                         {formData.imageMain ? (
-                                            <div className="preview-image-container">
-                                                <img src={formData.imageMain} alt="Main" className="preview-img" />
-                                                <button type="button" onClick={() => setFormData(prev => ({ ...prev, imageMain: '' }))} className="btn-remove-img" style={{ position: 'absolute', top: 5, right: 5, background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '50%', border: 'none', width: '24px', height: '24px' }}>×</button>
+                                            <div className="img-upload-card">
+                                                <img src={formData.imageMain} alt="Main" />
+                                                <div className="img-upload-toolbar">
+                                                    <button type="button" className="img-icon-btn replace" title="Replace image" onClick={() => document.getElementById('services-image-main-upload')?.click()}>
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+                                                    </button>
+                                                    <button type="button" className="img-icon-btn remove" title="Remove image" onClick={() => setFormData(prev => ({ ...prev, imageMain: '' }))}>
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
-                                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageMain')} className="form-input" disabled={uploadingImage === 'imageMain'} />
+                                            <label className="img-upload-dropzone" htmlFor="services-image-main-upload">
+                                                <div className="up-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></div>
+                                                <div className="dz-title">Click to upload</div>
+                                                <div className="dz-sub">PNG or JPG, up to 15MB</div>
+                                            </label>
                                         )}
+                                        <input id="services-image-main-upload" type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageMain')} style={{ display: 'none' }} disabled={uploadingImage === 'imageMain'} />
                                         {uploadingImage === 'imageMain' && <small>Uploading...</small>}
                                     </div>
                                 </div>
@@ -891,13 +903,25 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                     <label className="form-label">Detail Image</label>
                                     <div className="image-uploader">
                                         {formData.imageDetail ? (
-                                            <div className="preview-image-container">
-                                                <img src={formData.imageDetail} alt="Detail" className="preview-img" />
-                                                <button type="button" onClick={() => setFormData(prev => ({ ...prev, imageDetail: '' }))} className="btn-remove-img" style={{ position: 'absolute', top: 5, right: 5, background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '50%', border: 'none', width: '24px', height: '24px' }}>×</button>
+                                            <div className="img-upload-card">
+                                                <img src={formData.imageDetail} alt="Detail" />
+                                                <div className="img-upload-toolbar">
+                                                    <button type="button" className="img-icon-btn replace" title="Replace image" onClick={() => document.getElementById('services-image-detail-upload')?.click()}>
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+                                                    </button>
+                                                    <button type="button" className="img-icon-btn remove" title="Remove image" onClick={() => setFormData(prev => ({ ...prev, imageDetail: '' }))}>
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
-                                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageDetail')} className="form-input" disabled={uploadingImage === 'imageDetail'} />
+                                            <label className="img-upload-dropzone" htmlFor="services-image-detail-upload">
+                                                <div className="up-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></div>
+                                                <div className="dz-title">Click to upload</div>
+                                                <div className="dz-sub">PNG or JPG, up to 15MB</div>
+                                            </label>
                                         )}
+                                        <input id="services-image-detail-upload" type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageDetail')} style={{ display: 'none' }} disabled={uploadingImage === 'imageDetail'} />
                                         {uploadingImage === 'imageDetail' && <small>Uploading...</small>}
                                     </div>
                                 </div>
@@ -907,13 +931,25 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                     <label className="form-label">Action Image</label>
                                     <div className="image-uploader">
                                         {formData.imageAction ? (
-                                            <div className="preview-image-container">
-                                                <img src={formData.imageAction} alt="Action" className="preview-img" />
-                                                <button type="button" onClick={() => setFormData(prev => ({ ...prev, imageAction: '' }))} className="btn-remove-img" style={{ position: 'absolute', top: 5, right: 5, background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '50%', border: 'none', width: '24px', height: '24px' }}>×</button>
+                                            <div className="img-upload-card">
+                                                <img src={formData.imageAction} alt="Action" />
+                                                <div className="img-upload-toolbar">
+                                                    <button type="button" className="img-icon-btn replace" title="Replace image" onClick={() => document.getElementById('services-image-action-upload')?.click()}>
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><polyline points="21 3 21 9 15 9"></polyline></svg>
+                                                    </button>
+                                                    <button type="button" className="img-icon-btn remove" title="Remove image" onClick={() => setFormData(prev => ({ ...prev, imageAction: '' }))}>
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
-                                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageAction')} className="form-input" disabled={uploadingImage === 'imageAction'} />
+                                            <label className="img-upload-dropzone" htmlFor="services-image-action-upload">
+                                                <div className="up-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></div>
+                                                <div className="dz-title">Click to upload</div>
+                                                <div className="dz-sub">PNG or JPG, up to 15MB</div>
+                                            </label>
                                         )}
+                                        <input id="services-image-action-upload" type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'imageAction')} style={{ display: 'none' }} disabled={uploadingImage === 'imageAction'} />
                                         {uploadingImage === 'imageAction' && <small>Uploading...</small>}
                                     </div>
                                 </div>
@@ -961,48 +997,18 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                     </div>
                                     <div className="actions">
                                         <button
-                                            className="btn btn-sm"
-                                            style={{
-                                                background: 'transparent',
-                                                border: '1px solid #a89e96',
-                                                color: '#736e67',
-                                                padding: '0.4rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s'
-                                            }}
-                                            onMouseOver={(e) => {
-                                                e.currentTarget.style.borderColor = '#0ea5e9';
-                                                e.currentTarget.style.color = '#0ea5e9';
-                                            }}
-                                            onMouseOut={(e) => {
-                                                e.currentTarget.style.borderColor = '#a89e96';
-                                                e.currentTarget.style.color = '#736e67';
-                                            }}
+                                            className="action-btn"
+                                            title="Edit"
                                             onClick={() => handleEdit(service)}
                                         >
-                                            Edit
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a5c62" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                         </button>
                                         <button
-                                            className="btn btn-sm"
-                                            style={{
-                                                background: 'transparent',
-                                                border: '1px solid #ef4444',
-                                                color: '#ef4444',
-                                                padding: '0.4rem 1rem',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s'
-                                            }}
-                                            onMouseOver={(e) => {
-                                                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-                                            }}
-                                            onMouseOut={(e) => {
-                                                e.currentTarget.style.background = 'transparent';
-                                            }}
+                                            className="action-btn"
+                                            title="Delete"
                                             onClick={() => handleDelete(service.id)}
                                         >
-                                            Delete
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                         </button>
                                     </div>
                                 </div>

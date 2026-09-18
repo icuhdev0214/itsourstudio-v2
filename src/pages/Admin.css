@@ -333,6 +333,97 @@
     transform: scale(1.05);
 }
 
+/* Unified Image Upload Control (preview card + toolbar + dropzone) */
+.img-upload-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #ecdfd0;
+    background: #fffdf9;
+    max-width: 320px;
+}
+
+.img-upload-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.img-upload-toolbar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.img-icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: all 0.15s ease;
+}
+
+.img-icon-btn:hover {
+    transform: scale(1.05);
+}
+
+.img-icon-btn.replace:hover {
+    background: #faf1e6;
+}
+
+.img-icon-btn.remove:hover {
+    background: #fee2e2;
+}
+
+.img-upload-dropzone {
+    border: 2px dashed #e3b389;
+    border-radius: 12px;
+    background: #fdf1ea;
+    padding: 1.75rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    max-width: 320px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.img-upload-dropzone:hover,
+.img-upload-dropzone.drag-active {
+    background: #fbe7d4;
+    border-color: #c06838;
+}
+
+.img-upload-dropzone .up-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #fffdf9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.6rem;
+}
+
+.img-upload-dropzone .dz-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a1552c;
+}
+
+.img-upload-dropzone .dz-sub {
+    font-size: 0.75rem;
+    color: #736e67;
+    margin-top: 3px;
+}
+
 .proof-link {
     display: flex;
     align-items: center;
@@ -1235,12 +1326,70 @@
     z-index: 100;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
     color: #ecdfd0;
+    transition: width 0.2s ease, padding 0.2s ease;
 }
 
 .sidebar-header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.sidebar-collapse-toggle {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ecdfd0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.sidebar-collapse-toggle:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* Collapsed state: user-toggled icon rail, independent of viewport width.
+   Works identically inside the mobile off-canvas drawer (below) since the
+   toggle button lives in .sidebar-header, which renders in both contexts. */
+.admin-sidebar.collapsed {
+    width: 80px;
+    padding: 2rem 0.75rem;
+    align-items: center;
+}
+
+.admin-sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    border-bottom: none;
+    margin-bottom: 1rem;
+    padding-bottom: 0;
+}
+
+.admin-sidebar.collapsed .sidebar-brand-group {
+    display: none;
+}
+
+.admin-sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 1rem;
+}
+
+.admin-sidebar.collapsed .nav-label {
+    display: none;
+}
+
+.admin-layout.sidebar-collapsed .admin-main {
+    margin-left: 80px;
+    width: calc(100% - 80px);
 }
 
 .sidebar-title {
@@ -1312,6 +1461,7 @@
     /* Offset for sidebar */
     padding: 2rem;
     width: calc(100% - 280px);
+    transition: margin-left 0.2s ease, width 0.2s ease;
 }
 
 /* Enhancing Cards for Premium Feel */
@@ -1381,35 +1531,9 @@
     }
 }
 
-/* Responsive Sidebar (Mobile) */
-@media (max-width: 1024px) {
-    .admin-sidebar {
-        width: 80px;
-        /* Collapsed width */
-        padding: 2rem 0.75rem;
-        align-items: center;
-    }
-
-    .nav-item {
-        padding: 1rem;
-        justify-content: center;
-    }
-
-    .nav-label {
-        display: none;
-        /* Hide text on tablet */
-    }
-
-    .sidebar-header {
-        display: none;
-    }
-
-    .admin-main {
-        margin-left: 80px;
-        width: calc(100% - 80px);
-    }
-}
-
+/* Responsive Sidebar (Mobile) - collapse is now user-toggled (see
+   .admin-sidebar.collapsed above) rather than forced by viewport width, so
+   there's no separate 1024px auto-collapse breakpoint here anymore. */
 @media (max-width: 768px) {
     .admin-layout {
         flex-direction: column;
@@ -1446,7 +1570,7 @@
     }
 
     .sidebar-header {
-        display: block;
+        display: flex;
     }
 
     .nav-item {

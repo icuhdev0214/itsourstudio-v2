@@ -22,6 +22,57 @@
     padding: 1.5rem;
     gap: 0.5rem;
     flex-shrink: 0;
+    position: relative;
+    transition: width 0.2s ease, padding 0.2s ease;
+}
+
+.content-sidebar-collapse-toggle {
+    align-self: flex-end;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: #736e67;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    margin-bottom: 0.25rem;
+}
+
+.content-sidebar-collapse-toggle:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--color-primary);
+}
+
+/* Collapsed state: icon-only rail, mirroring the primary admin sidebar's
+   collapse pattern. Toggled independently (own localStorage key) since
+   these are two separate sidebars on the page at once. */
+.content-sidebar.collapsed {
+    width: 76px;
+    padding: 1.5rem 0.5rem;
+    align-items: center;
+}
+
+.content-sidebar.collapsed .content-sidebar-collapse-toggle {
+    align-self: center;
+}
+
+.content-sidebar.collapsed .sidebar-group-title {
+    display: none;
+}
+
+.content-sidebar.collapsed .content-nav-btn {
+    justify-content: center;
+    padding: 0.75rem;
+    gap: 0;
+}
+
+.content-sidebar.collapsed .content-nav-btn .nav-label,
+.content-sidebar.collapsed .content-nav-btn .nav-arrow {
+    display: none;
 }
 
 .sidebar-group-title {
@@ -304,10 +355,24 @@
 }
 
 @media (max-width: 900px) {
-    .content-sidebar {
+    /* The collapse toggle is a desktop/tablet-only feature - below 900px
+       this sidebar is a full-screen panel (toggled via mobile-menu-open /
+       mobile-content-open), not a side column, so ignore any collapsed
+       preference carried over from a desktop session. */
+    .content-sidebar,
+    .content-sidebar.collapsed {
         width: 100%;
         border-right: none;
         padding-bottom: 6rem;
+    }
+
+    .content-sidebar.collapsed .content-nav-btn .nav-label,
+    .content-sidebar.collapsed .content-nav-btn .nav-arrow {
+        display: flex;
+    }
+
+    .content-sidebar-collapse-toggle {
+        display: none;
     }
 
     .content-main {
@@ -678,9 +743,10 @@
     padding-top: 1rem;
 }
 
-.faq-actions button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
+.faq-actions .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .faq-empty-state {
