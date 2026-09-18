@@ -51,12 +51,6 @@
   - [Firebase Storage](#firebase-storage)
   - [Storage Security Rules](#storage-security-rules)
   - [Firebase Authentication](#firebase-authentication)
-- [Multi-Platform Support](#-multi-platform-support)
-  - [Web (Vercel)](#web-vercel)
-  - [Desktop — Electron](#desktop--electron)
-  - [Desktop — Tauri](#desktop--tauri)
-  - [Mobile — Capacitor (Android)](#mobile--capacitor-android)
-- [CI/CD Pipelines](#-cicd-pipelines)
 - [Testing](#-testing)
 - [SEO & Structured Data](#-seo--structured-data)
 - [Security Measures](#-security-measures)
@@ -76,11 +70,7 @@
 
 2. **Studio Administrators** — A comprehensive admin dashboard for managing bookings, gallery content, services/packages, user accounts, sales ledger, notifications, feedback/testimonials, content management (CMS), bio links, and more.
 
-The application is designed as a **cross-platform solution**, deployable as:
-- A **web application** (Vercel)
-- A **Windows desktop app** (Electron / Tauri)
-- An **Android mobile app** (Capacitor)
-- A **macOS desktop app** (Tauri via CI/CD)
+The application is deployed as a **web application only** (Vercel) — there is no native desktop or mobile app.
 
 ---
 
@@ -112,13 +102,6 @@ The application is designed as a **cross-platform solution**, deployable as:
 | **bcryptjs** | 3.0 | Password hashing |
 | **xlsx** | 0.18 | Excel import/export for sales ledger |
 
-### Native / Desktop
-| Technology | Purpose |
-|---|---|
-| **Electron** | Windows desktop app wrapper |
-| **Tauri** (Rust) | Lightweight cross-platform desktop builds |
-| **Capacitor** | Android mobile app (hybrid) |
-
 ### Testing
 | Technology | Purpose |
 |---|---|
@@ -130,7 +113,6 @@ The application is designed as a **cross-platform solution**, deployable as:
 | Technology | Purpose |
 |---|---|
 | **Vercel** | Web hosting + serverless functions |
-| **GitHub Actions** | CI/CD for Android APK & macOS DMG builds |
 | **Firebase Console** | Firestore rules & storage rules deployment |
 
 ---
@@ -139,13 +121,11 @@ The application is designed as a **cross-platform solution**, deployable as:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                        CLIENT APPLICATIONS                          │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐    │
-│  │   Web    │  │ Electron │  │  Tauri   │  │  Capacitor (APK) │    │
-│  │ (Vercel) │  │ (Win32)  │  │ (macOS)  │  │    (Android)     │    │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────┬─────────┘    │
-│       │              │             │                  │              │
-│       └──────────────┴─────────────┴──────────────────┘              │
+│                        CLIENT APPLICATION                            │
+│                         ┌──────────┐                                 │
+│                         │   Web    │                                 │
+│                         │ (Vercel) │                                 │
+│                         └────┬─────┘                                 │
 │                              │                                       │
 │                    React 19 + TypeScript                              │
 │                    (Vite-bundled SPA)                                 │
@@ -182,29 +162,20 @@ ItsourStudioNew/
 ├── .env                        # Environment variables (NEVER committed)
 ├── .env.example                # Template for environment variables
 ├── .env.local                  # Local overrides
-├── .github/
-│   └── workflows/
-│       ├── build_android.yml   # CI: Build Android APK via Capacitor
-│       └── build_macos.yml     # CI: Build macOS DMG via Tauri
 ├── _legacy/                    # Archived legacy code (HTML/CSS/JS)
-├── android/                    # Capacitor Android native project
 ├── api/
 │   └── send-email.js           # Vercel serverless function for emails
-├── electron/
-│   └── main.cjs                # Electron main process entry
 ├── public/
 │   ├── gallery/                # Static gallery images (solo, duo, group)
 │   ├── gallery-uploads/        # User-uploaded gallery images
 │   ├── logo/                   # Brand assets & favicons
 │   ├── POP/                    # Payment Proof of Payment uploads
-│   ├── downloads/              # Desktop app downloads
 │   ├── robots.txt              # Search engine crawler rules
 │   └── sitemap.xml             # XML sitemap for SEO
 ├── scripts/
 │   ├── createAdmin.js          # Create admin user in Firebase Auth
 │   ├── hashPassword.js         # Hash passwords using bcryptjs
 │   ├── compress-existing-images.js  # Bulk image compression utility
-│   ├── generate-icon.cjs       # Generate app icon (.ico)
 │   ├── generate-notification.js # Generate test notifications
 │   └── test-reminder.js        # Test the cron reminder system
 ├── server.js                   # Express backend (email, uploads, cron)
@@ -232,7 +203,6 @@ ItsourStudioNew/
 │   │   ├── NotFound.tsx        # 404 error page
 │   │   ├── AdminLogin.tsx      # Admin authentication page
 │   │   ├── AdminDashboard.tsx  # Main admin dashboard (~2,200 lines)
-│   │   ├── AdminDownload.tsx   # Desktop app download page
 │   │   └── EmailTest.tsx       # Email testing utility page
 │   └── components/
 │       ├── Navbar.tsx          # Responsive navigation bar
@@ -265,13 +235,8 @@ ItsourStudioNew/
 │           ├── NotificationDetailsModal.tsx  # Notification detail view
 │           ├── WalkInModal.tsx          # Walk-in booking + session timer
 │           └── InvoiceModal.tsx         # Payment processing & invoice modal
-├── src-tauri/                  # Tauri (Rust) desktop app configuration
-│   ├── tauri.conf.json         # Tauri app config
-│   ├── Cargo.toml              # Rust dependencies
-│   └── src/                    # Rust source files
 ├── tests/
 │   └── booking.spec.ts         # E2E Playwright test for booking flow
-├── capacitor.config.ts         # Capacitor mobile config
 ├── firebase.json               # Firebase project config
 ├── firestore.rules             # Firestore security rules
 ├── storage.rules               # Firebase Storage security rules
@@ -412,7 +377,7 @@ The admin dashboard (`/admin`) is a **single-page application within the app**, 
 Routing is managed by **React Router DOM v7** in `App.tsx`. Key routing behaviors:
 
 ```
-/                    → Home (or redirect to /admin on native platforms)
+/                    → Home
 /services            → Services
 /gallery             → Gallery
 /faq                 → FAQ
@@ -421,13 +386,10 @@ Routing is managed by **React Router DOM v7** in `App.tsx`. Key routing behavior
 /patch-notes         → PatchNotes
 /admin/login         → AdminLogin
 /admin               → AdminDashboard (ProtectedRoute)
-/admin/download      → AdminDownload
 /about               → Redirect to / with scrollTo='about'
 /contact             → Redirect to / with scrollTo='contact'
 *                    → NotFound (404)
 ```
-
-**Platform detection:** On Capacitor (Android) or Tauri (desktop) platforms, the root route `/` automatically redirects to `/admin`, since native apps are exclusively for admin use.
 
 **Protected routes:** The `<ProtectedRoute>` component wraps admin routes and checks `Firebase Auth` state. Unauthenticated users are redirected to `/admin/login`.
 
@@ -643,95 +605,6 @@ service firebase.storage {
 
 ---
 
-## Multi-Platform Support
-
-### Web (Vercel)
-
-The primary deployment target. The SPA is built with `vite build` and deployed to Vercel with rewrites for client-side routing.
-
-- **Production URL:** `https://itsourstudio.net` / `https://itsour-studio.vercel.app`
-- **Build command:** `tsc && vite build`
-- **Output directory:** `dist/`
-
-### Desktop — Electron
-
-A lightweight Electron wrapper that loads the live production URL (`https://itsourstudio.net/admin/login`), providing a native Windows desktop experience.
-
-```bash
-# Development
-npm run electron:dev
-
-# Build installer (NSIS)
-npm run electron:build
-```
-
-**Features:**
-- Maximized window on launch (1200×800 default)
-- Custom app icon
-- Windows NSIS installer with customizable install directory
-
-### Desktop — Tauri
-
-A more lightweight alternative to Electron using Rust. Used primarily for macOS builds via CI/CD.
-
-```bash
-# Development
-npm run tauri:dev
-
-# Production build
-npm run tauri:build
-```
-
-**Config:** `src-tauri/tauri.conf.json`
-- App ID: `com.itsourstudio.admin`
-- Maximized window, 1200×800 default
-- Targets: DMG, MSI, AppImage
-
-### Mobile — Capacitor (Android)
-
-A Capacitor-based hybrid mobile app that wraps the web application.
-
-```bash
-# Open in Android Studio
-npm run mobile:open
-
-# Sync native project after web build
-npx cap sync android
-```
-
-**Config:** `capacitor.config.ts`
-- App ID: `com.itsourstudio.admin`
-- App Name: `IoS Admin`
-- Web Directory: `dist`
-
----
-
-## CI/CD Pipelines
-
-### GitHub Actions: Build Android APK
-
-**File:** `.github/workflows/build_android.yml`
-**Triggers:** Push/PR to `main` or `master`
-
-**Pipeline:**
-1. Checkout → Install Node 22 → `npm install`
-2. `npm run build` → `npx cap sync android`
-3. Set up JDK 21 + Android SDK
-4. `./gradlew assembleDebug`
-5. Upload `app-debug.apk` as artifact
-
-### GitHub Actions: Build macOS App
-
-**File:** `.github/workflows/build_macos.yml`
-**Triggers:** Push to `main` or manual dispatch
-
-**Pipeline:**
-1. Checkout → Install Node 20 + Rust toolchain (x86_64-apple-darwin)
-2. `npm ci` → Build via `tauri-apps/tauri-action@v0`
-3. Upload `.dmg` as artifact
-
----
-
 ##  Testing
 
 ### Unit Tests (Vitest)
@@ -822,7 +695,6 @@ Dynamically generates **`FAQPage`** schema markup from Firestore-managed FAQ con
 | `createAdmin.js` | `node scripts/createAdmin.js` | Create a new admin user in Firebase Auth & Firestore |
 | `hashPassword.js` | `node scripts/hashPassword.js` | Hash a password string using bcryptjs |
 | `compress-existing-images.js` | `node scripts/compress-existing-images.js` | Bulk compress images in the gallery directory |
-| `generate-icon.cjs` | `node scripts/generate-icon.cjs` | Convert PNG logo to ICO format for desktop apps |
 | `generate-notification.js` | `node scripts/generate-notification.js` | Insert test notifications into Firestore |
 | `test-reminder.js` | `node scripts/test-reminder.js` | Manually trigger the reminder system for testing |
 | `test-email-local.js` | `node test-email-local.js` | Test email sending locally |
@@ -840,11 +712,6 @@ Dynamically generates **`FAQPage`** schema markup from Firestore-managed FAQ con
 | `dev:host` | `npm run dev:host` | Start with `--host` flag (LAN accessible for mobile testing) |
 | `build` | `npm run build` | TypeScript check + Vite production build |
 | `preview` | `npm run preview` | Preview the production build locally |
-| `electron:dev` | `npm run electron:dev` | Start Electron in development mode |
-| `electron:build` | `npm run electron:build` | Build Electron installer |
-| `tauri:dev` | `npm run tauri:dev` | Start Tauri in development mode |
-| `tauri:build` | `npm run tauri:build` | Build Tauri production bundle |
-| `mobile:open` | `npm run mobile:open` | Open Android project in Android Studio |
 | `test` | `npm run test` | Run Vitest unit tests |
 | `test:e2e` | `npm run test:e2e` | Run Playwright E2E tests |
 
@@ -852,7 +719,7 @@ Dynamically generates **`FAQPage`** schema markup from Firestore-managed FAQ con
 
 ##  Deployment
 
-### Vercel (Web — Primary)
+### Vercel (Web)
 
 1. Connect the GitHub repository to Vercel
 2. Set all environment variables from `.env.example` in the Vercel project settings
@@ -868,32 +735,6 @@ firebase deploy --only firestore:rules
 # Deploy Storage security rules
 firebase deploy --only storage:rules
 ```
-
-### Desktop Builds
-
-```bash
-# Windows (Electron)
-npm run electron:build
-# Output: release/Its Our Studio Admin Setup *.exe
-
-# macOS (Tauri) — via CI/CD only
-# Push to main → GitHub Actions builds DMG
-
-# Windows (Tauri)
-npm run tauri:build
-# Output: src-tauri/target/release/bundle/
-```
-
-### Android Build
-
-```bash
-npm run build
-npx cap sync android
-npm run mobile:open
-# → Build APK/AAB from Android Studio
-```
-
-Or via CI/CD: Push to `main` → GitHub Actions builds debug APK.
 
 ---
 
