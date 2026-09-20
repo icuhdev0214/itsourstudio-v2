@@ -655,11 +655,12 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                     </label>
                                     <button
                                         type="button"
-                                        className="btn btn-sm btn-danger"
+                                        className="action-btn"
+                                        title="Delete"
                                         onClick={() => handleRemoveExtensionOption(index)}
                                         disabled={option.duration === 0}
                                     >
-                                        Delete
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                     </button>
                                 </div>
                             ))}
@@ -801,10 +802,11 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                             />
                                             <button
                                                 type="button"
-                                                className="btn btn-sm btn-danger"
+                                                className="action-btn"
+                                                title="Delete"
                                                 onClick={() => handleRemoveFeature(index)}
                                             >
-                                                Delete
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                             </button>
                                         </div>
                                     ))}
@@ -857,8 +859,8 @@ const ServicesManagement = ({ showToast }: ServicesManagementProps) => {
                                                 />
                                                 Enabled
                                             </label>
-                                            <button type="button" className="btn btn-sm btn-danger" onClick={() => handleRemoveAddOn(index)}>
-                                                Delete
+                                            <button type="button" className="action-btn" title="Delete" onClick={() => handleRemoveAddOn(index)}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                             </button>
                                         </div>
                                     ))}
