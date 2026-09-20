@@ -885,8 +885,8 @@
 }
 
 .add-on-admin-row {
-    display: grid;
-    grid-template-columns: minmax(180px, 1fr) minmax(120px, 160px) auto auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
     align-items: end;
     padding: 1rem;
@@ -895,15 +895,31 @@
     border-radius: 10px;
 }
 
+.add-on-admin-row > div {
+    flex: 0 0 160px;
+}
+
+.add-on-admin-row > div:first-child {
+    flex: 1 0 180px;
+}
+
 .extension-admin-row {
-    display: grid;
-    grid-template-columns: minmax(180px, 1fr) minmax(110px, 140px) minmax(110px, 140px) auto auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
     align-items: end;
     padding: 1rem;
     background: #fffdf9;
     border: 1px solid #ecdfd0;
     border-radius: 10px;
+}
+
+.extension-admin-row > div {
+    flex: 0 0 130px;
+}
+
+.extension-admin-row > div:first-child {
+    flex: 1 0 180px;
 }
 
 .feature-admin-row {
@@ -1562,12 +1578,12 @@
     }
 
     .add-on-admin-row {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         align-items: stretch;
     }
 
     .extension-admin-row {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         align-items: stretch;
     }
 
