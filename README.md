@@ -85,7 +85,7 @@ The application is deployed as a **web application only** (Vercel) — there is 
 | **React Router DOM** | 7.9 | Client-side routing |
 | **Lucide React** | 0.562 | Icon library |
 | **react-colorful** | 5.6 | Color picker for backdrop management |
-| **use-sound** | 5.0 | Audio playback (notification sounds) |
+| **ogl** | 1.0 | Lightweight WebGL2 renderer for the Nocturne site's shader background and glow-cursor effects |
 | **CSS (Vanilla)** | — | Styling (no CSS framework) |
 | **Google Fonts** | — | League Spartan & Quicksand typefaces |
 
@@ -158,7 +158,7 @@ The application is deployed as a **web application only** (Vercel) — there is 
 ##  Project Structure
 
 ```
-ItsourStudioNew/
+itsourstudio-v2/
 ├── .env                        # Environment variables (NEVER committed)
 ├── .env.example                # Template for environment variables
 ├── .env.local                  # Local overrides
@@ -186,40 +186,49 @@ ItsourStudioNew/
 │   ├── style.css               # Global stylesheet (~116KB)
 │   ├── context/
 │   │   └── BookingContext.tsx   # React Context for booking modal state
+│   ├── nocturne/                # Public-site shell: dark redesign (nav, footer, shaders)
+│   │   ├── NocturneLayout.tsx   # Wraps every public page: floating pill nav + footer
+│   │   ├── GradientWaves.tsx    # WebGL shader background behind the hero
+│   │   ├── GlowCursor.tsx       # Trailing glow-cursor effect
+│   │   ├── TargetReticle.tsx    # Square reticle that tracks the cursor
+│   │   ├── DriftWall.tsx        # Decorative drifting-image wall
+│   │   ├── HeroCardStack.tsx    # Stacked package-card hero element
+│   │   ├── useEffectsEnabled.ts # Capability/preference gate for the shader layers
+│   │   ├── useStudioData.ts     # Shared hooks: useServices, useGallery, useAbout
+│   │   └── *.css                # tokens.css, nocturne.css, nocturne-modals.css, admin-theme.css
 │   ├── utils/
 │   │   ├── sanitize.ts         # Input sanitization & XSS prevention
 │   │   ├── compressImage.ts    # Client-side image compression (Canvas API)
 │   │   ├── generateReference.ts # Booking reference generator (IOS-YYMMDD-XXXX)
-│   │   ├── sanitize.test.ts    # Unit tests for sanitization
-│   │   └── generateReference.test.ts  # Unit tests for reference generator
+│   │   ├── dateLocal.ts        # Timezone-safe local date/time parsing & formatting
+│   │   ├── payment.ts          # Downpayment/payment-breakdown calculations
+│   │   ├── emailTemplates.ts   # Default admin-editable email template content
+│   │   ├── loadEmailTemplate.ts # Fetch + merge saved email templates from Firestore
+│   │   ├── serviceCatalog.ts   # Shared default service/package catalog
+│   │   └── *.test.ts           # Vitest unit tests alongside each module
 │   ├── pages/
-│   │   ├── Home.tsx            # Landing page (hero, gallery, about, contact)
-│   │   ├── Services.tsx        # Services/packages showcase page
-│   │   ├── Gallery.tsx         # Full gallery with lightbox & filtering
+│   │   ├── NocturneHome.tsx    # Landing page (hero, gallery preview, about, contact)
+│   │   ├── NocturneServices.tsx # Services/packages showcase page
+│   │   ├── NocturneGallery.tsx # Full gallery with lightbox & filtering
+│   │   ├── Services.tsx        # Default service-catalog data module (not a routed page)
 │   │   ├── FAQ.tsx             # Dynamic FAQ page (fetched from Firestore)
 │   │   ├── BioLinks.tsx        # Linktree-style bio links page (/links)
 │   │   ├── PrivacyPolicy.tsx   # Privacy policy page
+│   │   ├── TermsAndConditions.tsx # Terms & conditions page (/terms)
 │   │   ├── PatchNotes.tsx      # Release/patch notes page
 │   │   ├── NotFound.tsx        # 404 error page
 │   │   ├── AdminLogin.tsx      # Admin authentication page
 │   │   ├── AdminDashboard.tsx  # Main admin dashboard (~2,200 lines)
 │   │   └── EmailTest.tsx       # Email testing utility page
 │   └── components/
-│       ├── Navbar.tsx          # Responsive navigation bar
-│       ├── Footer.tsx          # Site footer with dynamic content
 │       ├── BookingModal.tsx    # Multi-step booking form (~1,300 lines)
-│       ├── BackdropVisualizer.tsx  # Interactive backdrop color viewer
 │       ├── StructuredData.tsx  # JSON-LD structured data for SEO
-│       ├── FeedbackModal.tsx   # Customer review submission modal
 │       ├── ReportModal.tsx     # Bug/issue reporting modal
 │       ├── ConfirmPopup.tsx    # Reusable confirmation dialog
 │       ├── CookieConsent.tsx   # GDPR cookie consent banner
 │       ├── LoadingScreen.tsx   # Animated loading/transition screen
 │       ├── ScrollToTop.tsx     # Scroll restoration on navigation
 │       ├── BackToTop.tsx       # Floating "back to top" button
-│       ├── LazyImage.tsx       # Lazy-loaded image component
-│       ├── PromoBanner.tsx     # Promotional top banner
-│       ├── PromoSection.tsx    # Seasonal promo section
 │       ├── BioIcon.tsx         # Icon renderer for bio links
 │       └── admin/
 │           ├── ContentManagement.tsx   # CMS (about, footer, promos, backdrops, FAQs)
@@ -229,7 +238,8 @@ ItsourStudioNew/
 │           ├── UserManagement.tsx       # Admin user CRUD + role management
 │           ├── FeedbackManagement.tsx   # Approve/reject customer testimonials
 │           ├── ReportManagement.tsx     # Bug report triage & status tracking
-│           ├── BioLinkManagement.tsx    # Bio links CRUD + drag-and-drop ordering
+│           ├── BioLinkManagement.tsx    # Bio links CRUD + drag-and-drop ordering (not currently linked from the admin sidebar)
+│           ├── EmailTemplateManagement.tsx # Edit the content of admin-editable email templates
 │           ├── NotificationHub.tsx      # Real-time notification dropdown
 │           ├── NotificationHistory.tsx  # Full notification log with pagination
 │           ├── NotificationDetailsModal.tsx  # Notification detail view
@@ -263,8 +273,8 @@ ItsourStudioNew/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Sedictt/ItsourStudioNew.git
-cd ItsourStudioNew
+git clone https://github.com/icuhdev0214/itsourstudio-v2.git
+cd itsourstudio-v2
 
 # 2. Install dependencies
 npm install
@@ -340,15 +350,18 @@ ALLOWED_ORIGINS=http://localhost:5173,https://itsour-studio.vercel.app
 
 | Route | Component | Description |
 |---|---|---|
-| `/` | `Home.tsx` | Landing page with hero section, image carousel, about section, gallery preview, testimonials, backdrop visualizer, and contact form |
-| `/services` | `Services.tsx` | Full-screen service showcase with dynamic scrolling, package details fetched from Firestore |
-| `/gallery` | `Gallery.tsx` | Filterable gallery (solo/duo/group) with lightbox viewer, images from Firestore |
+| `/` | `NocturneHome.tsx` | Landing page with hero, gallery preview, about section, testimonials, and contact form, in the Nocturne dark redesign shell |
+| `/services` | `NocturneServices.tsx` | Service showcase with package details fetched from Firestore |
+| `/gallery` | `NocturneGallery.tsx` | Filterable gallery (solo/duo/group) with lightbox viewer, images from Firestore |
 | `/faq` | `FAQ.tsx` | Accordion-style FAQ, content managed via admin CMS, with FAQ Schema markup |
 | `/links` | `BioLinks.tsx` | Linktree-style page with customizable links, profile, and social icons |
 | `/privacy-policy` | `PrivacyPolicy.tsx` | Static privacy policy page |
+| `/terms` | `TermsAndConditions.tsx` | Static terms & conditions page |
 | `/patch-notes` | `PatchNotes.tsx` | Version history and patch notes |
 | `/email-test` | `EmailTest.tsx` | Developer utility to test email sending |
 | `*` | `NotFound.tsx` | Custom 404 page |
+
+`/`, `/services`, `/gallery`, `/faq`, `/privacy-policy`, `/terms`, and `/patch-notes` all render inside `NocturneLayout`, which supplies the shared floating-pill nav and footer for the public site (see [Shared Components](#shared-components)).
 
 ### Admin Dashboard
 
@@ -368,22 +381,25 @@ The admin dashboard (`/admin`) is a **single-page application within the app**, 
 | **Feedback** | `FeedbackManagement.tsx` | View customer feedback, toggle testimonial visibility (approve for public display), delete |
 | **Reports** | `ReportManagement.tsx` | View issue/bug reports with status tracking (new → in-progress → resolved), screenshot viewing |
 | **Sales Ledger** | `SalesLedger.tsx` | Daily sales tracking spreadsheet with editable cells, Excel import/export (XLSX), walk-in slot management, financial record-keeping |
-| **Bio Links** | `BioLinkManagement.tsx` | Manage the Linktree-style page: edit profile, upload images, manage links with drag-and-drop reordering, toggle active/inactive, icon selection |
+| **Bio Links** ⚠️ | `BioLinkManagement.tsx` | Manage the Linktree-style page: edit profile, upload images, manage links with drag-and-drop reordering, toggle active/inactive, icon selection. **Not currently linked from the admin sidebar nav** — the `/links` page it manages is still live, but this editor isn't reachable in the UI |
 | **Invoice** | `InvoiceModal.tsx` | Payment processing modal with GCash/Cash payment methods, downpayment tracking, confirmation dialogs |
 | **Notifications** | `NotificationHub.tsx` / `NotificationHistory.tsx` | Real-time notification bell with dropdown, full notification log with pagination, mark read/unread, delete, navigate to related items |
+| **Email Templates** | `EmailTemplateManagement.tsx` | Edit the subject/body content of each admin-editable booking email, with merge-field placeholders |
 
 ### Routing
 
 Routing is managed by **React Router DOM v7** in `App.tsx`. Key routing behaviors:
 
 ```
-/                    → Home
-/services            → Services
-/gallery             → Gallery
+/                    → NocturneHome
+/services            → NocturneServices
+/gallery             → NocturneGallery
 /faq                 → FAQ
-/links               → BioLinks (no navbar/footer)
 /privacy-policy      → PrivacyPolicy
+/terms               → TermsAndConditions
 /patch-notes         → PatchNotes
+/links               → BioLinks (no shared nav/footer)
+/email-test          → EmailTest
 /admin/login         → AdminLogin
 /admin               → AdminDashboard (ProtectedRoute)
 /about               → Redirect to / with scrollTo='about'
@@ -405,18 +421,13 @@ State is managed through:
 
 | Component | Description |
 |---|---|
-| `Navbar` | Responsive navigation with transparent-to-solid scroll effect, mobile hamburger menu, promo banner integration |
-| `Footer` | Dynamic footer with content from Firestore, social links, report issue button |
+| `NocturneLayout` | Wraps every public page: the floating pill nav, GDPR-aware booking CTA, and shared footer, plus the decorative pointer layers |
+| `GradientWaves` / `GlowCursor` / `TargetReticle` | The Nocturne site's WebGL shader background and glow-cursor effects (via `ogl`), gated behind `useEffectsEnabled` (skipped on reduced-motion, low-power, or non-WebGL2 devices) |
 | `BookingModal` | Multi-step booking wizard: Package selection → Date & time picker → Personal info → Payment proof upload → Confirmation. Includes real-time slot availability, date blacklisting, extension rates, file drag-and-drop |
-| `BackdropVisualizer` | Interactive backdrop color preview with smooth transitions, fetched from Firestore |
 | `ConfirmPopup` | Reusable confirmation dialog for destructive actions |
 | `CookieConsent` | GDPR-compliant cookie consent banner |
 | `LoadingScreen` | Animated brand loading screen for initial load and page transitions |
-| `LazyImage` | Image component with lazy loading, placeholder, and smooth fade-in |
-| `FeedbackModal` | Customer review form with star rating and sanitized input |
 | `ReportModal` | Bug/issue reporting with screenshot upload to Firebase Storage |
-| `PromoBanner` | Dismissible promotional banner at top of page (session-storage based) |
-| `PromoSection` | Seasonal promotional section on the homepage |
 | `StructuredData` | SEO JSON-LD structured data injection |
 | `BioIcon` | Icon renderer supporting multiple icon types for bio links |
 | `ScrollToTop` | Automatic scroll-to-top on route change |
@@ -455,6 +466,22 @@ Generates booking reference numbers in the format `IOS-YYMMDD-XXXX`:
 - `IOS` = It's ouR Studio prefix
 - `YYMMDD` = Date
 - `XXXX` = Random 4-character alphanumeric suffix (excludes confusing chars: 0, O, 1, I)
+
+#### `dateLocal.ts` — Timezone-Safe Date/Time Utilities
+
+`parseLocalDateString`/`formatLocalDateString` build and read `YYYY-MM-DD` strings from local date components instead of `new Date(dateStr)`, which parses as UTC midnight and can silently shift the date by a day depending on the visitor's timezone. `getBusinessDateString`/`getBusinessTimeString` return "now" in the studio's own timezone (Asia/Manila) regardless of the visitor's or server's local timezone; `timeToMinutes` converts an `HH:MM` string to minutes for slot-overlap comparisons.
+
+#### `payment.ts` — Payment Breakdown
+
+`calculateRequiredDownpayment`/`calculatePaymentBreakdown` compute the required downpayment (`DOWNPAYMENT_RATE`, currently 50%) and the resulting downpayment/balance split for a booking total.
+
+#### `emailTemplates.ts` / `loadEmailTemplate.ts` — Editable Email Templates
+
+`emailTemplates.ts` defines the default content, labels, and merge-field placeholders for each admin-editable email type (`received`, `confirmed`, `completed`, `rejected`, `reminder`, `new_booking_admin`); `loadEmailTemplate.ts` fetches the admin's saved overrides from Firestore and merges them over the defaults. Edited via the admin **Email Templates** panel (`EmailTemplateManagement.tsx`).
+
+#### `serviceCatalog.ts` — Shared Service Sorting/Visibility
+
+`sortServices`/`visibleServices` apply the same package ordering and visibility filtering used by both the public services page and the admin Services list, so the two never drift apart.
 
 ---
 
