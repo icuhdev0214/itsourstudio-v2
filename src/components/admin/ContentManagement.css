@@ -1094,15 +1094,8 @@
     }
 
     .images-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.5rem;
-    }
-
-    .images-grid .form-label {
-        font-size: 0.7rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .preview-img {
