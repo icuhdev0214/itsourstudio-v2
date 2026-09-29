@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import { Pencil, Save, X, Trash2, PlusCircle, Monitor } from 'lucide-react';
 import { calculateRequiredDownpayment } from '../../utils/payment';
 import { formatLocalDateString, getBusinessDateString, parseLocalDateString } from '../../utils/dateLocal';
+import ConfirmPopup from '../ConfirmPopup';
 import './SalesLedger.css';
 
 interface Booking {
@@ -134,6 +135,22 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
 
     // Mobile detection
     const [isMobile, setIsMobile] = useState(false);
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     useEffect(() => {
         const checkMobile = () => {
@@ -247,22 +264,30 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this record? This will open up the time slot.')) {
-            try {
-                await deleteDoc(doc(db, 'bookings', id));
-                // Try to delete from booked_slots too if it exists
+    const handleDelete = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Record',
+            message: 'Are you sure you want to delete this record? This will open up the time slot.',
+            isDestructive: true,
+            onConfirm: async () => {
                 try {
-                    await deleteDoc(doc(db, 'booked_slots', id));
-                } catch (e) {
-                    // Ignore if not found
+                    await deleteDoc(doc(db, 'bookings', id));
+                    // Try to delete from booked_slots too if it exists
+                    try {
+                        await deleteDoc(doc(db, 'booked_slots', id));
+                    } catch (e) {
+                        // Ignore if not found
+                    }
+                    showToast('success', 'Deleted', 'Record removed successfully');
+                } catch (err) {
+                    console.error("Error deleting record:", err);
+                    showToast('error', 'Error', 'Failed to delete record');
+                } finally {
+                    closeConfirm();
                 }
-                showToast('success', 'Deleted', 'Record removed successfully');
-            } catch (err) {
-                console.error("Error deleting record:", err);
-                showToast('error', 'Error', 'Failed to delete record');
             }
-        }
+        });
     };
 
     // Create a new booking for an empty slot
@@ -756,6 +781,14 @@ const SalesLedger = ({ showToast }: SalesLedgerProps) => {
                     </div>
                 </>
             )}
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
+            />
         </div >
     );
 };

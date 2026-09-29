@@ -7,6 +7,7 @@ import { HexColorPicker } from "react-colorful";
 import ServicesManagement from './ServicesManagement';
 import GalleryManagement from './GalleryManagement';
 import EmailTemplateManagement from './EmailTemplateManagement';
+import ConfirmPopup from '../ConfirmPopup';
 import './ContentManagement.css';
 
 interface ContentManagementProps {
@@ -128,6 +129,22 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
         });
     };
     const [isBackdropModalOpen, setIsBackdropModalOpen] = useState(false);
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     // FAQ State
     const [faqs, setFaqs] = useState<FAQItem[]>([]);
@@ -345,16 +362,24 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
         setIsBackdropModalOpen(false);
     };
 
-    const handleDeleteBackdrop = async (id: string) => {
-        if (window.confirm("Delete this backdrop? This will remove it from the visualizer.")) {
-            try {
-                await deleteDoc(doc(db, 'backdrops', id));
-                showToast('success', 'Deleted', 'Backdrop deleted');
-            } catch (error) {
-                console.error("Error deleting backdrop:", error);
-                showToast('error', 'Error', 'Failed to delete backdrop');
+    const handleDeleteBackdrop = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Backdrop',
+            message: 'Delete this backdrop? This will remove it from the visualizer.',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'backdrops', id));
+                    showToast('success', 'Deleted', 'Backdrop deleted');
+                } catch (error) {
+                    console.error("Error deleting backdrop:", error);
+                    showToast('error', 'Error', 'Failed to delete backdrop');
+                } finally {
+                    closeConfirm();
+                }
             }
-        }
+        });
     };
 
     const handleSaveBackdrop = async (e: React.FormEvent) => {
@@ -423,17 +448,26 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
         }
     };
 
-    const handleDeleteFaq = async (id: string) => {
-        if (!window.confirm("Delete this FAQ?")) return;
-        try {
-            const updatedFaqs = faqs.filter(f => f.id !== id);
-            setFaqs(updatedFaqs);
-            await setDoc(doc(db, 'siteContent', 'faq'), { items: updatedFaqs });
-            showToast('success', 'Deleted', 'FAQ deleted');
-        } catch (error) {
-            console.error("Error deleting FAQ:", error);
-            showToast('error', 'Error', 'Failed to delete FAQ');
-        }
+    const handleDeleteFaq = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete FAQ',
+            message: 'Are you sure you want to delete this FAQ?',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    const updatedFaqs = faqs.filter(f => f.id !== id);
+                    setFaqs(updatedFaqs);
+                    await setDoc(doc(db, 'siteContent', 'faq'), { items: updatedFaqs });
+                    showToast('success', 'Deleted', 'FAQ deleted');
+                } catch (error) {
+                    console.error("Error deleting FAQ:", error);
+                    showToast('error', 'Error', 'Failed to delete FAQ');
+                } finally {
+                    closeConfirm();
+                }
+            }
+        });
     };
 
 
@@ -441,6 +475,11 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
     const navigateToSection = (section: typeof activeSection) => {
         setActiveSection(section);
         setIsMobileMenuOpen(false);
+        // These modals aren't scoped to a section's own conditional render, so
+        // they'd otherwise stay mounted (and on top of whatever the new section
+        // opens) if left open while switching sections.
+        setIsBackdropModalOpen(false);
+        setIsFaqModalOpen(false);
     };
 
     return (
@@ -1414,6 +1453,14 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
 
                 </div>
             </div>
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
+            />
         </div>
     );
 };

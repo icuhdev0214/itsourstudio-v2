@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { db, auth } from '../../firebase';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import ConfirmPopup from '../ConfirmPopup';
 import './UserManagement.css'; // We will create this
 
 interface User {
@@ -31,6 +32,22 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
         role: 'viewer',
         status: 'active'
     });
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     // Fetch Users Real-time
     useEffect(() => {
@@ -130,16 +147,24 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
         }
     };
 
-    const handleDeleteUser = async (id: string) => {
-        if (window.confirm("Are you sure you want to delete this user?")) {
-            try {
-                await deleteDoc(doc(db, 'users', id));
-                showToast('success', 'Deleted', 'User deleted successfully');
-            } catch (error) {
-                console.error("Error deleting user:", error);
-                showToast('error', 'Error', 'Failed to delete user');
+    const handleDeleteUser = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete User',
+            message: 'Are you sure you want to delete this user?',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'users', id));
+                    showToast('success', 'Deleted', 'User deleted successfully');
+                } catch (error) {
+                    console.error("Error deleting user:", error);
+                    showToast('error', 'Error', 'Failed to delete user');
+                } finally {
+                    closeConfirm();
+                }
             }
-        }
+        });
     };
 
     const handleQuickUpdate = async (userId: string, field: 'role' | 'status', value: string) => {
@@ -432,6 +457,14 @@ const UserManagement = ({ showToast }: UserManagementProps) => {
                     </form>
                 </div>
             </div>
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
+            />
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import ConfirmPopup from '../ConfirmPopup';
 import './ReportManagement.css';
 
 interface Report {
@@ -24,6 +25,22 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'new' | 'in-progress' | 'resolved'>('all');
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     useEffect(() => {
         const q = query(collection(db, 'reports'), orderBy('timestamp', 'desc'));
@@ -56,16 +73,24 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this report?')) {
-            try {
-                await deleteDoc(doc(db, 'reports', id));
-                showToast('success', 'Report Deleted', 'Report removed successfully');
-            } catch (error) {
-                console.error("Error deleting report:", error);
-                showToast('error', 'Error', 'Failed to delete report');
+    const handleDelete = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Report',
+            message: 'Are you sure you want to delete this report?',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'reports', id));
+                    showToast('success', 'Report Deleted', 'Report removed successfully');
+                } catch (error) {
+                    console.error("Error deleting report:", error);
+                    showToast('error', 'Error', 'Failed to delete report');
+                } finally {
+                    closeConfirm();
+                }
             }
-        }
+        });
     };
 
     const filteredReports = reports.filter(r => filter === 'all' || r.status === filter);
@@ -176,6 +201,14 @@ const ReportManagement = ({ showToast }: ReportManagementProps) => {
                     ))}
                 </div>
             )}
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
+            />
         </div>
     );
 };

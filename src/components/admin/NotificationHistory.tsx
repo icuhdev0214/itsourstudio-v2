@@ -3,6 +3,7 @@ import { db } from '../../firebase';
 import { collection, query, orderBy, limit, startAfter, getDocs, doc, updateDoc, writeBatch, where, deleteDoc } from 'firebase/firestore';
 import { Bell, Calendar, AlertTriangle, Trash2, ArrowLeft } from 'lucide-react';
 import NotificationDetailsModal from './NotificationDetailsModal';
+import ConfirmPopup from '../ConfirmPopup';
 import './NotificationHistory.css';
 
 interface Notification {
@@ -27,6 +28,22 @@ const NotificationHistory = ({ onNavigate }: NotificationHistoryProps) => {
     const [hasMore, setHasMore] = useState(true);
     const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
     const [filterType, setFilterType] = useState<'all' | 'booking' | 'report' | 'system' | 'unread'>('all');
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     const PAGE_SIZE = 20;
 
@@ -111,15 +128,24 @@ const NotificationHistory = ({ onNavigate }: NotificationHistoryProps) => {
         }
     };
 
-    const handleDelete = async (id: string, e: React.MouseEvent) => {
+    const handleDelete = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!window.confirm("Delete this notification?")) return;
-        try {
-            await deleteDoc(doc(db, 'notifications', id));
-            setNotifications(prev => prev.filter(n => n.id !== id));
-        } catch (error) {
-            console.error("Error deleting:", error);
-        }
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Notification',
+            message: 'Are you sure you want to delete this notification?',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'notifications', id));
+                    setNotifications(prev => prev.filter(n => n.id !== id));
+                } catch (error) {
+                    console.error("Error deleting:", error);
+                } finally {
+                    closeConfirm();
+                }
+            }
+        });
     };
 
     const getIcon = (type: string) => {
@@ -284,6 +310,14 @@ const NotificationHistory = ({ onNavigate }: NotificationHistoryProps) => {
                 notification={selectedNotification}
                 onClose={() => setSelectedNotification(null)}
                 onNavigate={onNavigate}
+            />
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
             />
         </div>
     );
