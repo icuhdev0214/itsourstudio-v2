@@ -385,6 +385,7 @@
 }
 
 .img-upload-dropzone {
+    display: block;
     border: 2px dashed #e3b389;
     border-radius: 12px;
     background: #fdf1ea;

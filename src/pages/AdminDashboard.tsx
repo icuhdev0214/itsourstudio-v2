@@ -16,6 +16,7 @@ import NotificationHistory from '../components/admin/NotificationHistory';
 import SalesLedger from '../components/admin/SalesLedger';
 import WalkInModal from '../components/admin/WalkInModal';
 import InvoiceModal from '../components/admin/InvoiceModal';
+import ConfirmPopup from '../components/ConfirmPopup';
 import { UserPlus } from 'lucide-react';
 import { loadEmailTemplate } from '../utils/loadEmailTemplate';
 import '../components/admin/FloatingTimer.css';
@@ -86,6 +87,22 @@ const AdminDashboard = () => {
     }>({ show: false, date: null, type: null, dayBookings: [] });
     const [blockReason, setBlockReason] = useState('');
     const [isWalkInOpen, setIsWalkInOpen] = useState(false);
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     const handleViewPaymentProof = async (booking: Booking) => {
         try {
@@ -861,29 +878,37 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm("Are you sure you want to delete this booking? This action cannot be undone.")) {
-            const booking = bookings.find(b => b.id === id);
-            try {
-                await deleteDoc(doc(db, 'bookings', id));
-                // Sync delete to booked_slots
-                await deleteDoc(doc(db, 'booked_slots', id));
+    const handleDelete = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Booking',
+            message: 'Are you sure you want to delete this booking? This action cannot be undone.',
+            isDestructive: true,
+            onConfirm: async () => {
+                const booking = bookings.find(b => b.id === id);
+                try {
+                    await deleteDoc(doc(db, 'bookings', id));
+                    // Sync delete to booked_slots
+                    await deleteDoc(doc(db, 'booked_slots', id));
 
-                // Release the exact-slot lock (see BookingModal's slot_locks fix)
-                if (booking?.date && booking?.time) {
-                    try {
-                        await deleteDoc(doc(db, 'slot_locks', `${booking.date}_${booking.time}`));
-                    } catch (err) {
-                        console.log("Slot lock not found, skipping release");
+                    // Release the exact-slot lock (see BookingModal's slot_locks fix)
+                    if (booking?.date && booking?.time) {
+                        try {
+                            await deleteDoc(doc(db, 'slot_locks', `${booking.date}_${booking.time}`));
+                        } catch (err) {
+                            console.log("Slot lock not found, skipping release");
+                        }
                     }
-                }
 
-                showToast('success', 'Deleted', 'Booking deleted successfully');
-            } catch (error) {
-                console.error("Error deleting booking:", error);
-                showToast('error', 'Delete Failed', 'Failed to delete booking');
+                    showToast('success', 'Deleted', 'Booking deleted successfully');
+                } catch (error) {
+                    console.error("Error deleting booking:", error);
+                    showToast('error', 'Delete Failed', 'Failed to delete booking');
+                } finally {
+                    closeConfirm();
+                }
             }
-        }
+        });
     };
 
 
@@ -992,17 +1017,25 @@ const AdminDashboard = () => {
         }
     };
 
-    const handleDeleteGalleryItem = async (id: string) => {
+    const handleDeleteGalleryItem = (id: string) => {
         // ideally we should also delete the file from disk using an API, but for now we just remove from DB
-        if (window.confirm("Delete this image from gallery?")) {
-            try {
-                await deleteDoc(doc(db, 'gallery', id));
-                showToast('success', 'Deleted', 'Image removed from gallery');
-            } catch (error) {
-                console.error("Error deleting gallery item:", error);
-                showToast('error', 'Error', 'Failed to delete image');
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Image',
+            message: 'Delete this image from gallery?',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'gallery', id));
+                    showToast('success', 'Deleted', 'Image removed from gallery');
+                } catch (error) {
+                    console.error("Error deleting gallery item:", error);
+                    showToast('error', 'Error', 'Failed to delete image');
+                } finally {
+                    closeConfirm();
+                }
             }
-        }
+        });
     };
 
     const handlePrevMonth = () => {
@@ -2332,6 +2365,14 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             )}
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
+            />
         </div>
     );
 };

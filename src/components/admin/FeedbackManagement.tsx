@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import ConfirmPopup from '../ConfirmPopup';
 import './FeedbackManagement.css';
 
 interface Feedback {
@@ -19,6 +20,22 @@ interface FeedbackManagementProps {
 const FeedbackManagement = ({ showToast }: FeedbackManagementProps) => {
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
     const [loading, setLoading] = useState(true);
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        isDestructive: boolean;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: () => { },
+        isDestructive: false
+    });
+    const closeConfirm = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+    };
 
     // Fetch Feedbacks Real-time
     useEffect(() => {
@@ -51,16 +68,24 @@ const FeedbackManagement = ({ showToast }: FeedbackManagementProps) => {
         }
     };
 
-    const handleDeleteFeedback = async (id: string) => {
-        if (window.confirm("Delete this feedback?")) {
-            try {
-                await deleteDoc(doc(db, 'feedbacks', id));
-                showToast('success', 'Deleted', 'Feedback deleted successfully');
-            } catch (error) {
-                console.error("Error deleting feedback:", error);
-                showToast('error', 'Error', 'Failed to delete feedback');
+    const handleDeleteFeedback = (id: string) => {
+        setConfirmConfig({
+            isOpen: true,
+            title: 'Delete Feedback',
+            message: 'Are you sure you want to delete this feedback?',
+            isDestructive: true,
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, 'feedbacks', id));
+                    showToast('success', 'Deleted', 'Feedback deleted successfully');
+                } catch (error) {
+                    console.error("Error deleting feedback:", error);
+                    showToast('error', 'Error', 'Failed to delete feedback');
+                } finally {
+                    closeConfirm();
+                }
             }
-        }
+        });
     };
 
     return (
@@ -169,6 +194,14 @@ const FeedbackManagement = ({ showToast }: FeedbackManagementProps) => {
                     </div>
                 )}
             </div>
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={closeConfirm}
+                isDestructive={confirmConfig.isDestructive}
+            />
         </div>
     );
 };
