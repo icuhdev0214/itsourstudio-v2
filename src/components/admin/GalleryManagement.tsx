@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { db, storage } from '../../firebase';
 import { collection, getDocs, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -453,7 +454,7 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                         )}
 
                         {/* Full Screen Grid Modal */}
-                        {showAll && (
+                        {showAll && createPortal(
                             <div className="gallery-grid-modal" onClick={() => setShowAll(false)}>
                                 <div className="gallery-grid-container" onClick={e => e.stopPropagation()}>
                                     <div className="gallery-grid-header">
@@ -501,11 +502,12 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                         ))}
                                     </div>
                                 </div>
-                            </div>
+                            </div>,
+                            document.body
                         )}
 
                         {/* Quick Edit Modal */}
-                        {quickEditItem && (
+                        {quickEditItem && createPortal(
                             <div className="caption-edit-modal" onClick={() => setQuickEditItem(null)}>
                                 <div className="caption-edit-card" onClick={e => e.stopPropagation()}>
                                     <h4>Edit Photo Details</h4>
@@ -548,7 +550,8 @@ const GalleryManagement = ({ showToast }: GalleryManagementProps) => {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div>,
+                            document.body
                         )}
                     </>
                 )}

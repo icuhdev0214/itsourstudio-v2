@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { db, storage } from '../../firebase';
 import { doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -1141,7 +1142,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                     )}
 
                     {/* Backdrop Modal */}
-                    {isBackdropModalOpen && (
+                    {isBackdropModalOpen && createPortal(
                         <div className="modal-overlay" onClick={() => setIsBackdropModalOpen(false)}>
                             <div className="modal-content" onClick={e => e.stopPropagation()}>
                                 <button className="modal-close-btn" onClick={() => setIsBackdropModalOpen(false)}>×</button>
@@ -1312,7 +1313,8 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        </div>,
+                        document.body
                     )}
 
 
@@ -1398,7 +1400,7 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                     )}
 
                     {/* FAQ Modal */}
-                    {isFaqModalOpen && (
+                    {isFaqModalOpen && createPortal(
                         <div className="modal-overlay" onClick={handleCancelFaqEdit}>
                             <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px' }}>
                                 <div className="modal-header">
@@ -1446,7 +1448,8 @@ const ContentManagement = ({ showToast }: ContentManagementProps) => {
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        </div>,
+                        document.body
                     )}
 
 

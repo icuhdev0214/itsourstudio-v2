@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './ConfirmPopup.css'; // Changed CSS import
 
 interface ConfirmPopupProps {
@@ -36,7 +37,11 @@ const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
 
     if (!isOpen) return null;
 
-    return (
+    // Rendered via portal: an ancestor (e.g. Content Management's frosted-glass
+    // panels, which use backdrop-filter) can otherwise become the containing
+    // block for this fixed-position overlay, clipping/mispositioning it instead
+    // of covering the full viewport.
+    return createPortal(
         <div className="confirm-popup-overlay">
             <div className="confirm-popup-content">
                 <div className="confirm-body">
@@ -59,7 +64,8 @@ const ConfirmPopup: React.FC<ConfirmPopupProps> = ({
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
