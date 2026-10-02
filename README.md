@@ -424,7 +424,7 @@ State is managed through:
 | `NocturneLayout` | Wraps every public page: the floating pill nav, GDPR-aware booking CTA, and shared footer, plus the decorative pointer layers |
 | `GradientWaves` / `GlowCursor` / `TargetReticle` | The Nocturne site's WebGL shader background and glow-cursor effects (via `ogl`), gated behind `useEffectsEnabled` (skipped on reduced-motion, low-power, or non-WebGL2 devices) |
 | `BookingModal` | Multi-step booking wizard: Package selection → Date & time picker → Personal info → Payment proof upload → Confirmation. Includes real-time slot availability, date blacklisting, extension rates, file drag-and-drop |
-| `ConfirmPopup` | Reusable confirmation dialog for destructive actions |
+| `ConfirmPopup` | Reusable confirmation dialog for destructive actions; renders via a React portal to `document.body` so it always covers the full viewport regardless of ancestor styling (e.g. the admin theme's `backdrop-filter` panels). Used for every delete action across the admin panel |
 | `CookieConsent` | GDPR-compliant cookie consent banner |
 | `LoadingScreen` | Animated brand loading screen for initial load and page transitions |
 | `ReportModal` | Bug/issue reporting with screenshot upload to Firebase Storage |
